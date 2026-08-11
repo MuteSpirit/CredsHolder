@@ -19,7 +19,7 @@ Follow [GitHub commit signing documentation](https://docs.github.com/en/authenti
 
 Sign all your commits for current project.
 
-| :blue_book: | Reason(s): |
+| :blue_book: | Reason: |
 |---|:---|
 | | Try avoid "Software supply chain attack" for source code |
 
@@ -79,14 +79,14 @@ Make information about Reasons a part of documentation.
 Example with single reason:
 
 ```
-| :blue_book: | Reason(s): |
+| :blue_book: | Reason: |
 |---|:---|
 | | Alone reason to do that |
 ```
 
 Example with list of reasons to do something:
 ```
-| :blue_book: | Reason(s): |
+| :blue_book: | Reasons: |
 |---|:---|
 | 1 | 1st reason to do that |
 | 2 | 2nd reason to do that |
@@ -94,19 +94,53 @@ Example with list of reasons to do something:
 | N | Nth reason to do that |
 ```
 
+## Schemas
+
+Use [PlantUML](https://www.plantuml.org) to generate pictures with schemas. It's enough powerful for most of purposes.
+
+| :blue_book: | Reasons: |
+|---|:---|
+| 1 | PlantUML files are text one. They may be added under source control |
+| 2 | Text files maintaining is much easier then graph ones |
+
+PlantUML files (\*.puml) MUST be rendered into PNG/JPEG with Makefile target.
+
+| :blue_book: | Reason: |
+|---|:---|
+| | In most cases only simple way will be used by Developers during long development period. |
+
+For one time usage pictures you may use any paint application.
+
 ## High Level Design (HLD)
 
 High level proposals which does not refer to concrete libraries, frameworks, etc.
 
-HLD SHOULD be as much abstract as possible. Use technologies instead of exist implementations.
+HLD SHOULD be as much abstract as possible. 
 
-For example, instead of MySQL, PostgreSQL, SQLite use SQL DB.
+Use technologies instead of exist implementations. For example, instead of MySQL, PostgreSQL, SQLite use SQL DB.
 
-| :blue_book: | Reason(s): |
+| :blue_book: | Reason: |
 |---|:---|
-| | Avoid mind locking Developers on single solution. Allow to find more optimal alternatives. |
+| | Avoid Designer/Developer mind lock on single known solution. Allow to find more optimal alternatives. |
 
 HLD MUST be usable for making Low Level Design.
+
+Approximate document structure is
+
+| Section | Purpose |
+|---|---|
+| Abbreviations | <br/>Abbreviations and Terms used in this document |
+| Requirements | <br/>User Stories, requirements, history context<br/>and another details needed to understand what we're designing.<br/>Try to figure out Actors to know requiremnt groups. That will help to formulate non-fragile requirements. |
+| Open Questions | <br/>List of questions to clarify the details of requirements and etc.<br/>Move answered questions into separate section instead of erase them.<br/>Keep both Questions and Answers in text.<br/> |
+| Entities | <br/>To be able to use [TRIZ](https://en.wikipedia.org/wiki/TRIZ) principal on invention we need to know elements of system, it's subsystem and suprasystem. |
+| Proposals | <br/>Ideas how requirements can be met.<br/>Add advantages and disadvantages for each variant to be able compare them |
+| Rejected Proposals | <br/>During designing you can have ideas good for a first glance but rejected after deeper analysis.<br/>Let list them too to avoid repeating the history and lost time for the same wrong ideas by reviewers and other designers.<br/>Please add the reason of idea rejection. |
+
+Always add picture/schema for each proposal variant describing the core of idea. Without that you'll lost reviewers attention after couple of paragraphs.
+
+During the years in IT we collect ready solutions and tricks in our mind and harry to use them in designs. But in many case the optimal solution is located in knowledge area unknown for us.
+
+Usage of "TRIZ Ideal Result" formulation, "TRIZ System Operator" and "TRIZ Principals to Resolve Contradictions" will allow you cross borders of your mind. ! Without any drugs !
 
 ## Low Level Design (LLD)
 

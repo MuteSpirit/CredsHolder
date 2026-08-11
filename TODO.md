@@ -12,8 +12,9 @@
 ## Sub-tasks
 
 * [x] CONTRIBUTING.md: with dev env settings, docs style, folder structure
-* [ ] collect requirements
-* [ ] add CONTRIBUTING.md with description of proposals format and principals
+* [x] docs(CONTRIBUTING.md): description of HLD principals
+* [ ] docs: collect project requirements
+* [ ] docs(CONTRIBUTING.md): description of LLD principals
 * [ ] propose Device UI
 * [ ] propose Device HW storage
 * [ ] propose Device (encrypted) data storage
