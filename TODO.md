@@ -11,7 +11,7 @@
 
 ## Sub-tasks
 
-* [ ] CONTRIBUTING.md: with dev env settings, docs style, folder structure
+* [x] CONTRIBUTING.md: with dev env settings, docs style, folder structure
 * [ ] collect requirements
 * [ ] add CONTRIBUTING.md with description of proposals format and principals
 * [ ] propose Device UI
