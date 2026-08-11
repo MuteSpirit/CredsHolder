@@ -43,12 +43,16 @@ User git commit alias with signing and adding "Signed-off-by":
     ...
 ```
 
+# File Naming
+
+Dash (`-`) is word separator in file names, e.g. `file-name.ext`.
+
 # Folder Structure
 
 | File/Folder | Purpose |
 |:---|:---|
 | README.md | index file, contains short note, news and links to other interesting things in project |
-| CONTRIBUTING.md | development process aggreements |
+| CONTRIBUTING.md | development process agreements |
 | TODO.md | task tracking |
 | Makefile | build docs, unit tests, sketch and other artifacts |
 | docs/\*.md | manuals |
@@ -129,10 +133,13 @@ Approximate document structure is
 
 | Section | Purpose |
 |---|---|
+| Introduction | Shortly describe the goal of document |
 | Abbreviations | <br/>Abbreviations and Terms used in this document |
-| Requirements | <br/>User Stories, requirements, history context<br/>and another details needed to understand what we're designing.<br/>Try to figure out Actors to know requiremnt groups. That will help to formulate non-fragile requirements. |
+| User Stories | <br/>Agile style User Stories, e.g. "As a User I'd like to ..."<br/>Try to figure out Actors. That will help to formulate non-fragile requirements.<br/>Number each user story to be able refer to it in LLD: S-1, S-2, etc.<br/>:warning: If you have already set number to some User Story then don't change it to avoid break reference in another documents. |
+| Requirements | <br/>Requirements converted from User Stories and explicit requirements given by Customer or Product Owner.<br/>User Stories are more then Requirements. Wait LLD to propose solutions for each.<br/>Number each user requirement to be able refer it in LLD: R-1, R-2, etc.<br/>:warning: If you have already set number to some Requirement then don't change it to avoid break reference in another documents. |
+| Background | <br/>Add here history context and another important details needed to understand more what we're designing. |
 | Open Questions | <br/>List of questions to clarify the details of requirements and etc.<br/>Move answered questions into separate section instead of erase them.<br/>Keep both Questions and Answers in text.<br/> |
-| Entities | <br/>To be able to use [TRIZ](https://en.wikipedia.org/wiki/TRIZ) principal on invention we need to know elements of system, it's subsystem and suprasystem. |
+| Entities | <br/>To be able to use [TRIZ](https://en.wikipedia.org/wiki/TRIZ) principal on invention we need to know elements of system, it's subsystem and supra system. |
 | Proposals | <br/>Ideas how requirements can be met.<br/>Add advantages and disadvantages for each variant to be able compare them |
 | Rejected Proposals | <br/>During designing you can have ideas good for a first glance but rejected after deeper analysis.<br/>Let list them too to avoid repeating the history and lost time for the same wrong ideas by reviewers and other designers.<br/>Please add the reason of idea rejection. |
 

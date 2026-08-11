@@ -2,8 +2,8 @@
 
 | :blue_book: | Reason(s) |
 | --- | :--- |
-| | Tracking tasks is in Markdown to avoid dependency on GitHub embedded bugtracker |
-| | Task list is present in each repository backup |
+| 1 | Tracking tasks is in Markdown to avoid dependency on GitHub embedded bugtracker |
+| 2 | Task list is present in each repository backup |
 
 ## Abbrevs, Terms, etc.
 
@@ -13,7 +13,7 @@
 
 * [x] CONTRIBUTING.md: with dev env settings, docs style, folder structure
 * [x] docs(CONTRIBUTING.md): description of HLD principals
-* [ ] docs: collect project requirements
+* [x] docs: collect project requirements
 * [ ] docs(CONTRIBUTING.md): description of LLD principals
 * [ ] propose Device UI
 * [ ] propose Device HW storage

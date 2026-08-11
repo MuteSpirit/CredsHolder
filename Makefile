@@ -5,7 +5,7 @@ all: html
 # Dependency required: pandoc
 MARKDOWN2HTML = pandoc --from gfm --to html --standalone
 
-DOCS := $(patsubst %.md,%.html,$(wildcard *.md))
+DOCS := $(patsubst %.md,%.html,$(wildcard *.md proposals/*.md))
 
 html: $(DOCS)
 
