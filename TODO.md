@@ -11,10 +11,11 @@
 
 ## Sub-tasks
 
-* [x] CONTRIBUTING.md: with dev env settings, docs style, folder structure
+* [x] CONTRIBUTING.md: with development environment settings, docs style, folder structure
 * [x] docs(CONTRIBUTING.md): description of HLD principals
 * [x] docs: collect project requirements
 * [x] docs(CONTRIBUTING.md): description of LLD principals
+* [~] propose authentication
 * [ ] propose Device UI
 * [ ] propose Device HW storage
 * [ ] propose Device (encrypted) data storage
@@ -22,10 +23,9 @@
 * [ ] propose object storage
 * [ ] propose interface between Device and user device (PC/smartphone)
 * [ ] propose device case
-* [ ] propose OS (skatch only or RTOS or ...)
+* [ ] propose OS (sketch only or RTOS or ...)
 * [ ] propose plugins schema in SW
 * [ ] propose OpenSource applications which code may be reused
-* [ ] propose authentication procedure
 * [ ] propose schematic
 * [ ] ROADMAP.md: propose MVP and Roadmap
 * [ ] CONTRIBUTING.md: development process principals

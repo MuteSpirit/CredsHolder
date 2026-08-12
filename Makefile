@@ -6,8 +6,9 @@ all: html
 MARKDOWN2HTML = pandoc --from gfm --to html --standalone
 
 DOCS := $(patsubst %.md,%.html,$(wildcard *.md proposals/*.md))
+PNGS := $(wildcard *.png proposals/*.png)
 
-html: $(DOCS)
+html: $(DOCS) $(PNGS)
 
 %.html: %.md
 	$(MARKDOWN2HTML) $< --output $@ --metadata title="$(shell F=$<; echo $${F%%.*})"

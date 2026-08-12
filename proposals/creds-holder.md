@@ -17,6 +17,39 @@ The concrete parts of device and use case scenarios will be designed separately.
 * RTOS - Real-Time OS
 * OTP - One Time Password
 
+## Background
+
+Similar hardware credential manager projects:
+
+* [Pastilda](https://www.crowdsupply.com/third-pin/pastilda)
+  * [Pastilda Sources](https://github.com/thirdpin/pastilda)
+* [Table with links to next prjects](https://docs.google.com/spreadsheets/d/e/2PACX-1vSTtUPpAxm_SOiypDJNJfBNEZP4m8UpZj7Soh05UDWHxTOwhCkvwW8CD0Iu1X4dh2fK4I_Htv-Mjcp9/pubhtml)
+  * DIY USB password generator	
+  * Istorage DatAshur	
+  * Type4me	
+  * myIDkey	
+  * IDKEY	
+  * Password S-Crib	
+  * Usb2kbd	
+  * Memtype	
+  * MyLOK	
+  * Victorinox Slim	
+  * SplashID Key Safe	
+  * Chipdrive MyKey	
+  * APC Touch Biometric Pod	
+  * OnlyKey	
+  * Everykey	
+  * LogmeOnce	
+  * Password Reset Key	
+  * FIDO U2F Security Key	
+  * Mooltipass	
+  * YubiKey 4	
+* [PasswordPump](https://github.com/seawarrior181/PasswordPump)
+* [PasswordPumpII](https://www.5volts.org/post/passwordpump-v2-0)
+* RecZone Password Safe
+* [Crypto Kakadu](https://github.com/BTLabsru/crypto-kakadu)
+* [Trezor Wallet](https://trezor.io/) - OpenSource crypto wallet
+
 ## Use Cases
 
 ### Actors
@@ -159,14 +192,10 @@ But if see wider then it may contain additional fields:
 
 * Can keyboard be connected to smartphone via NFC?
 
-# LLD. CredsHolder
-
-## Abbreviations and Terms
+## Notes
 
 * KEK - Key Encryption Key - key used to encrypt MEK
 * MEK - Media Encryption Key - key to encrypt application data
-
-## Notes
 
 | Encryption algorithm | e.g. AES-256 because it's well known algorithms without known backdoor and used by militaries. |
 | Hash function (KDF) | e.g. Whirlpool or SHA-512. Whirlpool is less common and slower. That will increase time for KEK bruteforce. |

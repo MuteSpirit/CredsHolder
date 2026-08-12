@@ -153,8 +153,9 @@ Approximate document structure is
 |---|---|
 | Introduction | Shortly describe the goal of document |
 | Abbreviations | <br/>Abbreviations and Terms used in this document |
-| Requirements | <br/>Requirements taken for design from HLD. |
+| Requirements | <br/>Requirements and User Stories taken for design from HLD. |
 | Background | <br/>Add here history context and another important details needed to understand more what we're designing. |
+| Contradictions | <br/>Requirements taken for design from HLD. |
 | Open Questions | <br/>List of questions to clarify the details of requirements and etc.<br/>Move answered questions into separate section instead of erase them.<br/>Keep both Questions and Answers in text.<br/> |
 | Entities | <br/>To be able to use [TRIZ](https://en.wikipedia.org/wiki/TRIZ) principal on invention we need to know elements of system, it's subsystem and supra system. |
 | Proposals | <br/>Ideas how requirements can be met.<br/>Add advantages and disadvantages for each variant to be able to compare them. |
