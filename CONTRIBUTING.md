@@ -140,7 +140,24 @@ Approximate document structure is
 | Background | <br/>Add here history context and another important details needed to understand more what we're designing. |
 | Open Questions | <br/>List of questions to clarify the details of requirements and etc.<br/>Move answered questions into separate section instead of erase them.<br/>Keep both Questions and Answers in text.<br/> |
 | Entities | <br/>To be able to use [TRIZ](https://en.wikipedia.org/wiki/TRIZ) principal on invention we need to know elements of system, it's subsystem and supra system. |
-| Proposals | <br/>Ideas how requirements can be met.<br/>Add advantages and disadvantages for each variant to be able compare them |
+
+## Low Level Design (LLD)
+
+Proposing for HLD requirements with all needed technical details.
+
+It SHOULD be possible to split LLD into tasks and give them to Developers. It's like a metric that LLD is enough good.
+
+Approximate document structure is
+
+| Section | Purpose |
+|---|---|
+| Introduction | Shortly describe the goal of document |
+| Abbreviations | <br/>Abbreviations and Terms used in this document |
+| Requirements | <br/>Requirements taken for design from HLD. |
+| Background | <br/>Add here history context and another important details needed to understand more what we're designing. |
+| Open Questions | <br/>List of questions to clarify the details of requirements and etc.<br/>Move answered questions into separate section instead of erase them.<br/>Keep both Questions and Answers in text.<br/> |
+| Entities | <br/>To be able to use [TRIZ](https://en.wikipedia.org/wiki/TRIZ) principal on invention we need to know elements of system, it's subsystem and supra system. |
+| Proposals | <br/>Ideas how requirements can be met.<br/>Add advantages and disadvantages for each variant to be able to compare them. |
 | Rejected Proposals | <br/>During designing you can have ideas good for a first glance but rejected after deeper analysis.<br/>Let list them too to avoid repeating the history and lost time for the same wrong ideas by reviewers and other designers.<br/>Please add the reason of idea rejection. |
 
 Always add picture/schema for each proposal variant describing the core of idea. Without that you'll lost reviewers attention after couple of paragraphs.
@@ -148,12 +165,6 @@ Always add picture/schema for each proposal variant describing the core of idea.
 During the years in IT we collect ready solutions and tricks in our mind and harry to use them in designs. But in many case the optimal solution is located in knowledge area unknown for us.
 
 Usage of "TRIZ Ideal Result" formulation, "TRIZ System Operator" and "TRIZ Principals to Resolve Contradictions" will allow you cross borders of your mind. ! Without any drugs !
-
-## Low Level Design (LLD)
-
-Proposing HLD parts with all needed technical details.
-
-It SHOULD be possible to split LLD into tasks and give them to Developers.
 
 # Development Environment
 

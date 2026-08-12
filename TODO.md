@@ -14,7 +14,7 @@
 * [x] CONTRIBUTING.md: with dev env settings, docs style, folder structure
 * [x] docs(CONTRIBUTING.md): description of HLD principals
 * [x] docs: collect project requirements
-* [ ] docs(CONTRIBUTING.md): description of LLD principals
+* [x] docs(CONTRIBUTING.md): description of LLD principals
 * [ ] propose Device UI
 * [ ] propose Device HW storage
 * [ ] propose Device (encrypted) data storage
