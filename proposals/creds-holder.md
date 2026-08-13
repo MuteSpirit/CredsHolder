@@ -9,7 +9,7 @@ The concrete parts of device and use case scenarios will be designed separately.
 ## Abbreviations and Terms
 
 * Hardware Credential Manager - separate device which store credentials
-* HLD - High Level Design (see [CONTRIBUTING.md](./CONTRIBUTING.md) for details)
+* HLD - High Level Design (see [CONTRIBUTING.md](/CONTRIBUTING.md) for details)
 * Device - the same as CredsHolder, the common title of current project device - hardware credential manager
 * OS - Operating System
 * DIY - Do It Yourself
@@ -24,31 +24,35 @@ Similar hardware credential manager projects:
 * [Pastilda](https://www.crowdsupply.com/third-pin/pastilda)
   * [Pastilda Sources](https://github.com/thirdpin/pastilda)
 * [Table with links to next prjects](https://docs.google.com/spreadsheets/d/e/2PACX-1vSTtUPpAxm_SOiypDJNJfBNEZP4m8UpZj7Soh05UDWHxTOwhCkvwW8CD0Iu1X4dh2fK4I_Htv-Mjcp9/pubhtml)
-  * DIY USB password generator	
-  * Istorage DatAshur	
-  * Type4me	
-  * myIDkey	
-  * IDKEY	
-  * Password S-Crib	
-  * Usb2kbd	
-  * Memtype	
-  * MyLOK	
-  * Victorinox Slim	
-  * SplashID Key Safe	
-  * Chipdrive MyKey	
-  * APC Touch Biometric Pod	
-  * OnlyKey	
-  * Everykey	
-  * LogmeOnce	
-  * Password Reset Key	
-  * FIDO U2F Security Key	
-  * Mooltipass	
-  * YubiKey 4	
+  * [DIY USB password generator](https://codeandlife.com/2012/03/03/diy-usb-password-generator/)
+  * [Istorage DatAshur](http://www.byte-on.ru/catalog/Istorage-DatAshur/fleshka_istorage_datashur_pro_16gb/)
+  * Type4me
+  * myIDkey
+  * IDKEY
+  * Password S-Crib
+  * Usb2kbd
+  * Memtype
+  * MyLOK
+  * Victorinox Slim
+  * SplashID Key Safe
+  * Chipdrive MyKey
+  * APC Touch Biometric Pod
+  * OnlyKey
+  * Everykey
+  * LogmeOnce
+  * Password Reset Key
+  * FIDO U2F Security Key
+  * [Mooltipass](https://www.themooltipass.com/)
+  * YubiKey 4
 * [PasswordPump](https://github.com/seawarrior181/PasswordPump)
 * [PasswordPumpII](https://www.5volts.org/post/passwordpump-v2-0)
 * RecZone Password Safe
-* [Crypto Kakadu](https://github.com/BTLabsru/crypto-kakadu)
+* [Crypto Kakadu](https://vk.ru/cryptokakadu)
+  * [Crypto Kakadu Apps](https://github.com/BTLabsru/crypto-kakadu)
 * [Trezor Wallet](https://trezor.io/) - OpenSource crypto wallet
+* [Ledger Crypto Wallet](https://www.ledger.com/)
+* [Mooltipath](https://www.themooltipass.com/)
+  * [Mooltipath GitHub](https://github.com/mooltipass)
 
 ## Use Cases
 
