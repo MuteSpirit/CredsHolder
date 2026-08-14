@@ -38,8 +38,9 @@ RE: [CredsHolder Project Requirements Doc](./creds-holder.md)
 | --- | --- | --- |
 | R-24 | S-10 | CredsHolder MUST authenticate User before grand access to application data. |
 | R-25 | S-10 | If User assumes that CredsHolder cannot be stolen then it should be able to turn authentication off. So ownership of CredsHolder will mean passed authentication. |
-| R-41 (optional) | S-19 (optional) | CredsHolder MUST allow password authentication. Maybe like alternative method. |
 | R-20 | S-7 | Option 1. CredsHolder SHOULD support easy installing additional components with shields. <br/> :-1: increased complexity<br/>:-1: bigger case size <br/>Option 2. Needed components SHOULD be part of MVP model.<br/>:-1: increased prise<br/>:+1: incremental development of usable CredsHolder version<br/>:+1: chance to add additional functions to device, e.g. alarm clock)<br/>Option 3. CredsHolder is always DYI device. <br/>:-1: contradiction with S-16 <br/>So if we decided to develop turning on a blue/green LED after pass authentication in release after MVP, then MVP hardware schema MUST contain LED which will not work in MVP version. |
+| S-19 (optional) | As a Corporate Employee I'd like to be able remotely unlock CredsHolder, e.g. one employee say password by phone to another employee. |
+| R-41 (optional) | S-19 (optional) | CredsHolder MUST allow password authentication. Maybe like alternative method. |
 
 ## Proposals
 

@@ -1,0 +1,33 @@
+@startuml
+!include <tupadr3/common>
+
+rectangle "Removable storage (microSD card)" as sdcard {
+    rectangle "Partition table (MBR)" as partitions {
+        rectangle "Partition 'apps'" {
+            rectangle "VeraCrypt Portable for Windows"
+            rectangle "VeraCrypt Portable for Linux"
+            rectangle "VeraCrypt Portable for MacOS"
+        }
+
+        rectangle "VeraCrypt Partition 'storage'" as veracrypt {
+            rectangle "VeraCrypt Volume Header" as vc_header
+            rectangle "VeraCrypt Volume" as vc_volume {
+                rectangle "FAT" as fat
+                rectangle "DB files" as db
+                rectangle "Application Data (Creds Accounts)" as app_data
+
+                fat -d- db
+                db -d- app_data
+            }
+        }
+    }
+}
+
+
+rectangle MCU as mcu
+rectangle "Internal EEPROM" as int_eeprom {
+    rectangle "LUKS Volume Header" as luks_header
+    rectangle PIM
+}
+
+@enduml

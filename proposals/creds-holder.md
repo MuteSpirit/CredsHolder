@@ -23,11 +23,37 @@ Similar hardware credential manager projects:
 
 * [Pastilda](https://www.crowdsupply.com/third-pin/pastilda)
   * [Pastilda Sources](https://github.com/thirdpin/pastilda)
+  * In common - very good project
+  * :+1: Uses KeePass db file on storage
+  * :+1: Use long password for authentication
+  * :+1: USB connector adapters for ports on mobile devices
+  * :-1: It's not obvious what mode - "pass through mode" or "Pastilda mode" is active now and at some time you will type you master password in "pass though mode" and some app on your PC accept it in electronic view
+  * :-1: full keyboard is needed to work with mobile devices
+  * :-1: no case
+* [PasswordPump](https://github.com/seawarrior181/PasswordPump)
+  * :-1: not so stable
+  * :-1: too complex code for maintenance
+  * :-1: no unit tests
+* [PasswordPumpII](https://www.5volts.org/post/passwordpump-v2-0)
+* [Trezor Wallet](https://trezor.io/) - OpenSource crypto wallet
+* [Ledger Crypto Wallet](https://www.ledger.com/)
+* [Mooltipath](https://www.themooltipass.com/)
+  * [Mooltipath GitHub](https://github.com/mooltipass)
+  * :-1: high price
+* [DYI HW Single Password Manager](https://habr.com/p/827616/)
+  * :-1: not OpenSource
+* [Crypto Kakadu](https://vk.ru/cryptokakadu)
+  * [Crypto Kakadu Apps](https://github.com/BTLabsru/crypto-kakadu)
+* RecZone Password Safe
+  * :-1: proprietary
+  * :-1: cannot fill login forms
+  * :-1: dead project
 * [Table with links to next prjects](https://docs.google.com/spreadsheets/d/e/2PACX-1vSTtUPpAxm_SOiypDJNJfBNEZP4m8UpZj7Soh05UDWHxTOwhCkvwW8CD0Iu1X4dh2fK4I_Htv-Mjcp9/pubhtml)
   * [DIY USB password generator](https://codeandlife.com/2012/03/03/diy-usb-password-generator/)
   * [Istorage DatAshur](http://www.byte-on.ru/catalog/Istorage-DatAshur/fleshka_istorage_datashur_pro_16gb/)
   * Type4me
   * myIDkey
+    * :-1: dead project
   * IDKEY
   * Password S-Crib
   * Usb2kbd
@@ -42,17 +68,7 @@ Similar hardware credential manager projects:
   * LogmeOnce
   * Password Reset Key
   * FIDO U2F Security Key
-  * [Mooltipass](https://www.themooltipass.com/)
   * YubiKey 4
-* [PasswordPump](https://github.com/seawarrior181/PasswordPump)
-* [PasswordPumpII](https://www.5volts.org/post/passwordpump-v2-0)
-* RecZone Password Safe
-* [Crypto Kakadu](https://vk.ru/cryptokakadu)
-  * [Crypto Kakadu Apps](https://github.com/BTLabsru/crypto-kakadu)
-* [Trezor Wallet](https://trezor.io/) - OpenSource crypto wallet
-* [Ledger Crypto Wallet](https://www.ledger.com/)
-* [Mooltipath](https://www.themooltipass.com/)
-  * [Mooltipath GitHub](https://github.com/mooltipass)
 
 ## Use Cases
 
@@ -132,7 +148,7 @@ Let's pay into account that CredsHolder has several stages in product life cycle
 | R-26 | S-10 | CredsHolder MUST have auto logout feature.<br/>For case when authenticated CredsHolder will be stolen. |
 | R-27 | S-10 | CredsHolder SHOULD have some schema to erase/block/hide credentials from Intruder if both CredsHolder and User will be stolen. |
 | R-28 | S-11 | CredsHolder case MUST be usable by any one human arm. |
-| R-29 | S-14 | CredsHolder MUST have |
+| R-29 | S-14 | CredsHolder MUST have ??? |
 | R-30 | S-15 | CredsHolder code/FW MUST allow to extend encryption/hash algorithm and add something else. |
 | R-31 | S-16 | CredsHolder SHOULD print owner contact (:question: and name :question:).<br/>If owner lost device and someone find it, device itself will help to return it back to owner |
 | R-32 | S-16 | (Alternative) CredsHolder MUST contain LoRA and GPS modules and be connected to local Meshtastic network. Owner will receive device coordinates when founder will turn device on. |
