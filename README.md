@@ -16,7 +16,11 @@ CredsHolder makes it easier to use good complex and unique passwords for your ac
 
 Current stage - designing.
 
-## 14 Aug 2026
+## 16 Aug 2026
+
+* Started [CredsHolder UI High Level Design](proposals/creds-holder-ui.md)
+
+## 15 Aug 2026
 
 * Finished [CredsHolder Storage High Level Design](proposals/creds-holder-storage.md)
   * Encrypted VeraCrypt volume on removable microSD card

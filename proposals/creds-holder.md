@@ -163,6 +163,7 @@ Let's pay into account that CredsHolder has several stages in product life cycle
 | R-40 | S-21 | CredsHolder MUST allow backup/restore application data/settings. |
 | R-41 (optional) | S-19 (optional) | CredsHolder MUST allow password authentication. Maybe like alternative method. |
 | R-42 (optional) | S-20 (optional) | CredsHolder MUST support several passwords for authentication. Or another several "master password" analogs, e.g. fingerprint, to allow notary to unblock CredsHolder.<br/>Even more better if both fingerprints/passwords - of inheritor AND notary are needed to unblock CredsHolder |
+| R-43 | S-6 | CredsHolder must be separate device because it decrease amount of attack vectors |
 
 ## Entities
 
