@@ -44,6 +44,20 @@ RE: [CredsHolder Project Requirements Doc](./creds-holder.md)
 
 ## Proposals
 
+* User unblocks CredsHolder with PIN
+* CredsHolder has no buttons or rotary encoder. All manipulations via movements of Device: forward lean, backward lean, shake horizontally, etc.
+* PIN will be entered with randomization: 
+  * sequence of entering PIN position is random
+  * sequence of scrolling digits to choose for position is random too.
+* CredsHolder does not show PIN on display but ask what position and what digit to enter using Morse code via vibrations
+* Auto-logout:
+  * User may log out explicitly.
+  * Auto-logout after some period without User activity. It's a backup for case when User forgot to lock CredsHolder.
+  * Logout if User turn CredsHolder upside down
+  * Logout if User dropped the device
+
+## Proposals designing chain
+
 At first, let's list variants how User can prove that he is CredsHolder owner:
 
 | Authentication Method | User use... | CredsHolder UI | Comment |
@@ -244,6 +258,17 @@ CredsHolder suggests digits to type into PIN position not in regular sequence 0,
 
 If display will be protected Intruder will cannot even recognize digits from video record of authentication.
 
+#### Voice recognition using wireless laryngophone with bone conduction
+
+<img src="./laryngophone.png" alt="Laryngophone" height=120 width=160>
+
+Laryngophone with bone conduction has one big advantage - voice is listen by CredsHolder but not by outside people or spy equipment.
+
+User can make voice command to device in all scenarios, not only during authentication.
+
+:heavy_minus_sign: expensive
+:heavy_minus_sign: higher requirements for Controller
+
 #### Position sensor
 
 Required to install: position sensor and vibration motor
@@ -270,7 +295,6 @@ Let's calculate a chance to guess PIN if Intruder knows used digits but not thei
 * So there are N! possible combinations ...
 * ... and only 10 fail tries before CredsHolder full-block/erasing/etc.
 * Therefore chance is 10/(N!), e.g. for N=6: `10/(N!) = 10/(1*2*3*4*5*6) = 0.01389 = 1.389%`
-
 
 ### Proposal 3. Invisible display
 
@@ -319,7 +343,7 @@ Display will not show password typing or print how many digits has been entered.
 | 9 | :heavy_minus_sign: :heavy_minus_sign: :heavy_minus_sign: :heavy_minus_sign: :black_circle: |
 | 0 | :heavy_minus_sign: :heavy_minus_sign: :heavy_minus_sign: :heavy_minus_sign: :heavy_minus_sign: |
 
-#### CredsHolder talk digits via wired headset
+#### CredsHolder speak digits via wired or wireless headset
 
 If CredsHolder has audio out then can pronounce digits to User via headset.
 
@@ -355,6 +379,7 @@ TRIZ Ideal Final Result:
 Proposals:
 * User may log out explicitly.
 * Auto-logout after some period without User activity. It's a backup for case when User forgot to lock CredsHolder.
-* Logout if User rotate CredsHolder and display is on bottom.
+* Logout if User turn CredsHolder upside down
+* Logout if User dropped the device
 
 

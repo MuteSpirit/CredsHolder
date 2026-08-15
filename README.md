@@ -10,9 +10,33 @@ CredsHolder makes it easier to use good complex and unique passwords for your ac
 
 # See Also
 
-* [CredsHolder Project Requirements Doc](./proposals/creds-holder.md)
+* [CredsHolder Project Requirements Doc](proposals/creds-holder.md)
 
 # Project News
+
+Current stage - designing.
+
+## 14 Aug 2026
+
+* Finished [CredsHolder Storage High Level Design](proposals/creds-holder-storage.md)
+  * Encrypted VeraCrypt volume on removable microSD card
+  * PIN for CredsHolder unlock but custom complex password and non-default PIM for VeraCrypt volume encryption
+  * FAT inside encrypted volume
+  * Any suitable file format for application data, i.e. SQLite
+  * See all details in design
+
+## 13 Aug 2026
+
+* Finished [CredsHolder Authentication High Level Design](proposals/creds-holder-auth.md)
+  * PIN for CredsHolder authentication
+  * No one button or encoder in Device
+  * Enter PIN via Morse code
+  * See all details in design
+
+## 12 Aug 2026
+
+* Finished [CredsHolder Project Requirements Doc](proposals/creds-holder.md)
+* Low Level Design for Authentication is started
 
 ## 07 Aug 2026
 
@@ -23,12 +47,7 @@ CredsHolder makes it easier to use good complex and unique passwords for your ac
   * Reason 3: to be not a fork repo of PasswordPump will allow to configure Git LFS and store docs pictures originals in Git.
   * Reason 4: do at least OpenSource project design and development accordign all best practices and without rush.
 
-## 12 Aug 2026
-
-* Finished [CredsHolder Project Requirements Doc](./proposals/creds-holder.md)
-* Low Level Design for Authentication is started
-
-## This project was fork of ...
+## This project was originally fork of ...
 
 ... https://github.com/seawarrior181/PasswordPump
 

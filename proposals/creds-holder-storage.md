@@ -14,6 +14,8 @@ This document is related to full chain and all places of securely storage settin
 * MEK - Media Encryption Key
 * KEK - Key Encryption Key
 * PIM - Personal Iteration Multiplier
+* KDF - Key Derivative Function
+* MCU - Microcontroller Unit (CPU + EEPROM + RAM + peripherals = MCU)
 
 ## Requirements
 
@@ -98,16 +100,32 @@ A wallet backup provides full access to the associated wallet. This is why you m
 
 ## Proposals
 
-It's recommended to check hash during constant time to hide such characteristics as PIM, hash function and so on.
+![CredsHolder Storage](./creds-holder-storage-arch.png)
 
-Use non standard PIM. (give link)
+* CredsHolder has removable storage (on microSD card)
+* Removable storage contains 2 partitions:
+  * 1st partition (label "apps") containing portable VeraCrypt applications for Linux, Windows and macOS
+  * 2nd partition (label "storage") is used as encrypted storage. It's minimal size MUST be 128 MB.
+* 1st partition may be absent. It's up to User how and were store them.
+* 2nd partition is formatted as VeraCrypt volume
+* On first start CredsHolder:
+  * Generate "Recovery Code" (alpha-digit password (MEK) + PIM) 
+  * Ask PIN from User
+  * Create VeraCrypt on 2nd partition. Header is included.
+  * Use PBKDF2 as KDF
+  * Create KEK from PIN, PIM and MEK
+  * Create LUKS header in internal memory and store KEK and PIM inside
+* Backup procedure is cloning CredsHolder microSD card. So backup will be in encrypted form only.
+* Restore procedure:
+  * insert backup microSD card or card from another device
+  * type "Recovery Code"
+  * set new PIN
+* Make brute-force attack more complex:
+  * Use slowest hash function - Whirlpool at current moment
+  * Use non standard PIM to make it an additional variable for brute-force attack
+  * Use function to derive key which work constant time. That will not allow to guess amount of PIM
 
-Use Whirlpool instead of default SHA-512 because Whirlpool is slower. (give link)
-
-... VeraCrypt ,,,
-
-It's recommended to use instead of PBKDF2 the Argon2 (where link?)
-
+See all details how conclusion above has been designed in next sections.
 
 ## Contradictions
 
@@ -127,7 +145,7 @@ Among similar projects there were two types of widely used removable flash:
 ### Contradiction. Removed storage can be brute-forced
 
 * CredsHolder storage SHOULD be removable 
-* But that will allow perform password bruteforce infinitely.
+* But that will allow perform password brute-force infinitely.
 
 IFR: device storage MUST defense itself from brute-force
 
@@ -296,58 +314,91 @@ Let's try to write on flash without caching.
 
 Let's try to write on flash without caching.
 
-### Summary
+### Contradiction. What do KDF use?
 
-![CredsHolder Storage](./creds-holder-storage-arch.png)
+* There is a recommendation to use Argon2 KDF instead of PBKDF2 to make brute-force more complex even with GPU use
+* But Argon2 uses a LOT of memory, boards like Arduino, nrf52840 and STM32 does not have so much
 
-* CredsHolder has removable storage (on microSD card)
-* Removable storage contains 2 partitions:
-  * 1st partition (label "apps") containing portable VeraCrypt applications for Linux, Windows and macOS
-  * 2nd partition (label "storage") is used as encrypted storage
-* 2nd partition is formatted as VeraCrypt volume
-* On first start CredsHolder:
-  * Generate "Recovery Code" (alpha-digit password (MEK) + PIM) 
-  * Ask PIN from User
-  * Create VeraCrypt on 2nd partition. Header is included.
-  * Create KEK from PIN, PIM and MEK
-  * Create LUKS header in internal memory and store KEK and PIM inside
-* Backup procedure is cloning CredsHolder microSD card
-* Restore procedure:
-  * insert backup microSD card or card from another device
-  * type "Recovery Code"
-  * set new PIN
+Proposal:
+* Continue PBKDF2 because it consumes small amount of memory
+* That's a hardware limitation for us
+* Maybe in future more powerful MCU will be able to use Argon2
 
-### Common recommendations
+### Contradiction. microSD of minimal size
 
-Backup must be in encrypted view only with passwords
-* Use slowest hash function - Whirlpool or some other
-* Use non standard PIM
-* Use function to derive key which work constant time. That will not allow to guess amount of PIM
+* I'd like to use microSD card with minimal size to decrease device cost
+* But current design requires partition with VeraCrypt portable applications on microSD card
 
-PBKDF2 consumes small amount of memory
-Argon2 uses a LOT of memory, boards like Arduino, nrf52840 and STM32 does not have so much
+At 15 Aug 2026 the portable apps for Windows, Linux and MacOS has summary size 102.4 MB ~= 100 MB.
+Let's assume that applications for Android, iOS and BSD has similar size and multiply in 2 times.
+And assume that size of that application may grow in new versions and multiply in 2 times again.
+And assume that new operation systems may appear in future and multiple in 2 times one more time.
+
+And as a result it's needed: 100 * 2 * 2 * 2 = 800 MB. Let's round up to 1GB for application files.
+
+Also we need size for application data.
+
+There is R-11 "CredsHolder MUST have enough Persistent Storage for 1000 Account Credentials."
+
+Each account is up to 694 bytes ~= 768 bytes:
+
+* Account Name - 64 bytes
+* login - 32 bytes
+* password - 32 bytes
+* URL of resource - no official limit, assume 255 bytes
+* email - 254 bytes
+* phone number - 12-16 symbols
+* previous password - 32 bytes
+* used password generation policy - 1 byte
+* expiration date/time - 8 bytes
+
+1000 accounts equal 768000 = 750 kB - much less then amount of partition for VeraCrypt portable applications.
+
+Let's assume that in future we'll support TOTP, maybe notes, files, etc. Anyway they will use a small bytes in comparison to VeraCrypt portable applications.
+
+| No | Details |
+| Option 1 "Download yourself" | We may try to assume that VeraCrypt portable applications are always available via Internet and User may download them on demand.<br/> But according to Murphy's law they will be needed at the moment of unavailable Internet access or equipment for that or permissions. |
+| Option 2 "Second microSD Card" | Attach to device the 2nd microSD with needed application. It will be not plugged even, just attached to case. |
+| Option 3 "Separate partition on main microSD" | Separate microSD will be more expensive then main microSD card with bigger size. Add separate partition for VeraCrypt portable applications |
+| Option 4 "Let User to solve" | Let's add a requirement that partition with label "storage" must be present on microSD and has size at least 128 MB. <br/>CredsHolder will interpret it as VeraCrypt volume with own data.<br/>And CredsHolder will be tolerant to size of microSD card and other partitions present on it. |
+
+Option 4 looks like compromise.
 
 ## Rejected Ideas
 
-### Idea 1 "Cryptocard for MEK embed to removable storage"
+### Idea 1. BIP39/SLIP39
 
-Removable storage will have 2 partitions:
-* password partition
-* encrypted partition
+Crypto wallets uses BIP39/SLIP39 as backup to be able restore master seed and regenerate private keys using CKD function.
 
-MEK will be split into several parts 12, 20 or 24. 
+But it also means that master seed is a number which may be used as encryption password.
 
-And they will be written in randomly in 0-1023 cells of "password partition".
+So we may randomly generate a'la master seed then convert it into 12 words, say them to user as backup.
 
-Instead of "Recovery Code" device will say to user 12, 20 or 24 words from "SLIP39 wordlist" in needed sequence.
+We'll be able to do that at any time on unlocked CredsHolder.
 
-During recovery it'll be needed to enter that words to allow recovery MEK back.
+:heavy_minus_sign: difficulty of showing sequence of many words to User, not sure how it'll be usable.
 
-Complexity: amount of combinations for 12 parts: C(1024,12) = 1024! / (12! × 1012!) = 2 601 150 623 552 800 702 891 545 856
+### Idea 2. Crypto card
 
-Maybe PIM will be coded by some of that "words", maybe not.
+Idea is a modification of [this idea](https://www.passwordcard.org/).
 
-:heavy_minus_sign: how easy enter 12 words from 1024 words list on small device like CredsHolder?
+Create separate partition "crypto card" on microSD equal to 1024 * 32 bytes.
+
+Fill them with random data.
+
+Randomly choose 12 numbers from diapason [0-1024].
+
+Use them as indexes and read 12 double-words (32 bytes) from "crypto card" partition.
+
+That will be an encryption password.
+
+As a backup you may inform User a 12 indexes as numbers or words from BIP39 wordlist.
+
+If someone will try to find encryption password among "crypto card" partition then in worst case he will check all combinations for 12 parts: C(1024,12) = 1024! / (12! × 1012!) = 2 601 150 623 552 800 702 891 545 856
+
+:heavy_minus_sign: more complex variant then BIP39
+:heavy_minus_sign: how easy enter 12 numbers/words from 1024 words list on small device like CredsHolder to recover access to device?
+:heavy_minus_sign: how easy show 12 numbers/words on small device like CredsHolder for User to remember as backup?
 
 ## Links
 

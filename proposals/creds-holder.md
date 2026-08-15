@@ -44,6 +44,7 @@ Similar hardware credential manager projects:
   * :-1: not OpenSource
 * [Crypto Kakadu](https://vk.ru/cryptokakadu)
   * [Crypto Kakadu Apps](https://github.com/BTLabsru/crypto-kakadu)
+* [Mew](https://github.com/konachan700/Mew)
 * RecZone Password Safe
   * :-1: proprietary
   * :-1: cannot fill login forms
