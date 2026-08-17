@@ -6,11 +6,11 @@ This document is related to full chain and all places of securely storage settin
 
 ## Abbreviations and Terms
 
-* EEPROM - 
+* EEPROM -
 * FW - firmware
-* FAT16 - 
-* FIDO2 - 
-* WebAuthn - 
+* FAT16 -
+* FIDO2 -
+* WebAuthn -
 * MEK - Media Encryption Key
 * KEK - Key Encryption Key
 * PIM - Personal Iteration Multiplier
@@ -109,7 +109,7 @@ A wallet backup provides full access to the associated wallet. This is why you m
 * 1st partition may be absent. It's up to User how and were store them.
 * 2nd partition is formatted as VeraCrypt volume
 * On first start CredsHolder:
-  * Generate "Recovery Code" (alpha-digit password (MEK) + PIM) 
+  * Generate "Recovery Code" (alpha-digit password (MEK) + PIM)
   * Ask PIN from User
   * Create VeraCrypt on 2nd partition. Header is included.
   * Use PBKDF2 as KDF
@@ -144,7 +144,7 @@ Among similar projects there were two types of widely used removable flash:
 
 ### Contradiction. Removed storage can be brute-forced
 
-* CredsHolder storage SHOULD be removable 
+* CredsHolder storage SHOULD be removable
 * But that will allow perform password brute-force infinitely.
 
 IFR: device storage MUST defense itself from brute-force
@@ -175,6 +175,8 @@ Proposal:
 * We'll be sure that ALL data is encrypted on removable device
 * Each Application (password manager, OTP manager) will be able to use different files and be developed independently
 
+:+1: it'll be easier to develop application on host PC because it'll be used technologies available not only for embedded systems.
+
 ### Contradiction. Where take PIM
 
 * VeraCrypt volume header does not contain PIM
@@ -184,7 +186,7 @@ Proposal:
 * Store in internal flash
 * Make PIM a part of "Recovery Code"
 
-### Contradiction. PIN is too short 
+### Contradiction. PIN is too short
 
 * An unplugged storage will allow perform password brute-force infinitely
 * And encryption algorithm and hash function is known from CredsHolder sources
@@ -197,7 +199,7 @@ From [Trezor Storage when Secure Element is absent](https://github.com/trezor/tr
 The purpose of the PBKDF2 function is to thwart brute-force attacks in case the attacker is able to circumvent the PIN entry counter mechanism but does not have full access to the contents of the flash storage of the device, e.g. fault injection attacks. For an attacker that would be able to read the flash storage and obtain the salt, the PBKDF2 with 20000 iterations and a 4- to 9-digit PIN would not pose an obstacle.
 ```
 
-By the way, both VeraCrypt and LUKS encrypted header contains salt but LUKS header also contains a name of encryption algorithm and PIM also. That decrease brute-force complexity and that is one more reason no use LUKS on removable storage, 
+By the way, both VeraCrypt and LUKS encrypted header contains salt but LUKS header also contains a name of encryption algorithm and PIM also. That decrease brute-force complexity and that is one more reason no use LUKS on removable storage,
 
 #### Proposal. Use PIN as password
 
@@ -212,7 +214,7 @@ Rejected because:
 
 #### Proposal. "Use removable smart card and removable storage"
 
-* Like [Mooltipass do that](https://www.themooltipass.com/) 
+* Like [Mooltipass do that](https://www.themooltipass.com/)
 ```
 The Mooltipass devices all use a PIN-locked smartcard containing the AES-256bits key required for data decryption. Like any chip and pin card, 3 false tries will permanently disable the Mooltipass card.
 
@@ -244,8 +246,8 @@ Our device is shipped with two smartcards, so you can keep a copy somewhere safe
 
 * Keep header on removable storage - Intruder will know salt but not password and not PIM
 * Use strong MEK - generate before create encrypted storage 1st time
-* Show MEK and PIM as "Recovery Code" to User and highly recommend to remember 
-* Generate KEK: Use PBKDF2 with PIN as password with separately generated separate KEK salt and KEK PIM. 
+* Show MEK and PIM as "Recovery Code" to User and highly recommend to remember
+* Generate KEK: Use PBKDF2 with PIN as password with separately generated separate KEK salt and KEK PIM.
 * Encrypt MEK with PBKDF2 output, result will be KEK. Store that at internal memory only.
 * On regular usage when User unlocking device run PBKDF2 with PIN to get KEK and decrypt MEK to decrypt data on removable storage
 * It's possible to use LUKS header format at internal storage to support several KEK and maybe reuse exist code supporting LUKS
@@ -270,7 +272,7 @@ Proposal:
 
 ### Contradiction
 
-* KEK derived from PIN is kept in internal memory 
+* KEK derived from PIN is kept in internal memory
 * But if Intruder extract it then brute-force will be easy
 
 IFR: Controller defense itself from extraction data from internal memory
@@ -279,7 +281,7 @@ Proposals:
 * Use "Secure Boot"
   * nrf52840 has "nRF Secure Immutable Bootloader (NSIB)" suggested by Nordic Semiconductor SDK
   * STM32U5 and STM32WB35 has hardware capabilities for Secure Boot
-* "non extractable bootloader" as a root of trust chain will prevent burn not-signed bootloader/firmware which may extract encryption 
+* "non extractable bootloader" as a root of trust chain will prevent burn not-signed bootloader/firmware which may extract encryption
 
 
 ### Contradiction
@@ -326,17 +328,7 @@ Proposal:
 
 ### Contradiction. microSD of minimal size
 
-* I'd like to use microSD card with minimal size to decrease device cost
-* But current design requires partition with VeraCrypt portable applications on microSD card
-
-At 15 Aug 2026 the portable apps for Windows, Linux and MacOS has summary size 102.4 MB ~= 100 MB.
-Let's assume that applications for Android, iOS and BSD has similar size and multiply in 2 times.
-And assume that size of that application may grow in new versions and multiply in 2 times again.
-And assume that new operation systems may appear in future and multiple in 2 times one more time.
-
-And as a result it's needed: 100 * 2 * 2 * 2 = 800 MB. Let's round up to 1GB for application files.
-
-Also we need size for application data.
+CredsHolder needs size for application data.
 
 There is R-11 "CredsHolder MUST have enough Persistent Storage for 1000 Account Credentials."
 
@@ -356,13 +348,39 @@ Each account is up to 694 bytes ~= 768 bytes:
 
 Let's assume that in future we'll support TOTP, maybe notes, files, etc. Anyway they will use a small bytes in comparison to VeraCrypt portable applications.
 
+VeraCrypt volume format has been choosen to be able insert microSD from CredsHolder, mount VeraCrypt volume on host PC and read (maybe modify) needed passwords.
+Yes, it's opening password in plain view on PC which may be theoretically infected but in urgent situation when CredsHolder was broken but passwords are needed right now, it's enough good variant.
+
+At 15 Aug 2026 the portable apps for Windows, Linux and MacOS has summary size 102.4 MB ~= 100 MB.
+Let's assume that applications for Android, iOS and BSD has similar size and multiply in 2 times.
+And assume that size of that application may grow in new versions and multiply in 2 times again.
+And assume that new operation systems may appear in future and multiple in 2 times one more time.
+
+And as a result it's needed: 100 * 2 * 2 * 2 = 800 MB. Let's round up to 1GB for application files.
+
+So we have requirements contradiction:
+
+* As a User I'd like to use microSD card in CredsHolder with minimal size to decrease device cost
+* And make a CredsHolder backup of minimal size to keep space on backup storage
+* But it's needed to store application data (less 5Mb) to perform CredsHolder main function
+* And store VeraCrypt portable applications which may be needed never or at rare urgency case
+
+The same as conditions contradiction:
+* microSD card must be small to be cheap and easy to clone as backup
+* And at the same time it must be enough big to store VeraCrypt application too
+
+
 | No | Details |
-| Option 1 "Download yourself" | We may try to assume that VeraCrypt portable applications are always available via Internet and User may download them on demand.<br/> But according to Murphy's law they will be needed at the moment of unavailable Internet access or equipment for that or permissions. |
+| Option 1 "Download yourself" | We may try to assume that VeraCrypt portable applications are always available via Internet and User may download them on demand.<br/> But according to Murphy's law they will be needed at the moment of unavailable Internet access or equipment for that or permissions, or VeraCrypt site will be closed at that moment and applications are not available at all. |
 | Option 2 "Second microSD Card" | Attach to device the 2nd microSD with needed application. It will be not plugged even, just attached to case. |
 | Option 3 "Separate partition on main microSD" | Separate microSD will be more expensive then main microSD card with bigger size. Add separate partition for VeraCrypt portable applications |
 | Option 4 "Let User to solve" | Let's add a requirement that partition with label "storage" must be present on microSD and has size at least 128 MB. <br/>CredsHolder will interpret it as VeraCrypt volume with own data.<br/>And CredsHolder will be tolerant to size of microSD card and other partitions present on it. |
+| Option 5 "Second microSD card reader" | Application data is on smaller microSD card inserted into 1st card reader<br/>VeraCrypt applications are on bigger microSD card inserted into 2nd card reader which is available for PC (maybe mounted and content may be read (?but no modified?))<br/>:heavy_minus_sign:If we are assume that in worst case CredsHolder device will be dead then it'll be not able to work as card reader |
+| Option 6 "Share decrypted for PC" | Theoretically CredsHolder could be share content of encrypted volume for PC after unlocking, PC will be even not aware about encryption usage<br/>But if we take into account case of broken CredsHolder Then it'll not help |
 
-Option 4 looks like compromise.
+Option 4 looks like compromise. We may create 2 different SD card images - with and without partition with VeraCrypt portable applications.
+
+And one more conclusion - there are no reasons for CredsHolder to work as card reader and give access to microSD card for User's equipment to which it's attached to.
 
 ## Rejected Ideas
 

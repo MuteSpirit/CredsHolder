@@ -31,9 +31,14 @@ Similar hardware credential manager projects:
   * :-1: full keyboard is needed to work with mobile devices
   * :-1: no case
 * [PasswordPump](https://github.com/seawarrior181/PasswordPump)
-  * :-1: not so stable
+  * :-1: not stable UI/UX
   * :-1: too complex code for maintenance
   * :-1: no unit tests
+  * :-1: weak security there is content encryption with AES-128 but ... 
+    * master password salt is 2 bytes
+    * PBKDF is not used, there is only one iteration to generate MEK from password
+    * device is not protected from changing sketch, so salt and master password hash (PVC) maybe extracted from internal memory
+    * not enough good random source - voltage on not plugged pin
 * [PasswordPumpII](https://www.5volts.org/post/passwordpump-v2-0)
 * [Trezor Wallet](https://trezor.io/) - OpenSource crypto wallet
 * [Ledger Crypto Wallet](https://www.ledger.com/)
