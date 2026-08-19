@@ -27,6 +27,21 @@ Gyroscope and accelerometer:
 - GY-521 (MPU-6050) - easy to start, many tutorials and libraries
 * BMI160 - ADC (analog digit converter) inside, enough accuracy and low power consumption
 
+### Random generator
+
+TBD
+
+For Arduino - WDT signals, library Entropy 
+
+### Keyboard emulation
+
+https://github.com/mooltipass/minible#manual-credential-typing
+```
+Manual Credential Typing
+Mooltipass devices can simulate key presses in order to type logins & passwords onto the computer they're connected to. As the "byte sent on the wire" to "actual character typed on the computer" conversion is handled by the computer itself, that meant the Mooltipass devices need to handle multiple keyboard layouts.
+For the Mooltipass Mini BLE, we are parsing the CLDR to make sure we can type text on any device.
+```
+
 # Links
 
 * ETL (C++ Embedded STL) https://www.etlcpp.com/

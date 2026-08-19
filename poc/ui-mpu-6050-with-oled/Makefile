@@ -1,6 +1,6 @@
-all: html poc proposals
+all: html
 
-.PHONY: clean poc proposals
+.PHONY: clean
 
 # Dependency required: pandoc
 MARKDOWN2HTML = pandoc --from gfm --to html --standalone
@@ -20,13 +20,6 @@ html: $(DOC_FILES) $(PNG_FILES) $(RENDERED_PUML_FILES)
 %.png: %.puml
 	# Latest PlantUML usage requires as new Java version as available 
 	/usr/bin/java -Djava.awt.headless=true -Djava.net.useSystemProxies=true -jar /usr/share/plantuml/plantuml.jar -tpng $<
-poc:
-	$(MAKE) -C ./poc/
-
-proposals:
-	$(MAKE) -C ./proposals/
 
 clean:
 	for f in "$(DOC_FILES)"; do if [ -f "$$f" ]; then rm "$$f"; fi; done
-	$(MAKE) -C ./poc/ clean
-	$(MAKE) -C ./proposals/ clean
