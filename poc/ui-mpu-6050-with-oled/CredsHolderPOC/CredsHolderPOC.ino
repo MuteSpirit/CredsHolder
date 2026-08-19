@@ -4,8 +4,8 @@
 
 #include <Adafruit_SSD1306.h>
 
-// #define MPU6050_DMP_FIFO_RATE_DIVISOR 0x31 // work enough stable
-#define MPU6050_DMP_FIFO_RATE_DIVISOR 0x0F
+// #define MPU6050_DMP_FIFO_RATE_DIVISOR 0x31 // 20 Hz - work enough stable
+#define MPU6050_DMP_FIFO_RATE_DIVISOR 0x13 // 40 Hz - also stable
 
 #include "MPU6050/I2Cdev.cpp"
 #include "MPU6050/MPU6050_6Axis_MotionApps20.cpp"
