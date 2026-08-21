@@ -16,9 +16,20 @@ CredsHolder makes it easier to use good complex and unique passwords for your ac
 
 Current stage - designing.
 
-## 16 Aug 2026
+## 21 Aug 2026
 
-* Started [CredsHolder UI High Level Design](proposals/creds-holder-ui.md)
+* Fritzing part for NRF52840 Pro Micro board finished. See [relevant README](./fritzing/README.md)
+* Starting POC No 3 "VeraCrypt volume on microSD card (NRF52840 Pro Micro)"
+
+## 19 Aug 2026
+
+* Two POCs finished successfully:
+  * POC No1 "UI with position sensor (Arduino Uno)" - see [README](poc/ui-mpu-6050-with-oled-on-arduino-uno/README.md)
+  * POC No2 "UI with position sensor (NRF52840 Pro Micro)" - see [README](poc/ui-mpu-6050-with-oled-on-nrf52840/README.md)
+
+## 17 Aug 2026
+
+* [CredsHolder UI High Level Design](proposals/creds-holder-ui.md) with 3 possible variants of device UI
 
 ## 15 Aug 2026
 
