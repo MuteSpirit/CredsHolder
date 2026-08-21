@@ -8,23 +8,22 @@ Add 3-colored LED to have ability show current mode - locked, authentication, un
 
 Arduino Pro Micro
 
-NRF52840 - with TrustZone - https://ali.click/aj86j1w: 
-* 64MHz, 256kB RAM, 1MB flash
-* ARM TrustZone CryptoCell-310 - https://www.micro-semiconductor.com/datasheet/c0-NRF52840-QIAA-R.pdf
-
-STB32U5 - with TrustZone - https://ali.click/5i86j1h:
-* 160MHz, 786kB RAM, 2MB flash
-* Cortex-M33 TrustZone - https://www.st.com/resource/en/application_note/an5421-getting-started-with-stm32-mcus-and-armtrustzone-development-stmicroelectronics.pdf
-
-In Ledger Crypto Wallet
-* MCU: STM32WB35
-* Secure Element: ST33K1M5C
+1. NRF52840 - with TrustZone - https://ali.click/aj86j1w: 
+  * 64MHz, 256kB RAM, 1MB flash
+  * ARM TrustZone CryptoCell-310 - https://www.micro-semiconductor.com/datasheet/c0-NRF52840-QIAA-R.pdf
+2. STB32U5 - with TrustZone - https://ali.click/5i86j1h:
+  * 160MHz, 786kB RAM, 2MB flash
+  * Cortex-M33 TrustZone - https://www.st.com/resource/en/application_note/an5421-getting-started-with-stm32-mcus-and-armtrustzone-development-stmicroelectronics.pdf
+3. STM32WB35
+  * In Ledger Crypto Wallet
+  * Secure Element: ST33K1M5C
+4. Seeed Studio XIAO nRF52840 Sense
 
 ## Peripherals
 
 Gyroscope and accelerometer:
-- GY-LSM6DS33 - 3 axis, interrupts are supported, libraries from Adafruit and Pololu
 - GY-521 (MPU-6050) - easy to start, many tutorials and libraries
+- GY-LSM6DS33 - 3 axis, interrupts are supported, libraries from Adafruit and Pololu
 * BMI160 - ADC (analog digit converter) inside, enough accuracy and low power consumption
 
 ### Random generator
