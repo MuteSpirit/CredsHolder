@@ -52,6 +52,15 @@ Mooltipass devices can simulate key presses in order to type logins & passwords 
 For the Mooltipass Mini BLE, we are parsing the CLDR to make sure we can type text on any device.
 ```
 
+### Link with PC
+
+| Option | Advantages | Disadvantages |
+| USB cable | 1. No way to sniff signal remotely because signal is digital and shielded cables<br>2. USB connector adapters to type-c, microUSB, etc. are exist<br>3. USB adapters increase device price<br>4. USB adapters requires place in case to put inside to avoid loss or it's needed some one combined USB-A & USB-C connector<br>5. Explicitly known what PC is plugged | 1. Maybe less usable then wireless link<br>2. Limited cable length |
+| Bluetooth | 1. Signal encryption is possible (AES-MAC is used since BLE v4.0)<br>2. There are less cables and then increased device physical usability | 1. Not all PCs support Bluetooth.<br>2. Battery is needed in device, which increasing device price.<br>3. (corner case) Try to type password on locked device without preliminary pairing by Bluetooth. |
+| Radio channel | | 1. Separate radio dongle is needed<br>2. Separate radio transmitter is needed in advance to integrated Bluetooth in NRF52840 |
+
+According to table above the USB cable usage looks more optimal at least for 1st version.
+
 # Links
 
 * ETL (C++ Embedded STL) https://www.etlcpp.com/
