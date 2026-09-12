@@ -1,0 +1,74 @@
+@startuml
+(*) -r-> "
+{{salt
+{
+PIN:
+<&chevron-top>
+{+ "/" } <&chevron-right> 
+<&chevron-bottom>
+}
+}}
+" as auth1stLetter
+
+auth1stLetter -r-> "
+{{salt
+{
+PIN:
+. | . | <&chevron-top>
+<&star> | <&chevron-left> | {+ "/" } | <&chevron-right>
+. | . | <&chevron-bottom>
+}
+}}
+" as auth2ndLetter
+
+auth2ndLetter -r-> "
+{{salt
+{
+PIN:
+. | . | <&chevron-top>
+<&star><&star> | <&chevron-left> | {+ "/" } | <&chevron-right>
+. | . | <&chevron-bottom>
+}
+}}
+" as auth3rdLetter
+
+auth3rdLetter -r-> "
+{{salt
+{
+{+ Accounts }
+Settings
+}
+}}
+" as menu
+
+menu -r-> "
+{{salt
+{
+    <&chevron-left> | {+ acc1 } | <&chevron-right>
+    acc2
+    acc3
+}
+}}
+" as accs
+
+accs -r-> "
+{{salt
+{
+. | Name: | acc1
+<&chevron-bottom> {+ Login: | user1 } <&chevron-right>
+. | Passwd: | ****
+<&chevron-left>
+}
+}}
+" as acc1
+
+menu --> "
+{{salt
+{
+    Settings
+    Show password: | On
+}
+}}
+" as opt1
+
+@enduml

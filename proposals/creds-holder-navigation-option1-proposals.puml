@@ -1,0 +1,303 @@
+// TODO: how show User that menu items are invisible top/bottom currently shown ones
+
+@startuml
+
+!option handwritten true
+
+!unquoted procedure SALT($x)
+"{{salt
+%invoke_procedure("_"+$x)
+}}" as $x
+!endprocedure
+
+!procedure _welcome()
+{+
+    CredsHolder v1.0
+    Build 2026-09-21 23:32:12
+    Ivan Efimov
+    <mutespirit@yandex.ru>
+}
+!endprocedure
+
+!procedure _calibrating()
+{+
+    .
+    Calibrating... | Done
+    .
+}
+!endprocedure
+
+!procedure _auth1stLetter()
+{
+    { . | PIN: }
+    {
+        .
+        {+ "/" } 
+    }
+}
+!endprocedure
+
+!procedure _auth2ndLetter()
+{
+    { . | PIN: }
+    {
+        .
+        <&star> | {+ "/" } 
+    }
+}
+!endprocedure
+
+!procedure _auth3rdLetter()
+{
+    { . | PIN: }
+    {
+        .
+        <&star> <&star> | {+ "/" } 
+    }
+}
+!endprocedure
+
+!procedure _auth4thLetter()
+{
+    { . | PIN: }
+    {
+        .
+        <&star> <&star> <&star> | {+ "/" } 
+    }
+}
+!endprocedure
+
+!procedure _unhidePin()
+{
+    { . | PIN: }
+    {
+        .
+        1 2 3 | {+ "4" } 
+    }
+}
+!endprocedure
+
+!procedure _menu()
+{
+    {
+        {+ Accounts }
+        Settings
+    }
+}
+!endprocedure
+
+!procedure _menuWithSettingsSelected()
+{
+    {
+        Accounts
+        {+ Settings }
+    }
+}
+!endprocedure
+
+
+!procedure _credsAccounts()
+{
+    { . | Accounts: }
+    {
+        {+ acc1 }
+        acc2
+        acc3
+    }
+}
+!endprocedure
+
+!procedure _acc1Login()
+{
+    { . | Account acc1}
+    {
+        {+ Login: | user1 }
+        { Passwd: | **** }
+        URL: http://example.com/login
+    }
+}
+!endprocedure
+
+!procedure _acc1Passw()
+{
+    { . | Account acc1 }
+    {
+        { Login: | user1 }
+        {+ Passwd: | **** }
+        URL: http://example.com/login
+    }
+}
+!endprocedure
+
+!procedure _optShowPasswords()
+{
+    {
+        Settings:
+        Show password: | On
+    }
+}
+!endprocedure
+
+!procedure _preTutorial()
+{
+    {+ Tutorial }
+    Unlock
+}
+!endprocedure
+
+!procedure _tutorial()
+{+
+    .
+    Snake game will be here
+    .
+}
+!endprocedure
+
+!procedure _preAuthMenu()
+{
+    Tutorial
+    {+ Unlock }
+}
+!endprocedure
+
+
+!procedure _autolock()
+{
+    Locked due to inactivity
+}
+!endprocedure
+
+(*) -r-> SALT(welcome)
+welcome -r-> SALT(calibrating)
+note top
+    Device would like to 
+    calibrate accelerometer and gyroscope
+    once time after power on
+    Keep Device idle on stable horizontal 
+    surface for 5-10 sec to initiate procedure
+end note
+
+calibrating -r-> SALT(preTutorial)
+note top
+{{salt
+{#
+    <&caret-right> | tilt clockwise        | start tutorial
+    <&caret-right> | tilt counterclockwise | start tutorial
+    <&caret-right> | tap/knock case        | start tutorial
+    <&arrow-top>     | tilt backward         | prev menu item
+    <&arrow-bottom>  | tilt forward          | next menu item
+}
+}}
+end note
+preTutorial --> SALT(tutorial)
+note bottom
+{{salt
+{#
+    <&arrow-top> |  tilt backward
+    <&arrow-bottom> | tilt forward
+    <&arrow-left> | tilt counterclockwise
+    <&arrow-right> | tilt clockwise
+}
+}}
+end note
+preTutorial -r-> SALT(preAuthMenu)
+note bottom
+{{salt
+{#
+    <&account-login> | tilt clockwise        | start unlocking
+    <&account-login> | tilt counterclockwise | start unlocking
+    <&account-login> | tap/knock case        | start unlocking
+    <&arrow-top>     | tilt backward         | prev menu item
+    <&arrow-bottom>  | tilt forward          | next menu item
+}
+}}
+end note
+
+preAuthMenu -r-> SALT(auth1stLetter)
+note top
+  When start type PIN...
+end note
+note bottom
+{{salt
+{#
+    <&arrow-top> |  tilt backward  | next digit
+    <&arrow-bottom> | tilt forward | prev digit
+    <&arrow-right> | tilt clockwise | switch to next PIN digit
+}
+}}
+end note
+auth1stLetter -r-> SALT(auth2ndLetter)
+note top
+  ... digit by digit ...
+end note
+note bottom
+{{salt
+{#
+    <&arrow-top> |  tilt backward  | next digit
+    <&arrow-bottom> | tilt forward | prev digit
+    <&arrow-left> | tilt counterclockwise | delete last PIN digit
+    <&arrow-right> | tilt clockwise | switch to next PIN digit
+}
+}}
+end note
+auth2ndLetter -r-> SALT(auth3rdLetter)
+auth3rdLetter -r-> SALT(auth4thLetter)
+note top
+  ...And tap/knock case
+  Then PIN will be checked
+  And authentication happen
+end note
+auth4thLetter --> SALT(unhidePin)
+note bottom
+    When make single tap/knock
+    Then PIN will be unhidden for 1 sec
+    But use this option very carefully
+end note
+auth4thLetter -r-> SALT(menu)
+note bottom
+{{salt
+    {#
+        <&caret-right> | tilt clockwise        | enter menu item
+        <&caret-right> | tilt counterclockwise | enter menu item
+        <&caret-right> | tap/knock case        | enter menu item
+        <&arrow-top> | tilt forward | prev menu item
+        <&arrow-bottom> | tilt backward | next menu item
+    }
+ }}
+end note
+menu -r-> SALT(credsAccounts)
+note top
+  And menu of manageable objects (creds, TOTP, etc.) will appear
+end note
+credsAccounts -r-> SALT(acc1Login)
+note top
+  When tilt right on needed account
+  Then credential account details will appear
+end note
+note bottom
+{{salt
+    {#
+      <&arrow-top> | tilt forward  | prev account field
+      <&arrow-bottom> | tilt backward | next account field
+      <&arrow-left> | tilt counterclockwise | return back to accounts list
+      <&arrow-right> | tilt clockwise | type chosen field on PC
+    }
+}}
+end note
+acc1Login -r-> SALT(acc1Passw)
+menu --> SALT(menuWithSettingsSelected)
+menuWithSettingsSelected --> SALT(optShowPasswords)
+note bottom
+{{salt
+    {#
+      <&arrow-top> | tilt forward  | prev settings option
+      <&arrow-bottom> | tilt backward | next settings option
+      <&arrow-left> | tilt counterclockwise | return back to prev menu
+      <&arrow-right> | tilt clockwise | start edit option
+    }
+}}
+end note
+
+acc1Passw -r-> SALT(autolock)
+
+@enduml

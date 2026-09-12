@@ -1,0 +1,162 @@
+@startuml
+
+!unquoted procedure SALT($x)
+"{{salt
+%invoke_procedure("_"+$x)
+}}" as $x
+!endprocedure
+
+!procedure _auth1stLetter()
+{
+    { . | PIN: }
+    {
+        <&chevron-top>
+        .
+        <&chevron-right>
+        <&chevron-bottom>
+    } | {
+        .
+        {+ "/" } 
+    }
+}
+!endprocedure
+
+!procedure _auth2ndLetter()
+{
+    { . | PIN: }
+    {
+        <&chevron-top>
+        <&chevron-left>
+        <&chevron-right>
+        <&chevron-bottom>
+    } | {
+        .
+        <&star> | {+ "/" } 
+    }
+}
+!endprocedure
+
+!procedure _auth3rdLetter()
+{
+    { . | PIN: }
+    {
+        <&chevron-top>
+        <&chevron-left>
+        <&chevron-right>
+        <&chevron-bottom>
+    } | {
+        .
+        <&star> <&star> | {+ "/" } 
+    }
+}
+!endprocedure
+
+!procedure _menu()
+{
+    {
+        <&chevron-top>
+        .
+        <&chevron-right>
+        <&chevron-bottom>
+    } | {
+        {+ Accounts }
+        Settings
+    }
+}
+!endprocedure
+
+!procedure _accs()
+{
+    { . | Accounts: }
+    {
+        <&chevron-top>
+        <&chevron-left> 
+        <&chevron-right>
+        <&chevron-bottom>
+    } | {
+        {+ acc1 }
+        acc2
+        acc3
+    }
+}
+!endprocedure
+
+!procedure _acc1Login()
+{
+    { . | Account: }
+    {
+        <&chevron-top>
+        <&chevron-left> 
+        <&chevron-right>
+        <&chevron-bottom>
+    } | {
+        Name: | acc1
+        {+ Login: | user1 }
+        Passwd: | ****
+    }
+}
+!endprocedure
+
+
+!procedure _acc1Passw()
+{
+    { . | Account: }
+    {
+        <&chevron-top>
+        <&chevron-left> 
+        <&chevron-right>
+        <&chevron-bottom>
+    } | {
+        Name: | acc1
+        Login: | user1
+        {+ Passwd: | **** }
+    }
+}
+!endprocedure
+
+!procedure _opt1()
+{
+    {
+        <&chevron-top>
+        <&chevron-left> 
+        <&chevron-right>
+        <&chevron-bottom>
+    } | {
+        Settings:
+        Show password: | On
+    }
+}
+!endprocedure
+
+(*) -r-> SALT(auth1stLetter)
+note top
+  When start type PIN...
+end note
+auth1stLetter -r-> SALT(auth2ndLetter)
+note top
+  ... digit by digit ...
+end note
+auth2ndLetter -r-> SALT(auth3rdLetter)
+auth3rdLetter -r-> SALT(menu)
+note top
+  ...And tap/knock case
+  Then PIN will be checked
+  And authentication happen
+end note
+menu -r-> SALT(accs)
+note top
+  And menu of manageable objects (creds, TOTP, etc.) will appear
+end note
+accs -r-> SALT(acc1Login)
+note top
+  When tilt right on needed account
+  Then credential account details will appear
+end note
+acc1Login --> SALT(acc1Passw)
+note right
+  You may switch between with tilt forward/backward
+  And activate typing into login form with tap/knock
+end note
+menu --> SALT(opt1)
+
+@enduml

@@ -48,6 +48,7 @@ According to several proposal documents and POCs made previously next libraries 
 | I2C | ArduinoCore-avr/Wire | https://github.com/arduino/ArduinoCore-avr/tree/master/libraries/Wire | Needed for libraries works with OLED and MPU6050 | GPL-v2 or GPL-v2.1 or later |
 | SSD1306 OLED display | SSD1306Ascii | https://github.com/greiman/ssd1306ascii | | MIT | 
 | SSD1306 OLED display | Adafruit_SSD1306 | https://github.com/adafruit/Adafruit_SSD1306 | | BSD |
+| SSD1306 OLED display | U8g2 | https://github.com/olikraus/u8g2 | | new-bsd license (two-clause bsd license) |
 | NRF52840 internal NVM storage | arduino-NVM | https://github.com/d00616/arduino-NVM | | LGPL 2.1 only |
 | Raw access microSD CardReader SPI | ArduinoCore-avr/SPI | https://github.com/arduino/ArduinoCore-avr/tree/master/libraries/SPI | | GPL-v2 or LGPL-v2.1 only |
 | Raw access microSD CardReader SPI | Adafruit_SPIFlash | https://github.com/adafruit/Adafruit_SPIFlash | | MIT |
@@ -73,6 +74,7 @@ According to several proposal documents and POCs made previously next libraries 
 | (alternative to position sensor UI) Rotary Encoder | RotaryEncoder | https://github.com/mathertel/RotaryEncoder | will be needed if UI based on MPU6050 failed | BSD |
 | Tap/knock detection via Piezo Sensor | | https://docs.arduino.cc/built-in-examples/sensors/Knock/ | Separate lib is not needed | Public Domain |
 | Morse code via vibrations | | | Separate lib is not needed | |
+| Intro Tutorial via Snake Game | https://github.com/aydakikio/arduino_snake | | MIT |
 
 ### Code Licenses
 

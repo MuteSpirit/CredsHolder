@@ -153,3 +153,7 @@ POC is needed to prove Option 1. Let's try to find out how stably detect:
 * 7. Shake horizontally (= "Switch")
 * 8. Shake vertically
 * 9. Knocking device case
+
+## UI Option 1 Navigation
+
+![UI Option 1 Navigation](creds-holder-navigation-option1-proposals.png)

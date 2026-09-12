@@ -9,4 +9,5 @@ ui-mpu-6050-with-oled-on-nrf52840:
 	$(MAKE) -C ui-mpu-6050-with-oled-on-nrf52840
 
 clean:
-	$(MAKE) -C ui-mpu-6050-with-oled-on-arduino clean
+	$(MAKE) -C ui-mpu-6050-with-oled-on-arduino-uno clean
+	$(MAKE) -C ui-mpu-6050-with-oled-on-nrf52840 clean
