@@ -1,7 +1,9 @@
-all: html poc proposals
+all: html poc proposals build
 
-.PHONY: clean poc proposals fritzing
-
+.PHONY: poc proposals fritzing build
+#
+# Documentation
+#
 # Dependency required: pandoc
 MARKDOWN2HTML = pandoc --from gfm --to html --standalone
 
@@ -11,6 +13,25 @@ PUML_FILES = $(wildcard *.puml)
 RENDERED_PUML_FILES = $(patsubst %.puml,%.png,$(PUML_FILES))
 
 PNG_FILES = $(wildcard *.png)
+#
+# Sources
+#
+APP_NAME := CredsHolder
+ARDUINO_LIBS := AUnit Crypto
+DEPS := $(wildcard src/*.cpp)
+APP_SRCS_CPP := main.t.cpp $(wildcard src/*.t.cpp)
+
+EXTRA_CFLAGS := -g3
+EXTRA_CPPFLAGS := -g3
+EXTRA_CXXFLAGS := -g3
+
+include ../libraries/EpoxyDuino/EpoxyDuino.mk
+#
+# Build
+#
+ARDUINO_BOARD_MANAGER_ADDITIONAL_URLS=https://raw.githubusercontent.com/pdcook/nRFMicro-Arduino-Core/3dab6477754d9b28053fe36b06c718cde6e93d3f/package_nRFMicro_index.json
+
+t: $(APP_NAME).out run
 
 html: $(DOC_FILES) $(PNG_FILES) $(RENDERED_PUML_FILES)
 
@@ -29,7 +50,18 @@ proposals:
 fritzing:
 	$(MAKE) -C ./fritzing/
 
-clean:
+.PHONY: clean_app
+clean_app:
+	rm $(wildcard *.t.o) $(wildcard src/*.t.o)
 	for f in "$(DOC_FILES)"; do if [ -f "$$f" ]; then rm "$$f"; fi; done
 	$(MAKE) -C ./poc/ clean
 	$(MAKE) -C ./proposals/ clean
+
+# Current target board is Pro Micro NRF52840
+build: build_nrf52840
+
+build_nrf52840:
+	arduino-cli compile -b nRFMicro-like-Boards:nrf52:supermini
+
+build_avr:
+	arduino-cli compile -b arduino:avr:uno
