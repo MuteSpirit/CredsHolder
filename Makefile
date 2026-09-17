@@ -29,8 +29,6 @@ include ../libraries/EpoxyDuino/EpoxyDuino.mk
 #
 # Build
 #
-ARDUINO_BOARD_MANAGER_ADDITIONAL_URLS=https://raw.githubusercontent.com/pdcook/nRFMicro-Arduino-Core/3dab6477754d9b28053fe36b06c718cde6e93d3f/package_nRFMicro_index.json
-
 t: $(APP_NAME).out run
 
 html: $(DOC_FILES) $(PNG_FILES) $(RENDERED_PUML_FILES)
