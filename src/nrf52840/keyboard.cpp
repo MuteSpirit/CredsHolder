@@ -7,6 +7,7 @@
 // A copy of the license is included in the section entitled "GNU
 // Free Documentation License".
 
+#if defined(ARDUINO_ARCH_NRF52)
 #include "keyboard.hpp"
 
 static uint8_t const desc_keyboard_report[] = {
@@ -71,3 +72,4 @@ bool TinyUsbKeyboard::push_tab()
 {
     return push(HID_KEY_TAB);
 }
+#endif // defined(ARDUINO_ARCH_NRF52)

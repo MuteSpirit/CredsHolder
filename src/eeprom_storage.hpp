@@ -2,12 +2,6 @@
 
 #include <inttypes.h>
 
-// #if defined(ARDUINO_ARCH_NRF52)
-// #ifdef USE_TINYUSB
-// #undef USE_TINYUSB
-// #endif
-// #endif
-
 #if defined(ARDUINO_ARCH_NRF52)
 #define NRF52840
 #  if !defined(USE_TINYUSB)

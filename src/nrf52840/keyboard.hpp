@@ -8,17 +8,8 @@
 // Free Documentation License".
 #pragma once
 
-// #if defined(ARDUINO_ARCH_NRF52)
+#if defined(ARDUINO_ARCH_NRF52)
 #include "../keyboard.hpp"
-
-// #undef CFG_TUD_ENABLED
-// #define CFG_TUD_ENABLED 1
-//
-// #undef CFG_TUD_HID
-// #define CFG_TUD_HID 1
-
-#undef USE_TINYUSB
-#define USE_TINYUSB 1
 
 #include "Adafruit_TinyUSB.h"
 
@@ -38,4 +29,4 @@ protected:
 protected:
     Adafruit_USBD_HID usb_keyboard_;
 };
-// #endif // defined(ARDUINO_ARCH_NRF52)
+#endif // defined(ARDUINO_ARCH_NRF52)

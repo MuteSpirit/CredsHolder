@@ -1,9 +1,13 @@
+// Copyright (C)  2026  Ivan Efimov aka MuteSpirit <mutespirit@yandex.ru>.
+//
+// Permission is granted to copy, distribute and/or modify this document
+// under the terms of the GNU Free Documentation License, Version 1.3
+// or any later version published by the Free Software Foundation;
+// with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+// A copy of the license is included in the section entitled "GNU
 #pragma once
-#ifndef __AUTH_FORM__
-#define __AUTH_FORM__
 
 #include "menu.hpp"
-
 
 class AuthFormTestHelper;
 class DeviceInputs;
@@ -77,5 +81,3 @@ protected:
     char password_[passwordSize];
     bool allowTryAuth_ {false}; /// auth try will happen only if password is not empty and if was not recognized as wrong
 };
-
-#endif // !__AUTH_FORM__

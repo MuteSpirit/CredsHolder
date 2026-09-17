@@ -1,5 +1,13 @@
 #include "auth.hpp"
 #include <string.h>
+
+#if defined(ARDUINO_ARCH_NRF52)
+#define NRF52840
+
+#  if !defined(USE_TINYUSB)
+#  define USE_TINYUSB 1
+#  endif
+#endif
 #include <SHA256.h>
 
 PasswordWandAuth::PasswordWandAuth()
