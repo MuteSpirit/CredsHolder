@@ -7,6 +7,13 @@
 // #undef USE_TINYUSB
 // #endif
 // #endif
+
+#if defined(ARDUINO_ARCH_NRF52)
+#define NRF52840
+#  if !defined(USE_TINYUSB)
+#  define USE_TINYUSB 1
+#  endif
+#endif
 #include <Arduino.h>
 #include <EEPROM_SPI_WE.h>
 

@@ -8,12 +8,21 @@
 // Free Documentation License".
 #pragma once
 
-#include <Print.h>
-
 #include <inttypes.h>
 #include <cstddef>
 
-class Oled : public Print
+#if defined(ARDUINO_ARCH_NRF52)
+#define NRF52840
+#  if !defined(USE_TINYUSB)
+#  define USE_TINYUSB 1
+#  endif
+#endif
+#include <Print.h>
+
+class Oled
+#if defined(ARDUINO)
+: public Print
+#endif
 {
 public:
     virtual void setup() = 0; 

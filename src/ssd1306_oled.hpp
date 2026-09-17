@@ -19,7 +19,6 @@
 
 
 class SSD1306I2C : public Oled
-                 , public U8G2
 {
 public:
    virtual void setup() override; 
@@ -31,4 +30,7 @@ public:
 
    virtual size_t write(uint8_t) override;
    virtual size_t write(const uint8_t *buffer, size_t size) override;
+
+protected:
+   U8G2 u8g2_;
 };

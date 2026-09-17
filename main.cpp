@@ -7,7 +7,7 @@
 // A copy of the license is included in the section entitled "GNU
 // Free Documentation License".
 #if defined(ARDUINO_ARCH_NRF52)
-#define NRF52
+#define NRF52840
 #endif
 
 #include "src/auth.hpp"
@@ -82,8 +82,8 @@ setup()
   Serial.begin(SERIAL_BAUD_RATE);
   while (!Serial);
 
-  // print_welcome(dynamic_cast<Print&>(oled));
-  // delay(SHOW_SPLASHSCREEN);
+  print_welcome(oled);
+  delay(SHOW_SPLASHSCREEN);
 
   print_welcome(Serial);
 

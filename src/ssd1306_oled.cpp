@@ -6,40 +6,42 @@
 // with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
 // A copy of the license is included in the section entitled "GNU
 // Free Documentation License".
+#include <cstddef>
+
 #include "ssd1306_oled.hpp"
 
 void
 SSD1306I2C::setup()
 {
-    U8G2::begin();
+    u8g2_.begin();
 }
 
 void
 SSD1306I2C::clear()
 {
-    U8G2::clearDisplay();
+    u8g2_.clearDisplay();
 }
 
 void
 SSD1306I2C::home()
 {
-    U8G2::home();
+    u8g2_.home();
 }
 
 void
 SSD1306I2C::setFont(const uint8_t* font)
 {
-    U8G2::setFont(font);                                                // perfect, slightly smaller than Arial14
+    u8g2_.setFont(font);
 }
 
 size_t
 SSD1306I2C::write(uint8_t b)
 {
-    return U8G2::write(b);
+    return u8g2_.write(b);
 }
 
 size_t
 SSD1306I2C::write(const uint8_t *buffer, size_t size)
 {
-    return U8G2::write(buffer, size);
+    return u8g2_.write(buffer, size);
 }
