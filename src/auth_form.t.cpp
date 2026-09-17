@@ -5,6 +5,14 @@
 #include "in_memory_oled.hpp"
 #include "imitated_user_unputs.cpp"
 #include "auth.hpp"
+
+#if defined(ARDUINO_ARCH_NRF52)
+#define NRF52840
+
+#  if !defined(USE_TINYUSB)
+#  define USE_TINYUSB 1
+#  endif
+#endif
 #include <SHA256.h>
 
 using namespace aunit;
@@ -98,7 +106,7 @@ testF(AuthFormTester, auth_form_deactivate)
 
     authForm.deactivate();
     // click on button which should switch forms between each other
-    userInputs.click(UserInputs::Button::triangle);
+    userInputs.click(DeviceInputs::UserAction::up);
 
     assertEqual(1, cb.c);
 };

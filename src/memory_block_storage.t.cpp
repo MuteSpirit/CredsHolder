@@ -1,5 +1,5 @@
 #if defined(EPOXY_DUINO)
-#include "memory_block_storage.cpp"
+#include "memory_block_storage.hpp"
 #include <stdio.h>
 #include <AUnit.h>
 

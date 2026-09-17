@@ -1,37 +1,20 @@
 #include "imitated_user_unputs.hpp"
 
+
 void
-ImitatedUserInputs::set(UserInputs::Button btn, BlindCall cb)
+ImitatedUserInputs::set(UserAction act, BlindCall cb)
 {
-    btnHooks_[static_cast<uint8_t>(btn)].cb_ = cb;
+    hooks_[static_cast<uint8_t>(act)] = cb;
 }
 
 void
-ImitatedUserInputs::unset(UserInputs::Button btn)
+ImitatedUserInputs::unset(UserAction act)
 {
-    btnHooks_[static_cast<uint8_t>(btn)].cb_ = BlindCall::stub();
+    hooks_[static_cast<uint8_t>(act)] = BlindCall::stub();
 }
 
 void
-ImitatedUserInputs::set(UserInputs::Encoder enc, BlindCall cb)
+ImitatedUserInputs::click(UserAction act)
 {
-    encoderHooks_[static_cast<uint8_t>(enc)] = cb;
-}
-
-void
-ImitatedUserInputs::unset(UserInputs::Encoder enc)
-{
-    encoderHooks_[static_cast<uint8_t>(enc)] = BlindCall::stub();
-}
-
-void
-ImitatedUserInputs::click(UserInputs::Button btn)
-{
-    btnHooks_[static_cast<uint8_t>(btn)].cb_();
-}
-
-void
-ImitatedUserInputs::rotate(UserInputs::Encoder encoder, int direction)
-{
-    encoderHooks_[static_cast<uint8_t>(encoder)](direction);
+    hooks_[static_cast<uint8_t>(act)]();
 }
