@@ -130,7 +130,7 @@ For one time usage pictures you may use any paint application.
 
 High level proposals which does not refer to concrete libraries, frameworks, etc.
 
-HLD SHOULD be as much abstract as possible. 
+HLD SHOULD be as much abstract as possible.
 
 Use technologies instead of exist implementations. For example, instead of MySQL, PostgreSQL, SQLite use SQL DB.
 
@@ -177,6 +177,46 @@ Always add picture/schema for each proposal variant describing the core of idea.
 During the years in IT we collect ready solutions and tricks in our mind and harry to use them in designs. But in many case the optimal solution is located in knowledge area unknown for us.
 
 Usage of "TRIZ Ideal Result" formulation, "TRIZ System Operator" and "TRIZ Principals to Resolve Contradictions" will allow you cross borders of your mind. ! Without any drugs !
+
+## C++ Code Style
+
+1. Do not add template class functions implementation inside class declaration because it harm class API readability:
+Wrong:
+```c++
+template<typename T>
+class A
+{
+public:
+    void foo()
+    {
+        /*
+        some
+        code
+        inside
+        */
+    }
+};
+```
+Accepted
+```c++
+template<typename T>
+class A
+{
+public:
+    void foo();
+};
+
+template<typename T>
+void A<T>::foo()
+{
+    /*
+    some
+    code
+    inside
+    */
+}
+
+```
 
 # Development Environment
 
