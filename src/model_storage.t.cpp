@@ -1,9 +1,10 @@
 #if defined(EPOXY_DUINO)
 #include "model.cpp"
+
+#include <string.h>
 #include "model_storage.cpp"
 #include "memory_block_storage.hpp"
 #include <AUnitVerbose.h>
-#include <string.h>
 
 test(model_storage_ctor)
 {

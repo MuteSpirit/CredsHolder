@@ -195,7 +195,12 @@ sudo apt install \
 To support Pro Micro NRF52840 it's needed to add board manager:
 * Go to "File -> Preferences"
 * Open "Additional board manager URLs"
-* Add https://raw.githubusercontent.com/pdcook/nRFMicro-Arduino-Core/3dab6477754d9b28053fe36b06c718cde6e93d3f/package_nRFMicro_index.json
+* Add next ones (seeedstudio is needed as dependency)
+```
+https://raw.githubusercontent.com/pdcook/nRFMicro-Arduino-Core/main/package_nRFMicro_index.json
+https://files.seeedstudio.com/arduino/package_seeeduino_boards_index.json
+```
+* If you have a troubles with board BSP then try use concrete commit of nRFMicro-Arduino-Core repo: https://raw.githubusercontent.com/pdcook/nRFMicro-Arduino-Core/3dab6477754d9b28053fe36b06c718cde6e93d3f/package_nRFMicro_index.json
   * Source: https://www.beachyuk.com/blog/connecting-and-testing-promicro-nrf52840-clones
 
 Then choose board "SuperMini nRF52840" in "Tools -> Board -> nRFMicro-Style Boards"

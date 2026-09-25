@@ -1,6 +1,11 @@
+// Copyright (C)  2026  Ivan Efimov aka MuteSpirit <mutespirit@yandex.ru>.
+//
+// Permission is granted to copy, distribute and/or modify this document
+// under the terms of the GNU Free Documentation License, Version 1.3
+// or any later version published by the Free Software Foundation;
+// with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+// A copy of the license is included in the section entitled "GNU
 #pragma once
-#ifndef __SETTINGS_MENU_HPP__
-#define __SETTINGS_MENU_HPP__
 
 #include "menu.hpp"
 
@@ -15,11 +20,12 @@ public:
     SettingsMenu(Oled &oled, DeviceInputs& userInputs, Settings& settings);
     ~SettingsMenu() = default;
 
-    virtual void init(BlindCall switchMenuCb) override;
+    virtual void init(BlindCall nextMenuCb, BlindCall prevMenuCb) override;
 
     virtual void activate() override;
     virtual void deactivate() override;
 
+    virtual void draw() override;
 protected:
     struct MenuItem // TODO: move to base class
     {
@@ -47,8 +53,6 @@ protected:
     };
 
 protected:
-    void drawItem();
-
     void selectPrevItem();
     void selectNextItem();
     void navigateItemCb(int direction);
@@ -75,7 +79,6 @@ protected:
     uint8_t activeItemIdx_{0};
     bool editMode_{false};
 
-    BlindCall switchMenuCb_;
+    BlindCall nextMenuCb_ {BlindCall::stub()};
+    BlindCall prevMenuCb_ {BlindCall::stub()};
 };
-
-#endif // !__SETTINGS_MENU_HPP__

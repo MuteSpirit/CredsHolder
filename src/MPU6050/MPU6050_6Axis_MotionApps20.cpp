@@ -269,7 +269,7 @@ static const unsigned char dmpMemory[MPU6050_DMP_CODE_SIZE] PROGMEM = {
 #endif
 
 // I Simplified this:
-uint8_t MPU6050_6Axis_MotionApps20::dmpInitialize() {
+uint8_t MPU6050_6Axis_MotionApps20::dmpInitialize(const uint8_t rate) {
 	// reset device
 	DEBUG_PRINTLN(F("\n\nResetting MPU6050..."));
 	reset();
@@ -314,16 +314,6 @@ uint8_t MPU6050_6Axis_MotionApps20::dmpInitialize() {
 	DEBUG_PRINTLN(F("Setting DMP and FIFO_OFLOW interrupts enabled..."));
 	setIntEnabled(1<<MPU6050_INTERRUPT_FIFO_OFLOW_BIT|1<<MPU6050_INTERRUPT_DMP_INT_BIT);
 
-        // command below does not work alone! Use MPU6050_DMP_FIFO_RATE_DIVISOR too !
-	// DEBUG_PRINTLN(F("Setting sample rate to 200Hz..."));
-	// setRate(4); // 1khz / (1 + 4) = 200 Hz
-	// setRate(39); // 1khz / (1 + 39) = 25 Hz // IVANE //
-	// setRate(18); // 1khz / (1 + 24) = 40 Hz // IVANE //
-	// setRate(19); // 1khz / (1 + 19) = 50 Hz // IVANE // TODO: make 60 Hz to have 1 measure per sec
-	setRate(16); // 1khz / (1 + 16) ~= 60 Hz // IVANE //
-	// setRate(9); // 1khz / (1 + 9) = 100 Hz // IVANE //
-	// setRate(7); // 1khz / (1 + 7) = 125 Hz // IVANE //
-
 	DEBUG_PRINTLN(F("Setting external frame sync to TEMP_OUT_L[0]..."));
 	setExternalFrameSync(MPU6050_EXT_SYNC_TEMP_OUT_L);
 
@@ -346,8 +336,20 @@ uint8_t MPU6050_6Axis_MotionApps20::dmpInitialize() {
 	if (!writeProgMemoryBlock(dmpMemory, MPU6050_DMP_CODE_SIZE)) return 1; // Failed
 	DEBUG_PRINTLN(F("Success! DMP code written and verified."));
 
+        // command below does not work alone! Use MPU6050_DMP_FIFO_RATE_DIVISOR too !
+	// DEBUG_PRINTLN(F("Setting sample rate to 200Hz..."));
+	// setRate(4); // 1khz / (1 + 4) = 200 Hz
+	// setRate(39); // 1khz / (1 + 39) = 25 Hz // IVANE //
+	// setRate(18); // 1khz / (1 + 24) = 40 Hz // IVANE //
+	// setRate(19); // 1khz / (1 + 19) = 50 Hz // IVANE // TODO: make 60 Hz to have 1 measure per sec
+	// setRate(16); // 1khz / (1 + 16) ~= 60 Hz // IVANE //
+	// setRate(9); // 1khz / (1 + 9) = 100 Hz // IVANE //
+	// setRate(7); // 1khz / (1 + 7) = 125 Hz // IVANE //
+	setRate(rate); // (1000 / (1 + rate)) Hz
+
 	// Set the FIFO Rate Divisor int the DMP Firmware Memory
-	unsigned char dmpUpdate[] = {0x00, MPU6050_DMP_FIFO_RATE_DIVISOR};
+	// unsigned char dmpUpdate[] = {0x00, MPU6050_DMP_FIFO_RATE_DIVISOR};
+	unsigned char dmpUpdate[] = {0x00, rate};
 	writeMemoryBlock(dmpUpdate, 0x02, 0x02, 0x16); // Lets write the dmpUpdate data to the Firmware image, we have 2 bytes to write in bank 0x02 with the Offset 0x16
 
 	//write start address MSB into register

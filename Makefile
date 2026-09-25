@@ -21,9 +21,9 @@ ARDUINO_LIBS := AUnit Crypto
 DEPS := $(wildcard src/*.cpp)
 APP_SRCS_CPP := main.t.cpp $(wildcard src/*.t.cpp)
 
-EXTRA_CFLAGS := -g3
-EXTRA_CPPFLAGS := -g3
-EXTRA_CXXFLAGS := -g3
+EXTRA_CFLAGS := -g3 -DNRF52840
+EXTRA_CPPFLAGS := -g3 -DNRF52840
+EXTRA_CXXFLAGS := -g3 -DNRF52840
 
 include ../libraries/EpoxyDuino/EpoxyDuino.mk
 #
@@ -59,7 +59,8 @@ clean_app:
 build: build_nrf52840
 
 build_nrf52840:
-	arduino-cli compile -b nRFMicro-like-Boards:nrf52:supermini
+	# arduino-cli compile --verbose --log --log-level debug --fqbn "nRFMicro-like-Boards:nrf52:supermini" --build-property "build.extra_flags=-I$$(pwd)/include -DNRF52 -DNRF52840_XXAA -DNRF52840 -DCFG_TUD_ENABLED=1 -DCFG_TUD_HID=1 -DUSE_TINYUSB=1"
+	arduino-cli compile --verbose --log --log-level debug --fqbn "nRFMicro-like-Boards:nrf52:supermini" --build-property "build.extra_flags=-I$$(pwd)/include -DNRF52840_XXAA -DCFG_TUD_ENABLED=1 -DCFG_TUD_HID=1 -DUSE_TINYUSB=1"
 
 build_avr:
 	arduino-cli compile -b arduino:avr:uno

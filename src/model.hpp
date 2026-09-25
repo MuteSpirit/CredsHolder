@@ -4,7 +4,7 @@
 
 #include <inttypes.h>
 #include <stdio.h>
-#include <stddef.h>
+#include <cstddef>
 
 // TODO: use enum ?
 #define ACCOUNT_NAME_SIZE 32

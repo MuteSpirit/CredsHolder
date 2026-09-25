@@ -8,16 +8,22 @@
 // Free Documentation License".
 #pragma once
 
-#include "oled.hpp"
-#include <cstddef>
+#include "creds_holder.hpp"
 
-#include <U8g2lib.h>
+#ifdef U8X8_HAVE_HW_I2C
+#include <Wire.h>
+#endif
+
+#include <U8x8lib.h>
 // Rejected OLED displays libraries
 // * SSD1306AsciiAvrI2c - for Arduino AVR only and not supported on NRF52840
 // * GyverOLED does not allow to set font
 // * GyverOLEDMenu draw ugly menu items
 
+#include "ui_selection_list.hpp"
+#include "oled.hpp"
 
+/// SSD1306 I2C OLED 128x64 display class
 class SSD1306I2C : public Oled
 {
 public:
@@ -27,10 +33,22 @@ public:
    virtual void home() override; 
 
    void setFont(const uint8_t* font) override;
+   virtual void setInverseFont(uint8_t value) override;
 
    virtual size_t write(uint8_t) override;
    virtual size_t write(const uint8_t *buffer, size_t size) override;
+   virtual void drawUTF8(uint8_t col, uint8_t row, const char *s) override;
+
+   virtual void display() override;
+
+   virtual uint8_t getRows(void) override;
+   virtual uint8_t getCols(void) override;
 
 protected:
-   U8G2 u8g2_;
+   U8X8_SSD1306_128X64_NONAME_HW_I2C u8x8_ {/* reset=*/ U8X8_PIN_NONE};
+
+   // friend etl::unique_ptr<UISelectionList> new_sl(const char* title,
+   //                                               Oled& oled, 
+   //                                               typename UISelectionList::const_iterator start, 
+   //                                               typename UISelectionList::const_iterator end);
 };

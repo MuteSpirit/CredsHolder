@@ -2,7 +2,7 @@
 #define __BLIND_CALL_HPP__
 
 #include <inttypes.h>
-#include <stddef.h>
+#include <cstddef>
 
 /**
  * @brief Auxilary class for creating default BlindCall object
@@ -108,7 +108,8 @@ public:
     /// @return true BlindCall is not stub
     operator bool()
     {
-        return reinterpret_cast<ClassMemberInvoker<StubCall, void*>*>(data_)->_this != &stubCall;
+        return reinterpret_cast<ClassMemberInvoker<StubCall, void*>*>(data_)->_this != nullptr
+            && reinterpret_cast<ClassMemberInvoker<StubCall, void*>*>(data_)->_this != &stubCall;
     }
 
     BlindCall(const BlindCall&) = default;

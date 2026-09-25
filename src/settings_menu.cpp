@@ -5,7 +5,7 @@
 // #define MENU_ITEM_PADDING_TOP 10
 // #include "GyverOLEDMenu.h"
 
-#include "SSD1306Ascii.h" // OLED fonts
+// #include "SSD1306Ascii.h" // OLED fonts
 
 #include "device_inputs.hpp"
 #include "settings.hpp"
@@ -17,7 +17,6 @@ SettingsMenu::SettingsMenu(Oled &oled, DeviceInputs& userInputs, Settings& setti
     : oled_(oled)
     , userInputs_(userInputs)
     , settings_(settings)
-    , switchMenuCb_(BlindCall::stub())
 {
     uint8_t i = 0;
 
@@ -35,9 +34,10 @@ SettingsMenu::SettingsMenu(Oled &oled, DeviceInputs& userInputs, Settings& setti
 }
 
 void
-SettingsMenu::init(BlindCall switchMenuCb)
+SettingsMenu::init(BlindCall nextMenuCb, BlindCall prevMenuCb)
 {
-    switchMenuCb_ = switchMenuCb;
+    nextMenuCb_ = nextMenuCb;
+    prevMenuCb_ = prevMenuCb;
 }
 
 void
@@ -45,7 +45,7 @@ SettingsMenu::selectNextItem()
 {
     if (activeItemIdx_ < numItems_ - 1) {
         ++activeItemIdx_;
-        drawItem();
+        draw();
     }
 }
 
@@ -54,7 +54,7 @@ SettingsMenu::selectPrevItem()
 {
     if (activeItemIdx_ > 0) {
         --activeItemIdx_;
-        drawItem();
+        draw();
     }
 }
 
@@ -99,7 +99,7 @@ SettingsMenu::enterEditMode()
 {
     editMode_ = true;
 
-    oled_.setFont(cp437font8x8);
+    // oled_.setFont(cp437font8x8);
 
     userInputs_.set(DeviceInputs::UserAction::left, BlindCall::make(this, &SettingsMenu::selectPrevValue));
     userInputs_.set(DeviceInputs::UserAction::down, BlindCall::make(this, &SettingsMenu::selectNextValue));
@@ -109,7 +109,7 @@ SettingsMenu::enterEditMode()
 
     userInputs_.set(DeviceInputs::UserAction::enter, BlindCall::make(this, &SettingsMenu::selectValue));
 
-    drawItem();
+    draw();
 }
 
 void
@@ -117,31 +117,31 @@ SettingsMenu::leaveEditMode()
 {
     editMode_ = false;
 
-    oled_.setFont(System5x7);
+    // oled_.setFont(System5x7);
 
-    userInputs_.set(DeviceInputs::UserAction::left, BlindCall::make(this, &SettingsMenu::selectPrevItem));
+    userInputs_.set(DeviceInputs::UserAction::up, BlindCall::make(this, &SettingsMenu::selectPrevItem));
     userInputs_.set(DeviceInputs::UserAction::down, BlindCall::make(this, &SettingsMenu::selectNextItem));
 
     userInputs_.set(DeviceInputs::UserAction::right, BlindCall::make(this, &SettingsMenu::toggleChangeItem));
-    userInputs_.set(DeviceInputs::UserAction::up, switchMenuCb_);
+    userInputs_.set(DeviceInputs::UserAction::left, prevMenuCb_);
 
     // userInputs_.set(DeviceInputs::UserAction::rotary, BlindCall::make(this, &SettingsMenu::navigateItemCb));
 
-    drawItem();
+    draw();
 }
 
 void
 SettingsMenu::selectPrevValue()
 {
     items_[activeItemIdx_].bValue_ = !items_[activeItemIdx_].bValue_;
-    drawItem();
+    draw();
 }
 
 void
 SettingsMenu::selectNextValue()
 {
     items_[activeItemIdx_].bValue_ = !items_[activeItemIdx_].bValue_;
-    drawItem();
+    draw();
 }
 
 void
@@ -169,7 +169,7 @@ SettingsMenu::cancelChange()
 }
 
 void
-SettingsMenu::drawItem()
+SettingsMenu::draw()
 {
     oled_.clear();
     oled_.home();
@@ -202,5 +202,5 @@ SettingsMenu::deactivate()
     oled_.clear();
 
     editMode_ = false;
-    oled_.setFont(System5x7);
+    // oled_.setFont(System5x7);
 }

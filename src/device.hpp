@@ -17,10 +17,21 @@
 #define OLED_SCK_PIN    3
 #define OLED_I2C_ADDR   0x3C
 
-#elif defined(ARDUINO_ARCH_NRF52) // NRF52840
+#define MPU6050_CS_PIN  D5
+
+#elif defined(ARDUINO_ARCH_NRF52) // Pro Micro nRF52840
 
 // OLED Display
-#define OLED_SDA_PIN    D6 
+#define OLED_SDA_PIN    D6
+#define OLED_SCK_PIN    D7
+#define OLED_I2C_ADDR   0x3C
+
+#define MPU6050_CS_PIN  D5
+
+#elif defined(EPOXY_DUINO) // Unit tests
+
+// OLED Display
+#define OLED_SDA_PIN    D6
 #define OLED_SCK_PIN    D7
 #define OLED_I2C_ADDR   0x3C
 

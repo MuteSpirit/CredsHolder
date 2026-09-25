@@ -32,6 +32,26 @@ ModelStorage<Object>::isExist(const char* key)
 
 template<typename Object>
 bool
+ModelStorage<Object>::search(const char* key, Object &t)
+{
+    for (ObjIndex i = 0; isOkIdx(i); ++i) {
+        if (isFreeAccount(i)) {
+            continue;
+        }
+
+        bs_.read(getKeyAddr(i), reinterpret_cast<uint8_t*>(get_key_ptr(t)), get_key_size<Object>());
+
+        if (!strncmp(key, get_key_ptr(t), get_key_size<Object>())) {
+            bs_.read(idx2addr(i), t);
+            return true;
+        }
+    }
+
+    return false;
+}
+
+template<typename Object>
+bool
 ModelStorage<Object>::isOkIdx(const ObjIndex idx) const
 {
     size_t startAddr = idx2addr(idx);

@@ -6,42 +6,71 @@
 // with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
 // A copy of the license is included in the section entitled "GNU
 // Free Documentation License".
-#include <cstddef>
-
 #include "ssd1306_oled.hpp"
+#include "accounts_menu.hpp"
 
 void
 SSD1306I2C::setup()
 {
-    u8g2_.begin();
+    u8x8_.begin();
 }
 
 void
 SSD1306I2C::clear()
 {
-    u8g2_.clearDisplay();
+    u8x8_.clearDisplay();
 }
 
 void
 SSD1306I2C::home()
 {
-    u8g2_.home();
+    u8x8_.home();
 }
 
 void
 SSD1306I2C::setFont(const uint8_t* font)
 {
-    u8g2_.setFont(font);
+    u8x8_.setFont(font);
+}
+
+void
+SSD1306I2C::setInverseFont(uint8_t value)
+{
+    u8x8_.setInverseFont(value);
 }
 
 size_t
 SSD1306I2C::write(uint8_t b)
 {
-    return u8g2_.write(b);
+    return u8x8_.write(b);
 }
 
 size_t
 SSD1306I2C::write(const uint8_t *buffer, size_t size)
 {
-    return u8g2_.write(buffer, size);
+    return u8x8_.write(buffer, size);
+}
+
+void
+SSD1306I2C::display()
+{
+    u8x8_.display();
+}
+
+uint8_t
+SSD1306I2C::getRows(void)
+{
+    return u8x8_.getRows();
+}
+
+uint8_t
+SSD1306I2C::getCols(void)
+{
+    return u8x8_.getCols();
+}
+
+void
+SSD1306I2C::drawUTF8(uint8_t col, uint8_t row, const char *s)
+{
+    u8x8_.drawUTF8(col, row, s);
 }

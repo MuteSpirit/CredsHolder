@@ -4,13 +4,7 @@
 #include <inttypes.h>
 #include <stdio.h>
 
-#if defined(ARDUINO_ARCH_NRF52)
-#define NRF52840
-
-#  if !defined(USE_TINYUSB)
-#  define USE_TINYUSB 1
-#  endif
-#endif
+#include "creds_holder.hpp"
 #include <AES.h>
 
 #include "block_storage.hpp"

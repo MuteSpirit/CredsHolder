@@ -6,9 +6,12 @@
 // with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
 // A copy of the license is included in the section entitled "GNU
 // Free Documentation License".
-#include "device.hpp"
+#include "creds_holder.hpp"
+
 #include <new>
 #include <math.h>
+
+#include <Arduino.h>
 
 // Arduino Wire library is required if I2Cdev I2CDEV_ARDUINO_WIRE implementation
 // is used in I2Cdev.h
@@ -18,14 +21,16 @@
 
 // To be able handle MPU6050 events in time and avoid chip FIFO overloading
 // it's needed to decrease speed of evetns generation to acceptable level
-// #define MPU6050_DMP_FIFO_RATE_DIVISOR 0x31 // work enough stable
-#define MPU6050_DMP_FIFO_RATE_DIVISOR 0x10 // ~ 60 Hz
+#define MPU6050_DMP_FIFO_RATE_DIVISOR 64 // work enough stable
+// #define MPU6050_DMP_FIFO_RATE_DIVISOR 0x10 // ~ 60 Hz
 
 #include "MPU6050/I2Cdev.h"
 #include "MPU6050/MPU6050_6Axis_MotionApps20.h"
 // TODO: try newer firmware from
 // #include "MPU6050/MPU6050_6Axis_MotionApps612.h"
 #include "MPU6050/MPU6050.h"
+
+#include "device.hpp"
 
 ////////////////////////////////////////////////////////////////////////////////
 enum class Movement : uint8_t
@@ -98,9 +103,10 @@ CredsHolderInputs::unset(UserAction act)
 bool
 CredsHolderInputs::setup(void)
 {
+    if (Serial) {Serial.println(F("CredsHolderInputs::setup 1"));}
 #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
     Wire.begin();
-    // Wire.setClock(400000); // 400kHz I2C clock. Comment this line if having compilation difficulties
+    Wire.setClock(400000); // 400kHz I2C clock. Comment this line if having compilation difficulties
 #elif I2CDEV_IMPLEMENTATION == I2CDEV_BUILTIN_FASTWIRE
     Fastwire::setup(400, true);
 #endif
@@ -109,10 +115,14 @@ CredsHolderInputs::setup(void)
 
     mpu->initialize();
 
-    uint8_t devStatus = mpu->dmpInitialize();
+    if (Serial) {Serial.println(F("CredsHolderInputs::setup 2"));}
+
+    uint8_t devStatus = mpu->dmpInitialize(/* rate */ 20);
     if (devStatus != 0) {
         return false;
     }
+
+    if (Serial) {Serial.println(F("CredsHolderInputs::setup 3"));}
 
     // TODO: make initial calibration, store init values in internal memory and reuse when they are present
     // for my concrete MPU6050 module next offsets has been detected during calibration:
@@ -125,11 +135,15 @@ CredsHolderInputs::setup(void)
     mpu->setZGyroOffset(68); 
 
     // Calibration Time: generate offsets and calibrate our MPU6050
-    mpu->CalibrateAccel(6);
-    mpu->CalibrateGyro(6);
+    // mpu->CalibrateAccel(6);
+    // mpu->CalibrateGyro(6);
+
+    if (Serial) {Serial.println(F("CredsHolderInputs::setup 4"));}
 
     // turn on the DMP, now that it's ready
     mpu->setDMPEnabled(true);
+
+    if (Serial) {Serial.println(F("CredsHolderInputs::setup 5"));}
 
     // enable Arduino interrupt detection
     attachInterrupt(digitalPinToInterrupt(MPU6050_CS_PIN), dmpDataReady, RISING);
@@ -150,7 +164,21 @@ static bool isTiltHappen(SplashDetectCtx &ctx, const float p);
 void
 CredsHolderInputs::loop_step(void)
 {
+    // bool nothingToDo = true;
+    //
+    // noInterrupts();
+    // if (mpuInterrupt) {
+    //     mpuInterrupt = false;
+    //     nothingToDo = false;
+    // }
+    // interrupts();
+    //
+    // if (nothingToDo) {
+    //     return;
+    // }
+
     if (!data()->mpu_.dmpGetCurrentFIFOPacket(data()->fifoBuffer_)) { // Get the Latest packet }
+        // if (Serial) { Serial.println(data()->mpu_.dmpGetFIFOPacketSize()); }
         return;
     }
 
@@ -162,21 +190,31 @@ CredsHolderInputs::loop_step(void)
     data()->mpu_.dmpGetGravity(&gravity, &q);
     data()->mpu_.dmpGetYawPitchRoll(ypr, &q, &gravity);
 
+    if (Serial) {
+        Serial.print(ypr[1] * 180 / M_PI); 
+        Serial.print("; "); 
+        Serial.print(ypr[2] * 180 / M_PI); 
+        Serial.println(); 
+    }
+
     if (isTiltHappen(data()->pitchDetectCtx_, ypr[1] * 180 / M_PI)) {
         if (data()->pitchDetectCtx_.mv == Movement::clockwise) {
+            if (Serial) {Serial.println(F("UserAction::up"));}
             data()->hooks_[static_cast<uint8_t>(UserAction::up)]();
         } else {
+            if (Serial) {Serial.println(F("UserAction::down"));}
             data()->hooks_[static_cast<uint8_t>(UserAction::down)]();
         }
     }
     if (isTiltHappen(data()->rollDetectCtx_, ypr[2] * 180 / M_PI)) {
         if (data()->rollDetectCtx_.mv == Movement::clockwise) {
+            if (Serial) {Serial.println(F("UserAction::left"));}
             data()->hooks_[static_cast<uint8_t>(UserAction::left)]();
         } else {
+            if (Serial) {Serial.println(F("UserAction::right"));}
             data()->hooks_[static_cast<uint8_t>(UserAction::right)]();
         }
     }
-//
 }
 
 static

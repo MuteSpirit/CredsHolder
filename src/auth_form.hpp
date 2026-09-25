@@ -5,6 +5,7 @@
 // or any later version published by the Free Software Foundation;
 // with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
 // A copy of the license is included in the section entitled "GNU
+// Free Documentation License".
 #pragma once
 
 #include "menu.hpp"
@@ -43,13 +44,15 @@ public:
 
     AuthForm(Oled &oled, DeviceInputs &inputs, Authenticator& auth);
 
-    void init(BlindCall successAuthCb, BlindCall failAuthCb);
+    virtual void init(BlindCall successAuthCb, BlindCall failAuthCb) override;
 
     virtual void activate() override;
     virtual void deactivate() override;
 
+    virtual void draw() override;
+
 protected:
-    virtual void init(BlindCall successAuthCb) override;
+    void init(BlindCall successAuthCb);
 
 protected:
     friend AuthFormTestHelper;

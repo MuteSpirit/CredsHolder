@@ -1,4 +1,15 @@
+// Copyright (C)  2026  Ivan Efimov aka MuteSpirit <mutespirit@yandex.ru>.
+//
+// Permission is granted to copy, distribute and/or modify this document
+// under the terms of the GNU Free Documentation License, Version 1.3
+// or any later version published by the Free Software Foundation;
+// with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+// A copy of the license is included in the section entitled "GNU
+// Free Documentation License".
 #include "accounts_menu.hpp"
+
+#include "creds_holder.hpp"
+#include <Arduino.h>
 
 #include "blind_call.hpp"
 #include "device.hpp"
@@ -8,49 +19,52 @@
 #include "oled.hpp"
 
 
-AccountsMenu::AccountsMenu(Keyboard& keyboard,
-                           Oled& oled,
+AccountsMenu::AccountsMenu(Oled& oled,
                            DeviceInputs& userInputs,
                            const Settings& settings,
                            ModelStorage<Account>& modelStore)
-    : keyboard_(keyboard)
-    , oled_(oled)
+    : oled_(oled)
     , userInputs_(userInputs)
     , settings_(settings)
     , modelStore_(modelStore)
+    // , accSl_(new_sl(oled))
 {
-    memset(&acc_, 0, sizeof(acc_));
 }
 
 void
-AccountsMenu::init(BlindCall switchMenuCb)
+AccountsMenu::selectAcc()
 {
-    // we don't touch switch_menu callback on "triangle" button so far, so don't remember that
-    (void)(switchMenuCb);
+    if (selectItemCb_) {
+        selectItemCb_();
+    }
+}
 
-    acc_idx_ = 0;
-    memset(&acc_, 0, sizeof(Account));
+void
+AccountsMenu::init(BlindCall nextMenuCb, BlindCall prevMenuCb)
+{
+    selectItemCb_ = nextMenuCb;
+    returnCb_ = prevMenuCb;
 }
 
 void
 AccountsMenu::activate()
 {
-    userInputs_.set(DeviceInputs::UserAction::left, BlindCall::make(this, &AccountsMenu::sendUsername));
-    userInputs_.set(DeviceInputs::UserAction::down, BlindCall::make(this, &AccountsMenu::sendPassword));
-    userInputs_.set(DeviceInputs::UserAction::right, BlindCall::make(this, &AccountsMenu::sendTab));
-    userInputs_.set(DeviceInputs::UserAction::up, BlindCall::make(this,&AccountsMenu::navigateAccounts));
+    if (Serial) {Serial.println(F("AccountsMenu::activate"));}
+
+    // userInputs_.set(DeviceInputs::UserAction::left, BlindCall::make(this, &AccountsMenu::sendUsername));
+    // userInputs_.set(DeviceInputs::UserAction::right, BlindCall::make(this, &AccountsMenu::sendTab));
+
+    userInputs_.set(DeviceInputs::UserAction::up, BlindCall::make(this,&AccountsMenu::prevAcc));
+    userInputs_.set(DeviceInputs::UserAction::down, BlindCall::make(this, &AccountsMenu::nextAcc));
 
     oled_.home();
 
-    acc_idx_ = 0;
-    memset(&acc_, 0, sizeof(Account));
-
-    if (modelStore_.get(acc_idx_, acc_) || 
-        modelStore_.getNext(acc_idx_, acc_, acc_idx_)) {
-        draw();
-    } else {
-        oled_.println(F("No creds accounts"));
-    }
+    // if (modelStore_.get(acc_idx_, acc_) || 
+    //     modelStore_.getNext(acc_idx_, acc_, acc_idx_)) {
+    //     draw();
+    // } else {
+    //     oled_.println(F("No creds accounts"));
+    // }
 }
 
 void
@@ -61,99 +75,105 @@ AccountsMenu::deactivate()
     userInputs_.unset(DeviceInputs::UserAction::right);
     userInputs_.unset(DeviceInputs::UserAction::enter);
 
-    acc_idx_ = 0;
-    memset(&acc_, 0, sizeof(Account));
+    // acc_idx_ = 0;
+    // memset(&acc_, 0, sizeof(Account));
 
     oled_.clear();
 }
 
-
 void
-AccountsMenu::sendTab()
+AccountsMenu::nextAcc()
 {
-    keyboard_.push_tab();
+    if (Serial) { Serial.println(F("AccountsMenu::nextAcc")); }
+
+    navigateAccounts(1);
 }
 
 void
-AccountsMenu::sendUsername()
+AccountsMenu::prevAcc()
 {
-    keyboard_.print(acc_.username);
-}
+    if (Serial) { Serial.println(F("AccountsMenu::prevAcc")); }
 
-void
-AccountsMenu::sendPassword()
-{
-    keyboard_.print(acc_.password);
+    navigateAccounts(-1);
 }
 
 /// @param[in] direction - 0 = No rotation, 1 = Clockwise, -1 = Counter Clockwise
 void
 AccountsMenu::navigateAccounts(int direction)
 {
-    if (0 == direction) {
-        return;
-    }
-
-    ModelStorage<Account>::ObjIndex idx = acc_idx_;
-
-    do {
-        if (direction > 0) {
-            if (modelStore_.getNext(acc_idx_, acc_, idx)) {
-                break;
-            }
-            if (modelStore_.get(0, acc_)) {
-                idx = 0;
-                break;
-            }
-            if (modelStore_.getNext(0, acc_, idx)) {
-                break;
-            }
-        } else {
-            if (modelStore_.getPrev(acc_idx_, acc_, idx)) {
-                break;
-            }
-            auto maxIdx = modelStore_.maxIdx();
-
-            if (modelStore_.get(maxIdx, acc_)) {
-                idx = maxIdx;
-                break;
-            }
-            if (modelStore_.getPrev(maxIdx, acc_, idx)) {
-                break;
-            }
-        }
-    } while (0);
-
-    if (idx != acc_idx_) {
-        acc_idx_ = idx;
-
-        oled_.clear();
-        oled_.home();
-
-        draw();
-    }
+    (void)direction;
+    // if (0 == direction) {
+    //     return;
+    // }
+    //
+    // ModelStorage<Account>::ObjIndex idx = acc_idx_;
+    //
+    // do {
+    //     if (direction > 0) {
+    //         if (modelStore_.getNext(acc_idx_, acc_, idx)) {
+    //             break;
+    //         }
+    //         if (modelStore_.get(0, acc_)) {
+    //             idx = 0;
+    //             break;
+    //         }
+    //         if (modelStore_.getNext(0, acc_, idx)) {
+    //             break;
+    //         }
+    //     } else {
+    //         if (modelStore_.getPrev(acc_idx_, acc_, idx)) {
+    //             break;
+    //         }
+    //         auto maxIdx = modelStore_.maxIdx();
+    //
+    //         if (modelStore_.get(maxIdx, acc_)) {
+    //             idx = maxIdx;
+    //             break;
+    //         }
+    //         if (modelStore_.getPrev(maxIdx, acc_, idx)) {
+    //             break;
+    //         }
+    //     }
+    // } while (0);
+    //
+    // if (idx != acc_idx_) {
+    //     acc_idx_ = idx;
+    //
+    //     oled_.clear();
+    //     oled_.home();
+    //
+    //     draw();
+    // }
 }
 
 void
 AccountsMenu::draw()
 {
-    oled_.println("  Credentials:  ");
-
-    oled_.print(F("N: "));
-    oled_.println(acc_.name);
-
-    oled_.print(F("U: "));
-    oled_.println(acc_.username);
-
-    oled_.print(F("P: "));
-    if (settings_.unhide_passwords_) {
-        oled_.println(acc_.password);
-    } else {
-        char hidden_passwd[PASSWORD_SIZE] = {0};
-        const uint8_t len = strnlen(acc_.password, PASSWORD_SIZE);
-        for (uint8_t i = 0; i < len; ++i) {
-            hidden_passwd[i] = '*';
-        }
-        oled_.println(hidden_passwd);
-    }
+    // if (Serial) {Serial.println(F("AccountsMenu::draw"));}
+    //
+    // oled_.println("  Credentials:  ");
+    //
+    // oled_.print(F("N: "));
+    // oled_.println(acc_.name);
+    //
+    // oled_.print(F("U: "));
+    // oled_.println(acc_.username);
+    //
+    // oled_.print(F("P: "));
+    // if (settings_.unhide_passwords_) {
+    //     oled_.println(acc_.password);
+    // } else {
+    //     char hidden_passwd[PASSWORD_SIZE] = {0};
+    //     const uint8_t len = strnlen(acc_.password, PASSWORD_SIZE);
+    //     for (uint8_t i = 0; i < len; ++i) {
+    //         hidden_passwd[i] = '*';
+    //     }
+    //     oled_.println(hidden_passwd);
+    // }
 }
+
+// Account
+// AccountsMenu::selected() const
+// {
+//     // modelStore_.search(selected(), Account &t)
+// }

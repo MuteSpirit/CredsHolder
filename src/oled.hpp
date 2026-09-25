@@ -7,18 +7,21 @@
 // A copy of the license is included in the section entitled "GNU
 // Free Documentation License".
 #pragma once
+#include "creds_holder.hpp"
 
 #include <inttypes.h>
-#include <cstddef>
+// #include "etl/memory.h"
 
-#if defined(ARDUINO_ARCH_NRF52)
-#define NRF52840
-#  if !defined(USE_TINYUSB)
-#  define USE_TINYUSB 1
-#  endif
-#endif
 #include <Print.h>
 
+// TODO: Rename class to Gui
+/// @details Coordinates increases from left top corner (0, 0), for example:
+/// +----------------------------------------------+
+/// | (0, 0) | (0, 1) | ...                        |
+/// | (1, 0) | (1, 1) | ...                        |
+/// | ...                                          |
+/// | ...             | (getCols()-1, getRows()-1) |
+/// +----------------------------------------------+
 class Oled
 #if defined(ARDUINO)
 : public Print
@@ -31,11 +34,16 @@ public:
     virtual void home() = 0; 
 
     virtual void setFont(const uint8_t* font) = 0;
+    virtual void setInverseFont(uint8_t value) = 0;
+    virtual void drawUTF8(uint8_t col, uint8_t row, const char *s) = 0;
 
     virtual ~Oled() {};
 
-    virtual size_t write(uint8_t) = 0;
-    virtual size_t write(const uint8_t *buffer, size_t size) = 0;
+    /// Update OLED with updated info from buffer
+    virtual void display() = 0;
+
+    virtual uint8_t getRows(void) = 0;
+    virtual uint8_t getCols(void) = 0;
 
 protected:
     Oled() = default;

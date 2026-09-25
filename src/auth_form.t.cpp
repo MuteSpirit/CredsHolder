@@ -1,18 +1,13 @@
 #if defined(EPOXY_DUINO)
 
-#include <AUnitVerbose.h>
+#include "creds_holder.hpp"
+#include <SHA256.h>
+
+#include "t/in_memory_oled.hpp"
+#include "t/imitated_user_unputs.cpp"
 #include "auth_form.cpp"
-#include "in_memory_oled.hpp"
-#include "imitated_user_unputs.cpp"
 #include "auth.hpp"
 
-#if defined(ARDUINO_ARCH_NRF52)
-#define NRF52840
-
-#  if !defined(USE_TINYUSB)
-#  define USE_TINYUSB 1
-#  endif
-#endif
 #include <SHA256.h>
 
 using namespace aunit;
@@ -69,7 +64,7 @@ protected:
     }
 
 protected:
-    InMemoryPrint<4, 20> oled;
+    OledInMem<4, 20> oled;
     ImitatedUserInputs userInputs;
     PasswordWandAuth auth;
 

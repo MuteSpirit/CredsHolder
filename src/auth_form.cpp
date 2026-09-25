@@ -1,3 +1,11 @@
+// Copyright (C)  2026  Ivan Efimov aka MuteSpirit <mutespirit@yandex.ru>.
+//
+// Permission is granted to copy, distribute and/or modify this document
+// under the terms of the GNU Free Documentation License, Version 1.3
+// or any later version published by the Free Software Foundation;
+// with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+// A copy of the license is included in the section entitled "GNU
+// Free Documentation License".
 #include "auth_form.hpp"
 #include "device_inputs.hpp"
 #include "oled.hpp"
@@ -38,12 +46,12 @@ AuthForm::activate()
     memset(password_, 0, sizeof(password_));
     allowTryAuth_ = false;
 
-    oled_.home();
-
     userInputs_.set(DeviceInputs::UserAction::right, BlindCall::make(this, &AuthForm::commitPassword));
     userInputs_.set(DeviceInputs::UserAction::down, BlindCall::make(this, &AuthForm::commitSymbol));
     userInputs_.set(DeviceInputs::UserAction::left, BlindCall::make(this, &AuthForm::chooseNextSymbolGroup));
     userInputs_.set(DeviceInputs::UserAction::up, BlindCall::make(this, &AuthForm::eraseLastSymbol));
+
+    draw();
 }
 
 void
@@ -170,4 +178,12 @@ char
 AuthForm::typingSymbol() const
 {
     return typingChars_[typingSymbolIdx_];
+}
+
+void
+AuthForm::draw()
+{
+    oled_.clear();
+    oled_.home();
+    oled_.println(typingChars_);
 }

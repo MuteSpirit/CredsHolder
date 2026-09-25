@@ -20,6 +20,7 @@ public:
     ~ModelStorage() = default;
 
     bool isExist(const char* key);
+    bool search(const char* key, Object &t);
 
     ObjIndex count() const;
     ObjIndex maxIdx() const;

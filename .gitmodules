@@ -1,0 +1,6 @@
+[submodule "src/etl"]
+	path = src/etl
+	url = https://github.com/ETLCPP/etl-arduino.git
+[submodule "lib/etl"]
+	path = lib/etl
+	url = https://github.com/ETLCPP/etl-arduino.git
