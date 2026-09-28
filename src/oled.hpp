@@ -17,7 +17,6 @@
 #include "creds_holder.hpp"
 
 #include <inttypes.h>
-// #include "etl/memory.h"
 
 #include <Print.h>
 

@@ -16,8 +16,6 @@
 #pragma once
 #include "creds_holder.hpp"
 
-#include "etl/iterator.h"
-
 #include "menu.hpp"
 
 class Oled;

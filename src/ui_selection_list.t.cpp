@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #if defined(EPOXY_DUINO)
+#include "Embedded_Template_Library.h"
 #include "etl/array.h"
 #include "ui_selection_list.hpp"
 #include "t/in_memory_oled.hpp"
