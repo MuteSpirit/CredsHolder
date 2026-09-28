@@ -14,7 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #if defined(EPOXY_DUINO)
-#include "test/in_memory_oled.hpp"
+#include "in_memory_oled.hpp"
+
+// Must be included as the last header to avoid troubles with macro "test"
+// when such word is used in headers above
 #include <AUnitVerbose.h>
 
 test(in_mem_oled_ctor)

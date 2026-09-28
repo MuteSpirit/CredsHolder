@@ -13,22 +13,27 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
-#include "imitated_user_unputs.hpp"
+#if defined(EPOXY_DUINO)
+#include "keyboard.hpp"
 
-void
-ImitatedUserInputs::set(UserAction act, BlindCall cb)
+bool
+ImitatedKeyboard::print(const char* s)
 {
-    hooks_[static_cast<uint8_t>(act)] = cb;
+    (void)s;
+    return true;
 }
 
-void
-ImitatedUserInputs::unset(UserAction act)
+bool
+ImitatedKeyboard::push(const uint8_t keyCode)
 {
-    hooks_[static_cast<uint8_t>(act)] = BlindCall::stub();
+    (void)keyCode;
+    return true;
 }
 
-void
-ImitatedUserInputs::click(UserAction act)
+bool
+ImitatedKeyboard::push_tab()
 {
-    hooks_[static_cast<uint8_t>(act)]();
+    return true;
 }
+
+#endif // defined(EPOXY_DUINO)
