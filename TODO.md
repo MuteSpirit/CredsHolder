@@ -27,6 +27,9 @@
   * menu Settings (show/hide passwords)
   * typing login/password
   * no encryption, no storage on microSD, hard-coded accounts
+* [ ] build test objects/exec in separate folder
+* [ ] scope code within new C++ namespace "creds_holder"
+* [ ] auto generation compiler_commands.json
 * [ ] propose authentication
   * (blocked) vibration motor module is in delivery
 * [ ] Implement calibration
