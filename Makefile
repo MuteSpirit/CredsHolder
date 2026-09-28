@@ -76,3 +76,6 @@ build_nrf52840: ## Target board is Pro Micro NRF52840
 
 build_avr: ## Target board is Arduino Uno
 	arduino-cli compile -b arduino:avr:uno
+
+dt:
+	gdb -tui $(APP_NAME).out

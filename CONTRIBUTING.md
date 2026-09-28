@@ -283,6 +283,14 @@ public:
 };
 ```
 
+## Debugger usage
+
+There is makefile target to run `gdb` debugger. Usage is
+```
+make dt
+```
+where `td` is Abbreviation of `debug test`
+
 # Development Environment
 
 ## Dependencies
