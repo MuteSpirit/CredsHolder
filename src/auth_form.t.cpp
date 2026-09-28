@@ -23,7 +23,9 @@
 #include "auth_form.cpp"
 #include "auth.hpp"
 
-#include <SHA256.h>
+// Must be included as the last header to avoid troubles with macro "test"
+// when such word is used in headers above
+#include <AUnitVerbose.h>
 
 using namespace aunit;
 

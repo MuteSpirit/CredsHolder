@@ -16,7 +16,10 @@
 #if defined(EPOXY_DUINO)
 #include "memory_block_storage.hpp"
 #include <stdio.h>
-#include <AUnit.h>
+
+// Must be included as the last header to avoid troubles with macro "test"
+// when such word is used in headers above
+#include <AUnitVerbose.h>
 
 class MemoryBlockStorageTestHelper
 {

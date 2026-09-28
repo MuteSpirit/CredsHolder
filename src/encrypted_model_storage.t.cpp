@@ -16,12 +16,15 @@
 #if defined(EPOXY_DUINO)
 #include <inttypes.h>
 #include <string.h>
-#include <AUnitVerbose.h>
 
 #include "model.hpp"
 #include "model_storage.hpp"
 #include "memory_block_storage.hpp"
 #include "encrypted_block_storage.hpp"
+
+// Must be included as the last header to avoid troubles with macro "test"
+// when such word is used in headers above
+#include <AUnitVerbose.h>
 
 // AES-256 requires a key that is exactly 32 bytes (256 bits).
 constexpr const uint8_t encStoreKey[] = "32-length-password-0123456789012";

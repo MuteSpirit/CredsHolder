@@ -16,8 +16,10 @@
 #if defined(EPOXY_DUINO)
 
 #include "blind_call.cpp"
-#include "aunit/AssertMacros.h"
-#include <AUnit.h>
+
+// Must be included as the last header to avoid troubles with macro "test"
+// when such word is used in headers above
+#include <AUnitVerbose.h>
 
 test(blind_call_default_ctor)
 {

@@ -19,6 +19,9 @@
 #include <string.h>
 #include "model_storage.cpp"
 #include "memory_block_storage.hpp"
+
+// Must be included as the last header to avoid troubles with macro "test"
+// when such word is used in headers above
 #include <AUnitVerbose.h>
 
 test(model_storage_ctor)
