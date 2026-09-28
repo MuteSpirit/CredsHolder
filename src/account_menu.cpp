@@ -59,7 +59,7 @@ public:
     explicit operator const char*() const;
 
     /// return real value, stored in field to type it as keyboard
-    const char* operator*() const;
+    const char* value() const;
 
     static Field first() { return Field::login; }
     static Field last() { return Field::password; }
@@ -233,7 +233,7 @@ AccountMenuImpl::next()
 void
 AccountMenuImpl::select()
 {
-    keyboard_.print(static_cast<const char*>(fieldsSl_->selected()));
+    keyboard_.print(fieldsSl_->selected().value());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -334,7 +334,7 @@ AccountField::operator!=(const AccountField& rhs) const
 }
 
 const char*
-AccountField::operator*() const
+AccountField::value() const
 {
     if (!acc_) {
         return "";

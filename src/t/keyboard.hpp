@@ -25,6 +25,11 @@ public:
     virtual bool print(const char* s) override;
     virtual bool push(const uint8_t keyCode) override;
     virtual bool push_tab() override;
+
+    const char* istream() const;
+
+protected:
+    etl::string<255> istream_{""};
 };
 
 #endif // defined(EPOXY_DUINO)

@@ -16,6 +16,7 @@
 #if defined(EPOXY_DUINO)
 #include "account_menu.cpp"
 
+#include "device_inputs.hpp"
 #include "t/in_memory_oled.hpp"
 #include "t/imitated_user_unputs.hpp"
 #include "t/keyboard.cpp"
@@ -65,6 +66,53 @@ test(account_menu_draw_with_acc)
     oled.getLine(1, buf, sz); assertStringCaseEqual("L: accLogin", buf);
     oled.getLine(2, buf, sz); assertStringCaseEqual("P: accPassw", buf);
     oled.getLine(3, buf, sz); assertStringCaseEqual(""           , buf);
+};
+
+test(account_menu_type_login)
+{
+    // Given
+    OledInMem<11, 4> oled;
+    ImitatedUserInputs userInputs;
+    ImitatedKeyboard keyboard;
+
+    AccountMenu accMenu(oled, userInputs, keyboard);
+
+    Account acc{"accName", "accLogin", "accPassw"};
+    accMenu.account(acc);
+    //
+    // When
+    userInputs.tilt(DeviceInputs::UserAction::right);
+
+    // without activate() nothing should happen
+    assertStringCaseEqual("", keyboard.istream());
+    //
+    // but after register callbacks...
+    accMenu.activate();
+
+    // menu should work
+    userInputs.tilt(DeviceInputs::UserAction::right);
+    assertStringCaseEqual("accLogin", keyboard.istream());
+};
+
+
+test(account_menu_type_password)
+{
+    // Given
+    OledInMem<11, 4> oled;
+    ImitatedUserInputs userInputs;
+    ImitatedKeyboard keyboard;
+
+    AccountMenu accMenu(oled, userInputs, keyboard);
+    accMenu.activate();
+
+    Account acc{"accName", "accLogin", "accPassw"};
+    accMenu.account(acc);
+    //
+    // When
+    userInputs.tilt(DeviceInputs::UserAction::down);
+    userInputs.tilt(DeviceInputs::UserAction::right);
+
+    assertStringCaseEqual("accPassw", keyboard.istream());
 };
 
 #endif // defined(EPOXY_DUINO)

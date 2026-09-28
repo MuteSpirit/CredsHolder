@@ -29,6 +29,7 @@ public:
     virtual bool setup(void) override { return true; };
     virtual void loop_step(void) override {};
 
+    void tilt(UserAction act);
     void click(UserAction act);
 
 protected:

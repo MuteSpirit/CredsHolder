@@ -28,6 +28,12 @@ ImitatedUserInputs::unset(UserAction act)
 }
 
 void
+ImitatedUserInputs::tilt(UserAction act)
+{
+    hooks_[static_cast<uint8_t>(act)]();
+}
+
+void
 ImitatedUserInputs::click(UserAction act)
 {
     hooks_[static_cast<uint8_t>(act)]();

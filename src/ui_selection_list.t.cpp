@@ -76,102 +76,102 @@ test(ui_sl_next)
     assertStringCaseEqual("c", sl.selected().c_str());
 }
 
-// test(ui_sl_with_one_item_and_next_jump_to_start)
-// {
-//     OledInMem<16, 4> oled;
-//     etl::array<const char*, 1> sa {"a"};
-//
-//     UISelectionList<typename etl::array<const char* const, 3>::iterator, const char*> sl(oled, "title", sa.cbegin(), sa.cend());
-//
-//     assertStringCaseEqual("a", sl.selected());
-//
-//     sl.next();
-//     assertStringCaseEqual("a", sl.selected());
-//
-//     sl.next();
-//     assertStringCaseEqual("a", sl.selected());
-// }
-//
-// test(ui_sl_with_two_items_and_next_jump_to_start)
-// {
-//     OledInMem<16, 4> oled;
-//     etl::array<const char*, 2> sa {"a", "b"};
-//
-//     UISelectionList<typename etl::array<const char* const, 3>::iterator, const char*> sl(oled, "title", sa.cbegin(), sa.cend());
-//
-//     assertStringCaseEqual("a", sl.selected());
-//
-//     sl.next();
-//     assertStringCaseEqual("b", sl.selected());
-//
-//     sl.next();
-//     assertStringCaseEqual("a", sl.selected());
-// }
-//
-// test(ui_sl_with_one_item_and_prev_jump_to_start)
-// {
-//     OledInMem<16, 4> oled;
-//     etl::array<const char*, 1> sa {"a"};
-//
-//     UISelectionList<typename etl::array<const char* const, 3>::iterator, const char*> sl(oled, "title", sa.cbegin(), sa.cend());
-//
-//     assertStringCaseEqual("a", sl.selected());
-//
-//     sl.prev();
-//     assertStringCaseEqual("a", sl.selected());
-//
-//     sl.prev();
-//     assertStringCaseEqual("a", sl.selected());
-// }
-//
-// test(ui_sl_with_two_items_and_prev_jump_to_end)
-// {
-//     // Given
-//     OledInMem<16, 4> oled;
-//     etl::array<const char*, 2> sa {"a", "b"};
-//     UISelectionList<typename etl::array<const char* const, 3>::iterator, const char*> sl(oled, "title", sa.cbegin(), sa.cend());
-//
-//     assertStringCaseEqual("a", sl.selected());
-//     // When
-//     sl.prev();
-//     // Then
-//     assertStringCaseEqual("b", sl.selected());
-//
-//     sl.prev();
-//     assertStringCaseEqual("a", sl.selected());
-// };
-//
-// test(ui_sl_draw_without_title)
-// {
-//     // Given
-//     OledInMem<1, 4> oled;
-//     etl::array<const char*, 3> sa {"a", "b", "c"};
-//     UISelectionList<typename etl::array<const char* const, 3>::iterator, const char*> sl(oled, nullptr, sa.cbegin(), sa.cend());
-//     // When
-//     sl.draw();
-//     // Then
-//     assertStringCaseEqual("abc", oled.getBuffer());
-// };
-//
-// test(ui_sl_draw_with_title)
-// {
-//     // Given
-//     OledInMem<1, 4> oled;
-//     etl::array<const char*, 3> sa {"a", "b", "c"};
-//     UISelectionList<typename etl::array<const char* const, 3>::iterator, const char*> sl(oled, "t", sa.cbegin(), sa.cend());
-//     // When
-//     sl.draw();
-//     // Then
-//     assertStringCaseEqual("tabc", oled.getBuffer());
-// };
-//
-// test(ui_sl_next_with_null_start_and_end)
-// {
-//     // Given
-//     OledInMem<1, 4> oled;
-//     UISelectionList<typename etl::array<const char* const, 3>::iterator, const char*> sl(oled, nullptr, nullptr, nullptr);
-//     // When
-//     assertNoFatalFailure(sl.next());
-// };
+test(ui_sl_with_one_item_and_next_jump_to_start)
+{
+    OledInMem<16, 4> oled;
+    etl::array<const char*, 1> sa {"a"};
+
+    UISelectionList<typename etl::array<const char* const, 3>::iterator, const char*> sl(oled, "title", sa.cbegin(), sa.cend());
+
+    assertStringCaseEqual("a", sl.selected());
+
+    sl.next();
+    assertStringCaseEqual("a", sl.selected());
+
+    sl.next();
+    assertStringCaseEqual("a", sl.selected());
+}
+
+test(ui_sl_with_two_items_and_next_jump_to_start)
+{
+    OledInMem<16, 4> oled;
+    etl::array<const char*, 2> sa {"a", "b"};
+
+    UISelectionList<typename etl::array<const char* const, 3>::iterator, const char*> sl(oled, "title", sa.cbegin(), sa.cend());
+
+    assertStringCaseEqual("a", sl.selected());
+
+    sl.next();
+    assertStringCaseEqual("b", sl.selected());
+
+    sl.next();
+    assertStringCaseEqual("a", sl.selected());
+}
+
+test(ui_sl_with_one_item_and_prev_jump_to_start)
+{
+    OledInMem<16, 4> oled;
+    etl::array<const char*, 1> sa {"a"};
+
+    UISelectionList<typename etl::array<const char* const, 3>::iterator, const char*> sl(oled, "title", sa.cbegin(), sa.cend());
+
+    assertStringCaseEqual("a", sl.selected());
+
+    sl.prev();
+    assertStringCaseEqual("a", sl.selected());
+
+    sl.prev();
+    assertStringCaseEqual("a", sl.selected());
+}
+
+test(ui_sl_with_two_items_and_prev_jump_to_end)
+{
+    // Given
+    OledInMem<16, 4> oled;
+    etl::array<const char*, 2> sa {"a", "b"};
+    UISelectionList<typename etl::array<const char* const, 3>::iterator, const char*> sl(oled, "title", sa.cbegin(), sa.cend());
+
+    assertStringCaseEqual("a", sl.selected());
+    // When
+    sl.prev();
+    // Then
+    assertStringCaseEqual("b", sl.selected());
+
+    sl.prev();
+    assertStringCaseEqual("a", sl.selected());
+};
+
+test(ui_sl_draw_without_title)
+{
+    // Given
+    OledInMem<1, 4> oled;
+    etl::array<const char*, 3> sa {"a", "b", "c"};
+    UISelectionList<typename etl::array<const char* const, 3>::iterator, const char*> sl(oled, nullptr, sa.cbegin(), sa.cend());
+    // When
+    sl.draw();
+    // Then
+    assertStringCaseEqual("abc", oled.getBuffer());
+};
+
+test(ui_sl_draw_with_title)
+{
+    // Given
+    OledInMem<1, 4> oled;
+    etl::array<const char*, 3> sa {"a", "b", "c"};
+    UISelectionList<typename etl::array<const char* const, 3>::iterator, const char*> sl(oled, "t", sa.cbegin(), sa.cend());
+    // When
+    sl.draw();
+    // Then
+    assertStringCaseEqual("tabc", oled.getBuffer());
+};
+
+test(ui_sl_next_with_null_start_and_end)
+{
+    // Given
+    OledInMem<1, 4> oled;
+    UISelectionList<typename etl::array<const char* const, 3>::iterator, const char*> sl(oled, nullptr, nullptr, nullptr);
+    // When
+    assertNoFatalFailure(sl.next());
+};
 
 #endif // defined(EPOXY_DUINO)

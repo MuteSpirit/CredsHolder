@@ -19,7 +19,7 @@
 bool
 ImitatedKeyboard::print(const char* s)
 {
-    (void)s;
+    istream_ += s;
     return true;
 }
 
@@ -27,13 +27,27 @@ bool
 ImitatedKeyboard::push(const uint8_t keyCode)
 {
     (void)keyCode;
+    // FIXME: need to take/include "class/hid/hid.h" from Adafruit_TinyUSB_Library 
+    // because AUnit does not support it and include does not work
+
+    // uint8_t const conv_table[128][2] =  { HID_KEYCODE_TO_ASCII };
+    // bool shift = false;
+    // char ch = shift ? conv_table[keyCode][1] : conv_table[keyCode][0];
+    // istream_ += ch;
     return true;
 }
 
 bool
 ImitatedKeyboard::push_tab()
 {
+    istream_ += '\t';
     return true;
+}
+
+const char*
+ImitatedKeyboard::istream() const
+{
+    return istream_.c_str();
 }
 
 #endif // defined(EPOXY_DUINO)
