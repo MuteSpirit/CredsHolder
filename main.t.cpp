@@ -21,12 +21,12 @@
 void
 setup()
 {
-  Serial.setLineModeUnix(); // use Unix line end instead of DOS
+    Serial.setLineModeUnix(); // use Unix line end instead of DOS
 }
 
 void
 loop()
 {
-  aunit::TestRunner::run();
+    aunit::TestRunner::run();
 }
 #endif // EPOXY_DUINO
