@@ -218,6 +218,71 @@ void A<T>::foo()
 
 ```
 
+# Unit Tests
+
+Reasons to use:
+* testable code
+* quick compilation and run on host system
+* ability to use debugger 
+* ability to develop without target board
+
+## File Naming
+
+`<filename>.t.cpp`
+
+## ifdef Guards
+
+Use unit test guards to not allow Arduino IDE try to compile test code into board firmware:
+<!-- TODO: try find another way -->
+
+```c++
+// ... license header is here ...
+#if defined(EPOXY_DUINO)
+... unit test code
+#endif // defined(EPOXY_DUINO)
+```
+Negative effect: IDE code highlighting breaks because it thinks that code will be not compiled
+
+## helper classes
+
+It's useful to have full access to internal fields of class under test.
+
+Implement that via friend class. It's enough to declare it in module source and define later in unit test module, e.g.
+
+```
+#
+# <module>.hpp
+#
+
+class ABCTestHelper;
+
+class ABC
+{
+public:
+    void foo();
+
+private:
+    int bar_;
+};
+```
+
+```
+#
+# <module>.t.cpp
+#
+
+class ABCTestHelper
+{
+public:
+    ABCTestHelper(ABC&);
+
+    int bar() const {return abc_.bar_; };
+
+public:
+    ABC &abc_;
+};
+```
+
 # Development Environment
 
 ## Dependencies
