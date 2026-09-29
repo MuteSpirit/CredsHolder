@@ -50,9 +50,6 @@ protected:
 
 protected:
     /// Buffer for implementation class instance
-    /// @details Compiler will say required size via similar message:
-    ///   src/account_menu.cpp|40 col 10| warning: placement new constructing an object of type 'AccountMenuImpl' and size '180' in a region of type 'uint8_t [16]' {aka 'unsigned char [16]'} and size '16' [-Wplacement-new=]
-    ///   ||    40 |     new (impl_) AccountMenuImpl(keyboard, oled, userInputs);
-    ///   ||       |          ^~~~~
+    /// @details Use static_assert in constructor to check required size at compile time 
     uint8_t impl_[200];
 };

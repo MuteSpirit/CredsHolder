@@ -13,29 +13,42 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
-#pragma once
+#include "account.hpp"
 
-#include <inttypes.h>
-#include <stdio.h>
-#include <cstddef>
+#include <string.h>
 
-// TODO: use enum ?
-#define ACCOUNT_NAME_SIZE 32
-#define USERNAME_SIZE     32
-#define PASSWORD_SIZE     32
-
-struct __attribute__((packed)) Account
+void acc_ctor(Account& acc)
 {
-    char name[ACCOUNT_NAME_SIZE];
-    char username[USERNAME_SIZE];
-    char password[PASSWORD_SIZE];
-};
+    memset(acc.name, 0, sizeof(acc.name));
+    memset(acc.username, 0, sizeof(acc.username));
+    memset(acc.password, 0, sizeof(acc.password));
+}
 
-template<typename Object>
-char *get_key_ptr(Object &o);
+bool
+operator==(const struct Account& lhs, const struct Account& rhs)
+{
+    return !strncmp(lhs.name, rhs.name, sizeof(lhs.name))
+        && !strncmp(lhs.username, rhs.username, sizeof(lhs.username))
+        && !strncmp(lhs.password, rhs.password, sizeof(lhs.password));
+}
 
-template<typename Object>
-uint8_t get_key_size();
+template<>
+char *
+get_key_ptr(Account &o)
+{
+    return o.name;
+}
 
-template<typename Object>
-ptrdiff_t get_key_offset();
+template<>
+uint8_t
+get_key_size<Account>()
+{
+    return sizeof(Account::name);
+}
+
+template<>
+ptrdiff_t
+get_key_offset<Account>()
+{
+    return offsetof(Account, name);
+}

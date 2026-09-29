@@ -39,7 +39,6 @@ public:
     virtual void factoryReset() override;
 
     MemoryBlockStorage();
-    ~MemoryBlockStorage() = default;
 
 protected:
     uint8_t getResetFlag();

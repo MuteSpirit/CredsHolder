@@ -27,6 +27,7 @@
 class UISelectionListTestHelper;
 
 
+////////////////////////////////////////////////////////////////////////////////
 template<typename Iterator, typename T>
 class UISelectionList
 {

@@ -17,8 +17,8 @@
 
 // #include "src/auth.hpp"
 #include "src/cli.hpp"
-#include "src/model.hpp"
-#include "src/model_storage.hpp"
+#include "src/account.hpp"
+#include "src/model/storage.hpp"
 #include "src/ssd1306_oled.hpp"
 #include "src/version.hpp"
 #include "src/display_ui.hpp"
@@ -28,7 +28,6 @@
 #include "src/settings_menu.hpp"
 #include "src/settings.hpp"
 // #include "src/auth_form.hpp"
-#include "src/model_storage.hpp"
 #include "src/memory_block_storage.hpp"
 
 #if defined(ARDUINO_ARCH_NRF52)

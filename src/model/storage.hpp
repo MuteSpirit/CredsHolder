@@ -18,34 +18,40 @@
 #include <inttypes.h>
 #include <stdio.h>
 
-// TODO: use size_t instead of uint32_t as address type
 
 class BlockStorage;
+template<typename T> class ModelIterator;
 
 
-template<typename Object>
+////////////////////////////////////////////////////////////////////////////////
+template<typename T>
 class ModelStorage
 {
 public:
-    using ObjIndex = uint16_t;
+    // TODO: add more unit tests after change type from unsigned to signed
+    using ObjIndex = int16_t;
 
 public:
     ModelStorage(BlockStorage &bs) : bs_(bs) {};
     ~ModelStorage() = default;
 
     bool isExist(const char* key);
-    bool search(const char* key, Object &t);
+    bool search(const char* key, T &t);
 
+    bool empty() const;
     ObjIndex count() const;
     ObjIndex maxIdx() const;
 
-    bool get(const ObjIndex idx, Object &t);
-    bool getNext(const ObjIndex from, Object &t, ObjIndex &idx);
-    bool getPrev(const ObjIndex from, Object &t, ObjIndex &idx);
-    bool add(const Object &t);
+    bool get(const ObjIndex idx, T &t) const;
+    bool getNext(const ObjIndex from, T &t, ObjIndex &idx) const;
+    bool getPrev(const ObjIndex from, T &t, ObjIndex &idx) const;
+    bool add(const T &t);
     bool del(const char* key);
 
     void factoryReset();
+
+    ModelIterator<T> cbegin() const;
+    ModelIterator<T> cend() const;
 
 protected:
     /// @brief Store not only original model object but also special flag.
@@ -61,7 +67,7 @@ protected:
             COUNT
         };
 
-        Object obj_;
+        T obj_;
         uint8_t reserve_[15];
         uint8_t commitFlag_;
     };

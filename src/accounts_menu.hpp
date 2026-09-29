@@ -17,7 +17,7 @@
 #include "creds_holder.hpp"
 
 #include "menu.hpp"
-#include "model.hpp"
+#include "model/account.hpp"
 #include "keyboard.hpp"
 #include "blind_call.hpp"
 #include "ui_selection_list.hpp"
@@ -29,7 +29,9 @@ class Oled;
 template<typename T>
 class ModelStorage;
 
+class AccountsMenuImpl;
 
+////////////////////////////////////////////////////////////////////////////////
 class AccountsMenu : public Menu
 {
 public:
@@ -43,24 +45,14 @@ public:
 
     virtual void draw() override;
 
-    // Account selected() const;
+    Account selected() const;
 
 protected:
-    void prevAcc();
-    void nextAcc();
-    void navigateAccounts(int direction);
-
-    void selectAcc();
-
-    BlindCall selectItemCb_; /// jump to form showing concrete Account
-    BlindCall returnCb_; /// jump back to form showed before "Accounts'
+    AccountsMenuImpl* impl();
+    const AccountsMenuImpl* impl() const;
 
 protected:
-    Oled& oled_;
-    DeviceInputs& userInputs_;
-
-    const Settings& settings_;
-    ModelStorage<Account>& modelStore_;
-
-    // UISelectionList *accSl_;
+    /// Buffer for implementation class instance.
+    /// @details Use static_assert in constructor to check required size at compile time 
+    uint8_t impl_[16];
 };

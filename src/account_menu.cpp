@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include "account_menu.hpp"
-// #include <new>
+#include <new>
 
 #include "Embedded_Template_Library.h"
 #include "etl/memory.h"
@@ -23,7 +23,7 @@
 
 #include "oled.hpp"
 #include "device_inputs.hpp"
-#include "model.hpp"
+#include "model/account.hpp"
 #include "keyboard.hpp"
 #include "ui_selection_list.hpp"
 
@@ -46,10 +46,10 @@ public:
 
     AccountField& operator=(const AccountField& rhs);
 
-    AccountField operator++(); // prefix increment
+    AccountField& operator++(); // prefix increment
     AccountField operator++(int); // postfix increment
 
-    AccountField operator--(); // prefix decrement
+    AccountField& operator--(); // prefix decrement
     AccountField operator--(int); // postfix decrement
 
     bool operator==(const AccountField& rhs) const;
@@ -85,10 +85,10 @@ public:
 
     const AccountField& operator*() const;
 
-    AccountFieldIterator operator++(); // prefix increment
+    AccountFieldIterator& operator++(); // prefix increment
     AccountFieldIterator operator++(int); // postfix increment
 
-    AccountFieldIterator operator--(); // prefix decrement
+    AccountFieldIterator& operator--(); // prefix decrement
     AccountFieldIterator operator--(int); // postfix decrement
 
     bool operator==(const AccountFieldIterator& rhs) const;
@@ -136,6 +136,7 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 AccountMenu::AccountMenu(Oled& oled, DeviceInputs& userInputs, Keyboard& keyboard)
 {
+    static_assert(sizeof(impl_) == sizeof(AccountMenuImpl), "fix AccountMenu::impl_ size");
     new (impl_) AccountMenuImpl(oled, userInputs, keyboard);
 }
 
@@ -279,7 +280,7 @@ void AccountField::updatePrintStr()
     }
 }
 
-AccountField
+AccountField&
 AccountField::operator++()
 {
     if (end() != field_) {
@@ -300,7 +301,7 @@ AccountField::operator++(int) // postfix ++
     return tmp;
 }
 
-AccountField
+AccountField&
 AccountField::operator--()
 {
     if (first() != field_) {
@@ -382,7 +383,7 @@ AccountFieldIterator::operator*() const
     return field_;
 }
 
-AccountFieldIterator AccountFieldIterator::operator++()
+AccountFieldIterator& AccountFieldIterator::operator++()
 {
     ++field_;
     return *this;
@@ -395,7 +396,7 @@ AccountFieldIterator AccountFieldIterator::operator++(int)
     return tmp;
 }
 
-AccountFieldIterator AccountFieldIterator::operator--()
+AccountFieldIterator& AccountFieldIterator::operator--()
 {
     --field_;
     return *this;

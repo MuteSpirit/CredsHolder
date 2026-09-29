@@ -13,25 +13,33 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
-#include "model.hpp"
+#pragma once
 
-template<>
-char *
-get_key_ptr(Account &o)
-{
-    return o.name;
-}
+#include <inttypes.h>
+#include <stdio.h>
+#include <cstddef>
 
-template<>
-uint8_t
-get_key_size<Account>()
-{
-    return sizeof(Account::name);
-}
+// TODO: use enum ?
+#define ACCOUNT_NAME_SIZE 32
+#define USERNAME_SIZE     32
+#define PASSWORD_SIZE     32
 
-template<>
-ptrdiff_t
-get_key_offset<Account>()
+struct __attribute__((packed)) Account
 {
-    return offsetof(Account, name);
-}
+    char name[ACCOUNT_NAME_SIZE];
+    char username[USERNAME_SIZE];
+    char password[PASSWORD_SIZE];
+};
+
+void acc_ctor(Account&); /// zeroes internal string fields
+
+bool operator==(const struct Account& lhs, const struct Account& rhs);
+
+template<typename Object>
+char *get_key_ptr(Object &o);
+
+template<typename Object>
+uint8_t get_key_size();
+
+template<typename Object>
+ptrdiff_t get_key_offset();

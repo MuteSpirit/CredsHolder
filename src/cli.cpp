@@ -18,9 +18,9 @@
 #include <c/arg.h>
 
 #include "cli.hpp"
-#include "model.hpp"
+#include "model/account.hpp"
 #include "version.hpp"
-#include "model_storage.hpp"
+#include "model/storage.hpp"
 
 /******************************************************************************/
 // from SimpleCLI/c/arg.c

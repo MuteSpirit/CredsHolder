@@ -13,31 +13,30 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
-#include "model_storage.hpp"
-#include "model.hpp"
-#include "block_storage.hpp"
-#include <inttypes.h>
-#include <stdio.h>
+#include "storage.hpp"
 #include <string.h>
 #include <sys/types.h>
+#include "account.hpp"
+#include "../block_storage.hpp"
 
-
+////////////////////////////////////////////////////////////////////////////////
 // Let's instantiate for Account to keep control on ModelStorage class usage
 template class ModelStorage<Account>;
 
-template<typename Object>
+////////////////////////////////////////////////////////////////////////////////
+template<typename T>
 bool
-ModelStorage<Object>::isExist(const char* key)
+ModelStorage<T>::isExist(const char* key)
 {
-    Object o;  
+    T o;  
     for (ObjIndex i = 0; isOkIdx(i); ++i) {
         if (isFreeAccount(i)) {
             continue;
         }
 
-        bs_.read(getKeyAddr(i), reinterpret_cast<uint8_t*>(get_key_ptr(o)), get_key_size<Object>());
+        bs_.read(getKeyAddr(i), reinterpret_cast<uint8_t*>(get_key_ptr(o)), get_key_size<T>());
 
-        if (!strncmp(key, get_key_ptr(o), get_key_size<Object>())) {
+        if (!strncmp(key, get_key_ptr(o), get_key_size<T>())) {
             return true;
         }
     }
@@ -45,18 +44,18 @@ ModelStorage<Object>::isExist(const char* key)
     return false;
 }
 
-template<typename Object>
+template<typename T>
 bool
-ModelStorage<Object>::search(const char* key, Object &t)
+ModelStorage<T>::search(const char* key, T &t)
 {
     for (ObjIndex i = 0; isOkIdx(i); ++i) {
         if (isFreeAccount(i)) {
             continue;
         }
 
-        bs_.read(getKeyAddr(i), reinterpret_cast<uint8_t*>(get_key_ptr(t)), get_key_size<Object>());
+        bs_.read(getKeyAddr(i), reinterpret_cast<uint8_t*>(get_key_ptr(t)), get_key_size<T>());
 
-        if (!strncmp(key, get_key_ptr(t), get_key_size<Object>())) {
+        if (!strncmp(key, get_key_ptr(t), get_key_size<T>())) {
             bs_.read(idx2addr(i), t);
             return true;
         }
@@ -65,24 +64,36 @@ ModelStorage<Object>::search(const char* key, Object &t)
     return false;
 }
 
-template<typename Object>
+template<typename T>
 bool
-ModelStorage<Object>::isOkIdx(const ObjIndex idx) const
+ModelStorage<T>::isOkIdx(const ObjIndex idx) const
 {
     size_t startAddr = idx2addr(idx);
-    return bs_.isAddrOk(startAddr) && (bs_.isAddrOk(startAddr + sizeof(Object) - sizeof(ObjInStorage::commitFlag_)));
+    return bs_.isAddrOk(startAddr) && (bs_.isAddrOk(startAddr + sizeof(T) - sizeof(ObjInStorage::commitFlag_)));
 }
 
-template<typename Object>
+template<typename T>
 size_t
-ModelStorage<Object>::getKeyAddr(const ObjIndex idx)
+ModelStorage<T>::getKeyAddr(const ObjIndex idx)
 {
-    return idx2addr(idx) + get_key_offset<Object>();
+    return idx2addr(idx) + get_key_offset<T>();
 }
 
-template<typename Object>
-typename ModelStorage<Object>::ObjIndex
-ModelStorage<Object>::count() const
+template<typename T>
+bool
+ModelStorage<T>::empty() const
+{
+    for (ObjIndex idx = 0; isOkIdx(idx); ++idx) {
+        if (!isFreeAccount(idx)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+template<typename T>
+typename ModelStorage<T>::ObjIndex
+ModelStorage<T>::count() const
 {
     ObjIndex c = 0;
     for (ObjIndex idx = 0; isOkIdx(idx); ++idx) {
@@ -93,32 +104,32 @@ ModelStorage<Object>::count() const
     return c;
 }
 
-template<typename Object>
-typename ModelStorage<Object>::ObjIndex
-ModelStorage<Object>::maxIdx() const
+template<typename T>
+typename ModelStorage<T>::ObjIndex
+ModelStorage<T>::maxIdx() const
 {
     size_t maxAvailableSlots = (bs_.maxAddr() - bs_.minAddr()) / sizeof(ObjInStorage);
     return maxAvailableSlots > 0 ? maxAvailableSlots - 1 : 0;
 }
 
-template<typename Object>
+template<typename T>
 bool
-ModelStorage<Object>::isFreeAccount(const ObjIndex idx) const
+ModelStorage<T>::isFreeAccount(const ObjIndex idx) const
 {
     return static_cast<uint8_t>(ObjInStorage::Committment::free) == bs_.read(idx2addr(idx) + offsetof(ObjInStorage, commitFlag_));
 }
 
-template<typename Object>
+template<typename T>
 bool
-ModelStorage<Object>::get(const ObjIndex idx, Object &o)
+ModelStorage<T>::get(const ObjIndex idx, T &o) const
 {
     bs_.read(idx2addr(idx), o);
-    return true;
+    return !isFreeAccount(idx);
 }
 
-template<typename Object>
+template<typename T>
 bool
-ModelStorage<Object>::getNext(const ObjIndex from, Object &o, ObjIndex &idx)
+ModelStorage<T>::getNext(const ObjIndex from, T &o, ObjIndex &idx) const
 {
     for (ObjIndex i = from + 1; isOkIdx(i); ++i) {
         if (!isFreeAccount(i)) {
@@ -130,9 +141,9 @@ ModelStorage<Object>::getNext(const ObjIndex from, Object &o, ObjIndex &idx)
     return false;
 }
 
-template<typename Object>
+template<typename T>
 bool
-ModelStorage<Object>::getPrev(const ObjIndex from, Object &o, ObjIndex &idx)
+ModelStorage<T>::getPrev(const ObjIndex from, T &o, ObjIndex &idx) const
 {
     for (ObjIndex i = from; i > 0; --i) {  // if set "i >= 0" as stop condition then index 0 will be missed
         ObjIndex pos = i > 0 ? i - 1 : 0;
@@ -146,9 +157,9 @@ ModelStorage<Object>::getPrev(const ObjIndex from, Object &o, ObjIndex &idx)
     return false;
 }
 
-template<typename Object>
+template<typename T>
 bool
-ModelStorage<Object>::add(const Object &o)
+ModelStorage<T>::add(const T &o)
 {
     ObjIndex idx = 0;
     if (!getFreeObjectIndex(idx)) {
@@ -161,9 +172,9 @@ ModelStorage<Object>::add(const Object &o)
     return true;
 }
 
-template<typename Object>
+template<typename T>
 bool
-ModelStorage<Object>::getFreeObjectIndex(ObjIndex &idx)
+ModelStorage<T>::getFreeObjectIndex(ObjIndex &idx)
 {
     for (ObjIndex i = 0; isOkIdx(i); ++i) {
         if (isFreeAccount(i)) {
@@ -174,20 +185,20 @@ ModelStorage<Object>::getFreeObjectIndex(ObjIndex &idx)
     return false;
 }
 
-template<typename Object>
+template<typename T>
 bool
-ModelStorage<Object>::del(const char* key)
+ModelStorage<T>::del(const char* key)
 {
-    Object o;
+    T o;
 
     for (ObjIndex i = 0; isOkIdx(i); ++i) {
         if (isFreeAccount(i)) {
             continue;
         }
 
-        bs_.read(getKeyAddr(i), reinterpret_cast<uint8_t*>(get_key_ptr(o)), get_key_size<Object>());
+        bs_.read(getKeyAddr(i), reinterpret_cast<uint8_t*>(get_key_ptr(o)), get_key_size<T>());
 
-        if (!strncmp(key, get_key_ptr(o), get_key_size<Object>())) {
+        if (!strncmp(key, get_key_ptr(o), get_key_size<T>())) {
             // TODO: make zeroing Account slot for more secure
             // TODO: add count of writes to slot to stop use it after EEPROM max read/write operations limit
             bs_.write(idx2addr(i) + offsetof(ObjInStorage, commitFlag_), 
@@ -199,16 +210,34 @@ ModelStorage<Object>::del(const char* key)
     return false;
 }
 
-template<typename Object>
+template<typename T>
 size_t
-ModelStorage<Object>::idx2addr(const ObjIndex idx) const
+ModelStorage<T>::idx2addr(const ObjIndex idx) const
 {
     return bs_.minAddr() + idx * sizeof(ObjInStorage);
 }
 
-template<typename Object>
+template<typename T>
 void
-ModelStorage<Object>::factoryReset()
+ModelStorage<T>::factoryReset()
 {
     bs_.factoryReset();
+}
+
+template<typename T>
+ModelIterator<T>
+ModelStorage<T>::cbegin() const
+{
+    // special case when storage is empty: need to return the same as end()
+    if (empty()) {
+        return cend();
+    }
+    return ModelIterator<T>(*this, ModelIterator<T>::FIRST);
+}
+
+template<typename T>
+ModelIterator<T>
+ModelStorage<T>::cend() const
+{
+    return ModelIterator<T>(*this, ModelIterator<T>::END);
 }

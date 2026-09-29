@@ -17,8 +17,8 @@
 #include <inttypes.h>
 #include <string.h>
 
-#include "model.hpp"
-#include "model_storage.hpp"
+#include "model/account.hpp"
+#include "model/storage.hpp"
 #include "memory_block_storage.hpp"
 #include "encrypted_block_storage.hpp"
 
@@ -101,7 +101,7 @@ test(encrypted_model_storage_get_next_prev)
     Account acc;
     memset(&acc, 0, sizeof(acc));
 
-    uint16_t idx = 0;
+    typename ModelStorage<Account>::ObjIndex idx = 0;
     //
     // Next
     assertTrue(m.getNext(0, acc, idx));
@@ -217,7 +217,7 @@ test(encrypted_model_storage_get_next_prev_over_free_spot)
     Account acc;
     memset(&acc, 0, sizeof(acc));
 
-    uint16_t idx = 0;
+    typename ModelStorage<Account>::ObjIndex idx = 0;
     //
     // Next
     assertTrue(m.getNext(0, acc, idx));
@@ -262,7 +262,7 @@ test(encrypted_model_storage_add_del_and_add_to_fill_free_spot)
     Account acc;
     memset(&acc, 0, sizeof(acc));
 
-    uint16_t idx = 0;
+    typename ModelStorage<Account>::ObjIndex idx = 0;
     //
     // Next
     assertTrue(m.getNext(0, acc, idx));
