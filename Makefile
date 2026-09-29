@@ -64,8 +64,7 @@ fritzing:
 
 .PHONY: clean_app
 clean_app:
-	for f in "$(APP_NAME).o  $(APP_NAME).out  $(patsubst %.cpp,%.o,$(APP_SRCS_CPP))"; do if [ -f "$$f" ]; then rm "$$f"; fi; done
-	for f in "$(DOC_FILES)"; do if [ -f "$$f" ]; then rm "$$f"; fi; done
+	rm -f $(APP_NAME).o $(APP_NAME).out $(patsubst %.cpp,%.o,$(APP_SRCS_CPP)) $(DOC_FILES)
 	$(MAKE) -C ./poc/ clean
 	$(MAKE) -C ./proposals/ clean
 

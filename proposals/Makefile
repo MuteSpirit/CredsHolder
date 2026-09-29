@@ -22,5 +22,5 @@ html: $(DOC_FILES) $(PNG_FILES) $(RENDERED_PUML_FILES)
 	/usr/bin/java -Djava.awt.headless=true -Djava.net.useSystemProxies=true -jar /usr/share/plantuml/plantuml.jar -tpng $<
 
 clean:
-	for f in "$(DOC_FILES)"; do if [ -f "$$f" ]; then rm "$$f"; fi; done
+	rm -f $(DOC_FILES)
 
