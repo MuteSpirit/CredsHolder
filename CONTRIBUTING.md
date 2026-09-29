@@ -180,7 +180,33 @@ Usage of "TRIZ Ideal Result" formulation, "TRIZ System Operator" and "TRIZ Princ
 
 ## C++ Code Style
 
-1. Do not add template class functions implementation inside class declaration because it harm class API readability:
+1. Function/method definition:
+  * return type of separate line to have function name at start of separate line too and make visual name recognition easier
+  * opening curly brace is on new line
+
+For example
+```c++
+void
+foo(size_t v)
+{
+    return 2 * v;
+}
+
+bool
+A::bar() const
+{
+    return false;
+}
+
+template<typename T>
+bool
+B<T>::zoo()
+{
+    return true;
+}
+```
+
+2. Do not add template class functions implementation inside class declaration because it harm class API readability:
 Wrong:
 ```c++
 template<typename T>
@@ -223,7 +249,7 @@ void A<T>::foo()
 Reasons to use:
 * testable code
 * quick compilation and run on host system
-* ability to use debugger 
+* ability to use debugger
 * ability to develop without target board
 
 ## File Naming
@@ -242,6 +268,14 @@ Use unit test guards to not allow Arduino IDE try to compile test code into boar
 #endif // defined(EPOXY_DUINO)
 ```
 Negative effect: IDE code highlighting breaks because it thinks that code will be not compiled
+
+## AUnit header is last one
+
+```c++
+// Must be included as the last header to avoid troubles with macro "test"
+// when such word is used in headers above
+#include <AUnitVerbose.h>
+```
 
 ## helper classes
 
