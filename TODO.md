@@ -28,8 +28,12 @@
   * typing login/password
   * no encryption, no storage on microSD, hard-coded accounts
 * [ ] build test objects/exec in separate folder
+* [ ] build .o files for tests using all .cpp files, not .t.cpp only
 * [ ] scope code within new C++ namespace "creds_holder"
 * [ ] auto generation compiler_commands.json
+* [ ] Implement "insulation" as template class
+* [ ] Include "creds_holder.hpp" globally via CFLAGS/CPPFLAGS/CXXFLAGS instead of explicit one in each source file
+* [ ] Build Adafruit_nRFCrypto under AUnit
 * [ ] propose authentication
   * (blocked) vibration motor module is in delivery
 * [ ] Implement calibration
