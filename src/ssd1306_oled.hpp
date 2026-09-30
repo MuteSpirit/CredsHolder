@@ -24,10 +24,9 @@
 #include <U8x8lib.h>
 // Rejected OLED displays libraries
 // * SSD1306AsciiAvrI2c - for Arduino AVR only and not supported on NRF52840
-// * GyverOLED does not allow to set font
+// * GyverOLED does has only one embed font
 // * GyverOLEDMenu draw ugly menu items
 
-#include "ui_selection_list.hpp"
 #include "oled.hpp"
 
 /// SSD1306 I2C OLED 128x64 display class
@@ -53,9 +52,4 @@ public:
 
 protected:
    U8X8_SSD1306_128X64_NONAME_HW_I2C u8x8_ {/* reset=*/ U8X8_PIN_NONE};
-
-   // friend etl::unique_ptr<UISelectionList> new_sl(const char* title,
-   //                                               Oled& oled, 
-   //                                               typename UISelectionList::const_iterator start, 
-   //                                               typename UISelectionList::const_iterator end);
 };

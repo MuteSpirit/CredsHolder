@@ -136,7 +136,7 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 AccountMenu::AccountMenu(Oled& oled, DeviceInputs& userInputs, Keyboard& keyboard)
 {
-    static_assert(sizeof(impl_) == sizeof(AccountMenuImpl), "fix AccountMenu::impl_ size");
+    static_assert(sizeof(impl_) >= sizeof(AccountMenuImpl), "Fix AccountMenu::impl_ size");
     new (impl_) AccountMenuImpl(oled, userInputs, keyboard);
 }
 

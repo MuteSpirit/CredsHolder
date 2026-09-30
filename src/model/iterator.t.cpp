@@ -13,12 +13,12 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
-// #if defined(EPOXY_DUINO)
+#if defined(EPOXY_DUINO)
 
 // !!! Do not change sequence of next includes to avoid compilation error like
 //   ‘ModelIterator’ does not name a type [-Wtemplate-body
-#include "storage.cpp"
-#include "iterator.cpp"
+#include "storage.hpp"
+#include "iterator.hpp"
 
 #include "account.hpp"
 #include "../memory_block_storage.hpp"
@@ -61,23 +61,4 @@ testF(ModelIteratorTest, ctor_empty_iterator)
     assertTrue(*it == emptyAcc);
 };
 
-//
-// test(model_iterator_ctor)
-// {
-//     MemoryBlockStorage<1024, 64> bs;
-//     ModelStorage<Account> ms(bs);
-//
-//     Account acc0 {.name = "n0", .username = "u0", .password = "p0"};
-//     Account acc1 {.name = "n1", .username = "u1", .password = "p1"};
-//     Account acc2 {.name = "n2", .username = "u2", .password = "p2"};
-//
-//     bs.factoryReset();
-//
-//     assertTrue(ms.add(acc0));
-//     assertTrue(ms.add(acc1));
-//     assertTrue(ms.add(acc2));
-//
-//     ModelIterator<Account> it(ms);
-// };
-
-// #endif // EPOXY_DUINO
+#endif // EPOXY_DUINO

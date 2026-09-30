@@ -17,11 +17,8 @@
 #include <string.h>
 #include <sys/types.h>
 #include "account.hpp"
+#include "iterator.hpp"
 #include "../block_storage.hpp"
-
-////////////////////////////////////////////////////////////////////////////////
-// Let's instantiate for Account to keep control on ModelStorage class usage
-template class ModelStorage<Account>;
 
 ////////////////////////////////////////////////////////////////////////////////
 template<typename T>
@@ -241,3 +238,7 @@ ModelStorage<T>::cend() const
 {
     return ModelIterator<T>(*this, ModelIterator<T>::END);
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// Let's instantiate for Account to keep control on ModelStorage class usage
+template class ModelStorage<Account>;

@@ -14,12 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include "iterator.hpp"
+
+#include <new>
 #include "account.hpp"
 #include "storage.hpp"
-
-////////////////////////////////////////////////////////////////////////////////
-// Let's instantiate for Account to keep control on ModelStorage class usage
-template class ModelIterator<Account>;
 
 ////////////////////////////////////////////////////////////////////////////////
 template<typename T>
@@ -49,8 +47,8 @@ public:
 template<typename T>
 ModelIterator<T>::ModelIterator(const ModelStorage<T> &store, typename ModelStorage<T>::ObjIndex idx)
 {
-    static_assert(sizeof(impl_) == sizeof(ModelIteratorImpl<T>), "fix ModelIterator<T>::impl_ size");
-    new(impl_) ModelIteratorImpl<T>(store, idx);
+    static_assert(sizeof(impl_) >= sizeof(ModelIteratorImpl<T>), "fix ModelIterator<T>::impl_ size");
+    new (impl_) ModelIteratorImpl<T>(store, idx);
 }
 
 template<typename T>
@@ -179,3 +177,7 @@ ModelIterator<T>::operator!=(const ModelIterator<T>& rhs) const
 {
     return not operator==(rhs);
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// Let's instantiate for Account to keep control on ModelStorage class usage
+template class ModelIterator<Account>;

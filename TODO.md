@@ -34,6 +34,7 @@
 * [ ] Implement "insulation" as template class
 * [ ] Include "creds_holder.hpp" globally via CFLAGS/CPPFLAGS/CXXFLAGS instead of explicit one in each source file
 * [ ] Build Adafruit_nRFCrypto under AUnit
+* [ ] Check U8x8 log class - maybe it's better in memory debug oled then OledInMem
 * [ ] propose authentication
   * (blocked) vibration motor module is in delivery
 * [ ] Implement calibration
@@ -42,6 +43,7 @@
 * [ ] Implement read file from microSD card with partition "storage" formatted with FAT16
 * [ ] Implement formatting partition "storage" as VeraCrypt volume
 * [ ] Implement reading from VeraCrypt volume
+  * [ ] migrate from Crypto to nRFCrypto (add abstraction?)
 * [ ] Implement PIN on LUKS header in internal storage
 * [ ] Implement set PIN by User
 * [ ] Implement new way for accept/enter action - via tap/knock

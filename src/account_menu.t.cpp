@@ -14,12 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #if defined(EPOXY_DUINO)
-#include "account_menu.cpp"
+#include "account_menu.hpp"
 
 #include "device_inputs.hpp"
+#include "model/account.hpp"
 #include "t/in_memory_oled.hpp"
 #include "t/imitated_user_unputs.hpp"
-#include "t/keyboard.cpp"
+#include "t/keyboard.hpp"
 
 // Must be included as the last one to avoid troubles with macro "test"
 // when such word is used in headers above

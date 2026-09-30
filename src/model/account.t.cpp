@@ -13,8 +13,8 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
-// #if defined(EPOXY_DUINO)
-#include "account.cpp"
+#if defined(EPOXY_DUINO)
+#include "account.hpp"
 #include <string.h>
 
 // Must be included as the last header to avoid troubles with macro "test"
@@ -53,4 +53,4 @@ test(account_equation_operator)
     assertFalse(lhs == rhs);
 };
 
-// #endif // EPOXY_DUINO
+#endif // EPOXY_DUINO

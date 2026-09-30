@@ -17,7 +17,8 @@
 
 #include "creds_holder.hpp"
 #include <new>
-#include <Arduino.h>
+
+#include "Embedded_Template_Library.h"
 #include <etl/iterator.h>
 
 #include "blind_call.hpp"
@@ -50,7 +51,7 @@ public:
     const Settings& settings_;
     ModelStorage<Account>& modelStore_;
 
-    etl::uniquie_ptr<UISelectionList<AccountIterator, Account>> accSl_;
+    // etl::unique_ptr<UISelectionList<ModelIterator<Account>, Account>> accSl_;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -59,7 +60,7 @@ AccountsMenu::AccountsMenu(Oled& oled,
                            const Settings& settings,
                            ModelStorage<Account>& modelStore)
 {
-    static_assert(sizeof(impl_) == sizeof(AccountsMenuImpl), "fix AccountsMenu::impl_ size");
+    static_assert(sizeof(impl_) >= sizeof(AccountsMenuImpl), "fix AccountsMenu::impl_ size");
     new (impl_) AccountsMenuImpl(oled, userInputs, settings, modelStore);
 }
 
@@ -85,8 +86,6 @@ AccountsMenu::init(BlindCall nextMenuCb, BlindCall prevMenuCb)
 void
 AccountsMenu::activate()
 {
-    if (Serial) {Serial.println(F("AccountsMenu::activate"));}
-
     impl()->userInputs_.set(DeviceInputs::UserAction::left, impl()->prevMenuCb_);
     impl()->userInputs_.set(DeviceInputs::UserAction::right, BlindCall::make(impl(), &AccountsMenuImpl::select));
 
@@ -126,39 +125,35 @@ AccountsMenuImpl::AccountsMenuImpl(Oled& oled,
     , userInputs_(userInputs)
     , settings_(settings)
     , modelStore_(modelStore)
-    , accSl_(new UISelectionList<AccountIterator, Account>(oled_, "Credentials", cbegin(modelStore_), cend(modelStore_)))
+    // , accSl_(new UISelectionList<ModelIterator<Account>, Account>(oled_, "Credentials", modelStore_.cbegin(), modelStore_.cend()))
 {
 }
 
 void
 AccountsMenuImpl::select()
 {
-    if (selectItemCb_) {
-        selectItemCb_(accSl_->selected());
-    }
+    // if (selectItemCb_) {
+    //     selectItemCb_(accSl_->selected());
+    // }
 }
 
 void
 AccountsMenuImpl::next()
 {
-    if (Serial) { Serial.println(F("AccountsMenu::next")); }
-
-    accSl_->next();
+    // accSl_->next();
 }
 
 void
 AccountsMenuImpl::prev()
 {
-    if (Serial) { Serial.println(F("AccountsMenu::prev")); }
-
-    accSl_->prev();
+    // accSl_->prev();
 }
 
 // /// @param[in] direction - 0 = No rotation, 1 = Clockwise, -1 = Counter Clockwise
 // void
 // AccountsMenu::navigateAccounts(int direction)
 // {
-    (void)direction;
+    // (void)direction;
     // if (0 == direction) {
     //     return;
     // }
@@ -206,7 +201,8 @@ AccountsMenuImpl::prev()
 void
 AccountsMenu::draw()
 {
-    accSl_->draw();
+    // TODO: how support Settings::unhide_passwords_ ?
+    // accSl_->draw();
 
     // if (Serial) {Serial.println(F("AccountsMenu::draw"));}
     //

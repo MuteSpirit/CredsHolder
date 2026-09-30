@@ -17,7 +17,6 @@
 
 #include "creds_holder.hpp"
 #include <Print.h>
-#include <string.h>
 
 void
 print_welcome(Print& out)

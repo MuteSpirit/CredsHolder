@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #if defined(EPOXY_DUINO)
 
-#include "auth.cpp"
+#include "auth.hpp"
 #include "AUnitVerbose.h"
 #include "SHA256.h"
 

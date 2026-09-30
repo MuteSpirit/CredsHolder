@@ -13,9 +13,9 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
-// #if defined(EPOXY_DUINO)
-#include "storage.cpp"
-#include "iterator.cpp"
+#if defined(EPOXY_DUINO)
+#include "storage.hpp"
+#include "iterator.hpp"
 
 #include <string.h>
 #include "account.hpp"
@@ -307,4 +307,4 @@ testF(ModelStorageTest, iterate_from_cbegin_to_cend_for_non_empty_storage)
     assertTrue(ms_.cend() == ++it);
 }
 
-// #endif // EPOXY_DUINO
+#endif // EPOXY_DUINO

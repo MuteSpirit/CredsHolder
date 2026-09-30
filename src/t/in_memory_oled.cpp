@@ -13,22 +13,4 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
-#pragma once
-
-#include "../device_inputs.hpp"
-
-class ImitatedUserInputs : public DeviceInputs
-{
-public:
-    virtual void set(UserAction act, BlindCall cb) override;
-    virtual void unset(UserAction act) override;
-
-    virtual bool setup(void) override { return true; };
-    virtual void loop_step(void) override {};
-
-    void tilt(UserAction act);
-    void click(UserAction act);
-
-protected:
-    BlindCall hooks_[static_cast<uint8_t>(DeviceInputs::UserAction::size)];
-};
+#include "in_memory_oled.hpp"

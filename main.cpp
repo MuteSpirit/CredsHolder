@@ -17,7 +17,7 @@
 
 // #include "src/auth.hpp"
 #include "src/cli.hpp"
-#include "src/account.hpp"
+#include "src/model/account.hpp"
 #include "src/model/storage.hpp"
 #include "src/ssd1306_oled.hpp"
 #include "src/version.hpp"

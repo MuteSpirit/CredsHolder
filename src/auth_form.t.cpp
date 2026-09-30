@@ -19,8 +19,8 @@
 #include <SHA256.h>
 
 #include "t/in_memory_oled.hpp"
-#include "t/imitated_user_unputs.cpp"
-#include "auth_form.cpp"
+#include "t/imitated_user_unputs.hpp"
+#include "auth_form.hpp"
 #include "auth.hpp"
 
 // Must be included as the last header to avoid troubles with macro "test"

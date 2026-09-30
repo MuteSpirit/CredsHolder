@@ -54,5 +54,5 @@ protected:
 protected:
     /// Buffer for implementation class instance.
     /// @details Use static_assert in constructor to check required size at compile time 
-    uint8_t impl_[16];
+    uint8_t impl_[88];
 };
