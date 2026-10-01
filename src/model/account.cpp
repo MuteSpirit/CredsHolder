@@ -17,6 +17,11 @@
 
 #include <string.h>
 
+Account::operator const char*()
+{
+    return name;
+}
+
 void acc_ctor(Account& acc)
 {
     memset(acc.name, 0, sizeof(acc.name));

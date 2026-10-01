@@ -95,7 +95,6 @@ test(account_menu_type_login)
     assertStringCaseEqual("accLogin", keyboard.istream());
 };
 
-
 test(account_menu_type_password)
 {
     // Given

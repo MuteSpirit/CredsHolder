@@ -53,4 +53,15 @@ test(account_equation_operator)
     assertFalse(lhs == rhs);
 };
 
+test(account_operator_const_char_ptr)
+{
+    Account acc;
+    acc_ctor(acc);
+    
+    constexpr const char* expectedAccName = "testAcc";
+    strcpy(acc.name, expectedAccName);
+
+    assertStringCaseEqual(expectedAccName, static_cast<const char*>(acc));
+};
+
 #endif // EPOXY_DUINO

@@ -17,14 +17,12 @@
 #include "creds_holder.hpp"
 
 #include "menu.hpp"
-#include "model/account.hpp"
-#include "keyboard.hpp"
 #include "blind_call.hpp"
-#include "ui_selection_list.hpp"
+#include "model/account.hpp"
 
-class Settings;
 class DeviceInputs;
 class Oled;
+
 
 template<typename T>
 class ModelStorage;
@@ -35,8 +33,7 @@ class AccountsMenuImpl;
 class AccountsMenu : public Menu
 {
 public:
-    AccountsMenu(Oled& oled, DeviceInputs& userInputs, const Settings&, ModelStorage<Account>&);
-    ~AccountsMenu() = default;
+    AccountsMenu(Oled& oled, DeviceInputs& userInputs, ModelStorage<Account>&);
 
     virtual void init(BlindCall nextMenuCb, BlindCall prevMenuCb) override;
 
@@ -53,6 +50,6 @@ protected:
 
 protected:
     /// Buffer for implementation class instance.
-    /// @details Use static_assert in constructor to check required size at compile time 
-    uint8_t impl_[88];
+    /// @details static_assert is used in a constructor to control required impl_ size
+    uint8_t impl_[112];
 };

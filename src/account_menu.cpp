@@ -255,6 +255,7 @@ AccountField::operator=(const AccountField& rhs)
     return *this;
 }
 
+// TODO: how support Settings::unhide_passwords_ ?
 void AccountField::updatePrintStr()
 {
     if (!acc_) {

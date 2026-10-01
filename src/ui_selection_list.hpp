@@ -42,6 +42,10 @@ public:
     void draw();
 
 protected:
+    /// @return visible rows taking into account title (non)existence
+    uint8_t visible() const;
+
+protected:
     etl::string<255> title_;
     Oled& oled_;
     uint8_t visible_{0};
@@ -86,7 +90,7 @@ UISelectionList<Iterator, T>::next()
         firstIt_ = firstItemIt_;
     } else {
         // TODO: check me
-        if (etl::distance(firstIt_, curIt_) > visible_) {
+        if (etl::distance(firstIt_, curIt_) >= visible()) {
             ++firstIt_;
         }
     }
@@ -102,7 +106,7 @@ UISelectionList<Iterator, T>::prev()
         --curIt_;
 
         firstIt_ = curIt_;
-        decltype(visible_) c = visible_;
+        decltype(visible_) c = visible();
 
         // Reason of "--c":
         //   firstIt_ is already on last item, so it's needed to do one step less then "visible_"
@@ -125,18 +129,17 @@ UISelectionList<Iterator, T>::draw()
     oled_.home();
     oled_.clear();
 
-    decltype(visible_) visible = visible_;
-
     if (!title_.empty()) {
         oled_.println(title_.c_str());
-        --visible;
     }
+
+    decltype(visible_) rowsForItems = visible();
 
     // if ( u8sl.current_pos >= u8sl.total )
     //   u8sl.current_pos = u8sl.total-1;
 
     Iterator it = firstIt_;
-    for(uint8_t i = 0; it != endItemIt_ && i < visible; ++i, ++it) {
+    for(uint8_t i = 0; it != endItemIt_ && i < rowsForItems; ++i, ++it) {
         if (it == curIt_) {
             oled_.setInverseFont(1);
         }
@@ -145,4 +148,11 @@ UISelectionList<Iterator, T>::draw()
             oled_.setInverseFont(0);
         }
     }
+}
+
+template<typename Iterator, typename T>
+uint8_t
+UISelectionList<Iterator, T>::visible() const
+{
+    return visible_ - (title_.empty() ? 0 : 1);
 }

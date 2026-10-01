@@ -29,6 +29,8 @@ struct __attribute__((packed)) Account
     char name[ACCOUNT_NAME_SIZE];
     char username[USERNAME_SIZE];
     char password[PASSWORD_SIZE];
+
+    operator const char*();
 };
 
 void acc_ctor(Account&); /// zeroes internal string fields

@@ -19,12 +19,12 @@
 #include <new>
 
 #include "Embedded_Template_Library.h"
-#include <etl/iterator.h>
+#include "etl/memory.h"
 
-#include "blind_call.hpp"
-#include "device.hpp"
 #include "model/storage.hpp"
-#include "settings.hpp"
+#include "model/iterator.hpp"
+
+#include "device.hpp"
 #include "oled.hpp"
 #include "ui_selection_list.hpp"
 
@@ -33,12 +33,10 @@
 class AccountsMenuImpl
 {
 public:
-    AccountsMenuImpl(Oled& oled, DeviceInputs& userInputs, const Settings&, ModelStorage<Account>&);
+    AccountsMenuImpl(Oled& oled, DeviceInputs& userInputs, ModelStorage<Account>&);
 
     void prev();
     void next();
-    // void navigateAccounts(int direction);
-
     void select();
 
 public:
@@ -48,20 +46,18 @@ public:
     Oled& oled_;
     DeviceInputs& userInputs_;
 
-    const Settings& settings_;
     ModelStorage<Account>& modelStore_;
 
-    // etl::unique_ptr<UISelectionList<ModelIterator<Account>, Account>> accSl_;
+    etl::unique_ptr<UISelectionList<ModelIterator<Account>, Account>> accSl_;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
 AccountsMenu::AccountsMenu(Oled& oled,
                            DeviceInputs& userInputs,
-                           const Settings& settings,
                            ModelStorage<Account>& modelStore)
 {
     static_assert(sizeof(impl_) >= sizeof(AccountsMenuImpl), "fix AccountsMenu::impl_ size");
-    new (impl_) AccountsMenuImpl(oled, userInputs, settings, modelStore);
+    new (impl_) AccountsMenuImpl(oled, userInputs, modelStore);
 }
 
 AccountsMenuImpl*
@@ -106,47 +102,62 @@ void
 AccountsMenu::deactivate()
 {
     impl()->userInputs_.unset(DeviceInputs::UserAction::left);
-    impl()->userInputs_.unset(DeviceInputs::UserAction::down);
     impl()->userInputs_.unset(DeviceInputs::UserAction::right);
+
+    impl()->userInputs_.unset(DeviceInputs::UserAction::up);
+    impl()->userInputs_.unset(DeviceInputs::UserAction::down);
     impl()->userInputs_.unset(DeviceInputs::UserAction::enter);
 
-    // acc_idx_ = 0;
-    // memset(&acc_, 0, sizeof(Account));
-
     impl()->oled_.clear();
+}
+
+void
+AccountsMenu::draw()
+{
+    if (impl()->accSl_) {
+        impl()->accSl_->draw();
+    }
+}
+
+Account
+AccountsMenu::selected() const
+{
+    return impl()->accSl_->selected();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 AccountsMenuImpl::AccountsMenuImpl(Oled& oled,
                                    DeviceInputs& userInputs,
-                                   const Settings& settings,
                                    ModelStorage<Account>& modelStore)
     : oled_(oled)
     , userInputs_(userInputs)
-    , settings_(settings)
     , modelStore_(modelStore)
-    // , accSl_(new UISelectionList<ModelIterator<Account>, Account>(oled_, "Credentials", modelStore_.cbegin(), modelStore_.cend()))
+    , accSl_(new UISelectionList<ModelIterator<Account>, Account>(oled_, "Accounts", modelStore_.cbegin(), modelStore_.cend()))
 {
 }
 
 void
 AccountsMenuImpl::select()
 {
-    // if (selectItemCb_) {
-    //     selectItemCb_(accSl_->selected());
-    // }
+    if (nextMenuCb_) {
+        nextMenuCb_();
+    }
 }
 
 void
 AccountsMenuImpl::next()
 {
-    // accSl_->next();
+    if (accSl_) {
+        accSl_->next();
+    }
 }
 
 void
 AccountsMenuImpl::prev()
 {
-    // accSl_->prev();
+    if (accSl_) {
+        accSl_->prev();
+    }
 }
 
 // /// @param[in] direction - 0 = No rotation, 1 = Clockwise, -1 = Counter Clockwise
@@ -198,34 +209,6 @@ AccountsMenuImpl::prev()
     // }
 // }
 
-void
-AccountsMenu::draw()
-{
-    // TODO: how support Settings::unhide_passwords_ ?
-    // accSl_->draw();
-
-    // if (Serial) {Serial.println(F("AccountsMenu::draw"));}
-    //
-    // oled_.println("  Credentials:  ");
-    //
-    // oled_.print(F("N: "));
-    // oled_.println(acc_.name);
-    //
-    // oled_.print(F("U: "));
-    // oled_.println(acc_.username);
-    //
-    // oled_.print(F("P: "));
-    // if (settings_.unhide_passwords_) {
-    //     oled_.println(acc_.password);
-    // } else {
-    //     char hidden_passwd[PASSWORD_SIZE] = {0};
-    //     const uint8_t len = strnlen(acc_.password, PASSWORD_SIZE);
-    //     for (uint8_t i = 0; i < len; ++i) {
-    //         hidden_passwd[i] = '*';
-    //     }
-    //     oled_.println(hidden_passwd);
-    // }
-}
 
 
 

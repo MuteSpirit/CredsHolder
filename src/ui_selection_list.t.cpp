@@ -16,6 +16,7 @@
 #if defined(EPOXY_DUINO)
 #include "Embedded_Template_Library.h"
 #include "etl/array.h"
+#include "etl/vector.h"
 #include "ui_selection_list.hpp"
 #include "t/in_memory_oled.hpp"
 
@@ -172,6 +173,40 @@ test(ui_sl_next_with_null_start_and_end)
     UISelectionList<typename etl::array<const char* const, 3>::iterator, const char*> sl(oled, nullptr, nullptr, nullptr);
     // When
     assertNoFatalFailure(sl.next());
+};
+
+test(ui_sl_draw_empty_container)
+{
+    // Given
+    OledInMem<1, 4> oled;
+    etl::vector<const char*, 1> sa;
+
+    UISelectionList<typename decltype(sa)::const_iterator, const char*> sl(oled, "A", sa.cbegin(), sa.cend());
+
+    // When
+    sl.draw();
+
+    // Then
+    constexpr uint8_t sz = 16;
+    char buf[sz] = {0};
+
+    oled.getLine(0, buf, sz); assertStringCaseEqual("A", buf);
+    oled.getLine(1, buf, sz); assertStringCaseEqual("", buf);
+    oled.getLine(2, buf, sz); assertStringCaseEqual("", buf);
+    oled.getLine(3, buf, sz); assertStringCaseEqual("", buf);
+};
+
+test(ui_sl_draw_with_title_and_longer_visible_and_next_up_to_last_item)
+{
+    // Given
+    OledInMem<1, 2> oled;
+    etl::array<const char*, 3> sa {"a", "b"};
+    UISelectionList<typename decltype(sa)::const_iterator, const char*> sl(oled, "t", sa.cbegin(), sa.cend());
+    // When
+    sl.next(); // a -> b
+    sl.draw();
+    // Then
+    assertStringCaseEqual("tb", oled.getBuffer());
 };
 
 #endif // defined(EPOXY_DUINO)
