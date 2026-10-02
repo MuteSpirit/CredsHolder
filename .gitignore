@@ -5,3 +5,6 @@
 *.out
 *.elf
 *.hex
+
+build
+compiler_commands.json

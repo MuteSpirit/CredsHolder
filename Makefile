@@ -28,41 +28,47 @@ ARDUINO_LIBS = AUnit Crypto Embedded_Template_Library_ETL SimpleCLI # arduino-NV
 # Add *.cpp files only as DEPS to correctly trigger recompilation on sources change
 #   but does not add all sources into APP_SRCS_CPP to avoid compilation troubles for host just right now
 # TODO: fix host target compilation for all *.cpp
-DEPS = $(shell find src -type f -name '*.cpp' -a "*.hpp")
+DEPS = $(shell find src -type f -name '*.cpp' -o -name '*.hpp')
 TEST_SRC = $(shell find src -type f -name '*.t.cpp') $(shell find src/t -type f -name '*.cpp')
 
 # TODO: compile object files into separate folder
 APP_SRCS_CPP = main.t.cpp $(TEST_SRC) $(patsubst %.t.cpp,%.cpp,$(TEST_SRC))
 
 ETL_FLAGS = -DETL_NO_STL -DETL_NO_INITIALIZER_LIST
+COMMON_CFLAGS = -std=gnu17 -DNRF52840_XXAA -DUSE_TINYUSB $(ETL_FLAGS)
+COMMON_CPPFLAGS = -std=gnu++14 -DNRF52840_XXAA -DUSE_TINYUSB $(ETL_FLAGS)
+
 
 # Define EPOXY_DUINO to mark host as target
 # TODO: check is it possible to not define NRF52840_XXAA
-EXTRA_CFLAGS   += -std=gnu17 -DEPOXY_DUINO -g3 -DNRF52840_XXAA -DUSE_TINYUSB $(ETL_FLAGS)
-EXTRA_CPPFLAGS += -std=gnu++14 -DEPOXY_DUINO -g3 -DNRF52840_XXAA -DUSE_TINYUSB $(ETL_FLAGS)
-EXTRA_CXXFLAGS += -std=gnu++14 -DEPOXY_DUINO -g3 -DNRF52840_XXAA -DUSE_TINYUSB $(ETL_FLAGS)
+EXTRA_CFLAGS   += $(COMMON_CFLAGS)   -DEPOXY_DUINO -g3
+EXTRA_CPPFLAGS += $(COMMON_CPPFLAGS) -DEPOXY_DUINO -g3
+EXTRA_CXXFLAGS += $(COMMON_CPPFLAGS) -DEPOXY_DUINO -g3
 
 include ../libraries/EpoxyDuino/EpoxyDuino.mk
 #
 # Build
 #
+help:  ## Show this help
+	@sed -ne '/@sed/!s/:.*## /:\t/p' $(MAKEFILE_LIST)
+
 t: $(APP_NAME).out run
 
 html: $(DOC_FILES) $(PNG_FILES) $(RENDERED_PUML_FILES)
 
-%.html: %.md
+%.html: %.md  ## Generate HTML from Markdown files
 	$(MARKDOWN2HTML) $< --output $@ --metadata title="$(shell F=$<; echo $${F%%.*})"
 
-%.png: %.puml
+%.png: %.puml  ## Generate PNG pictures from PlantUML schemas
 	# Latest PlantUML usage requires as new Java version as available 
 	/usr/bin/java -Djava.awt.headless=true -Djava.net.useSystemProxies=true -jar /usr/share/plantuml/plantuml.jar -tpng $<
-poc:
+poc: ## Generate POC docs
 	$(MAKE) -C ./poc/
 
-proposals:
+proposals: ## Generate designs docs
 	$(MAKE) -C ./proposals/
 
-fritzing:
+fritzing:  ## Generate docs at Fritzing related folder
 	$(MAKE) -C ./fritzing/
 
 .PHONY: clean_app
@@ -71,13 +77,17 @@ clean_app:
 	$(MAKE) -C ./poc/ clean
 	$(MAKE) -C ./proposals/ clean
 
-build: build_nrf52840
+build: build_nrf52840 compiler_commands.json
 
 build_nrf52840: ## Target board is Pro Micro NRF52840
-	arduino-cli compile --verbose --log --log-level trace --fqbn "nRFMicro-like-Boards:nrf52:supermini" --build-property "build.extra_flags=-DNRF52840_XXAA -DCFG_TUD_ENABLED=1 -DCFG_TUD_HID=1 -DUSE_TINYUSB=1 -DETL_NO_STL -DETL_NO_INITIALIZER_LIST"
+	arduino-cli compile --verbose --log --log-level trace --fqbn "nRFMicro-like-Boards:nrf52:supermini" --build-property "build.extra_flags=$(COMMON_CPPFLAGS)"
 
 build_avr: ## Target board is Arduino Uno
-	arduino-cli compile -b arduino:avr:uno
+	arduino-cli compile --fqbn arduino:avr:uno
 
-dt:
+compiler_commands.json: $(DEPS) clean ## Generate compilation database
+	compiledb -n make t
+	# arduino-cli compile --fqbn "nRFMicro-like-Boards:nrf52:supermini" --only-compilation-database --build-path ./build --build-property "build.extra_flags=$(COMMON_CPPFLAGS)"
+
+dt:  ## Run GDB to debug unit tests
 	gdb -tui $(APP_NAME).out
