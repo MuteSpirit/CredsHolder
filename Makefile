@@ -35,15 +35,25 @@ TEST_SRC = $(shell find src -type f -name '*.t.cpp') $(shell find src/t -type f 
 APP_SRCS_CPP = main.t.cpp $(TEST_SRC) $(patsubst %.t.cpp,%.cpp,$(TEST_SRC))
 
 ETL_FLAGS = -DETL_NO_STL -DETL_NO_INITIALIZER_LIST
-COMMON_CFLAGS = -std=gnu17 -DNRF52840_XXAA -DUSE_TINYUSB $(ETL_FLAGS)
-COMMON_CPPFLAGS = -std=gnu++14 -DNRF52840_XXAA -DUSE_TINYUSB $(ETL_FLAGS)
 
-
-# Define EPOXY_DUINO to mark host as target
 # TODO: check is it possible to not define NRF52840_XXAA
+COMMON_CFLAGS = -std=gnu17 -DNRF52840_XXAA -DUSE_TINYUSB $(ETL_FLAGS)
+COMMON_CXXFLAGS = -std=gnu++14 -DNRF52840_XXAA -DUSE_TINYUSB $(ETL_FLAGS)
+
+CC=clang
+CXX=clang++
+# Define EPOXY_DUINO to mark host as target
 EXTRA_CFLAGS   += $(COMMON_CFLAGS)   -DEPOXY_DUINO -g3
-EXTRA_CPPFLAGS += $(COMMON_CPPFLAGS) -DEPOXY_DUINO -g3
-EXTRA_CXXFLAGS += $(COMMON_CPPFLAGS) -DEPOXY_DUINO -g3
+EXTRA_CXXFLAGS += $(COMMON_CXXFLAGS) -DEPOXY_DUINO -g3
+
+# -Wno-main is needed to suppress warning in AUnit <Arduino.h>
+EXTRA_CPPFLAGS += $(ETL_FLAGS) -Wno-main
+
+# TODO: decide something with warnings in dependent libraries
+# -Wno-unused-but-set-variable is needed to suppress warning in SimpleCLI
+# -Wno-#warnings - to suppress warning in Crypto about unknown platform
+# -Wno-unused-parameter - to suppress warning in Crypto
+# EXTRA_CPPFLAGS += $(ETL_FLAGS) -Wno-main -Wno-unused-but-set-variable -Wno-\#warnings -Wno-unused-parameter
 
 include ../libraries/EpoxyDuino/EpoxyDuino.mk
 #

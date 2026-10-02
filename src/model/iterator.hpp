@@ -22,7 +22,7 @@
 
 #include "storage.hpp"
 
-class Account;
+struct Account;
 template <typename T> class ModelIteratorImpl;
 
 
@@ -44,7 +44,6 @@ public:
 
 public:
     explicit ModelIterator(const ModelStorage<T>& store, typename ModelStorage<T>::ObjIndex idx = 0);
-    ModelIterator(const ModelIterator&) = default;
 
     T& operator*();
     const T& operator*() const;

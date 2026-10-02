@@ -22,7 +22,7 @@ class Oled;
 class AccountMenuImpl;
 class DeviceInputs;
 class Keyboard;
-class Account;
+struct Account;
 
 /// GUI element to show single credential account, it's URL, login, password, etc.
 /// Account fields which maybe typed into login form (or other) will be able to navigate and select.

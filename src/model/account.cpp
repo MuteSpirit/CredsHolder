@@ -22,7 +22,7 @@ Account::operator const char*()
     return name;
 }
 
-void acc_ctor(Account& acc)
+void acc_ctor(struct Account& acc)
 {
     memset(acc.name, 0, sizeof(acc.name));
     memset(acc.username, 0, sizeof(acc.username));
@@ -39,7 +39,7 @@ operator==(const struct Account& lhs, const struct Account& rhs)
 
 template<>
 char *
-get_key_ptr(Account &o)
+get_key_ptr(struct Account &o)
 {
     return o.name;
 }

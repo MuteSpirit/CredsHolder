@@ -33,7 +33,7 @@ struct __attribute__((packed)) Account
     operator const char*();
 };
 
-void acc_ctor(Account&); /// zeroes internal string fields
+void acc_ctor(struct Account&); /// zeroes internal string fields
 
 bool operator==(const struct Account& lhs, const struct Account& rhs);
 
