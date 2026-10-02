@@ -169,22 +169,23 @@ AccountMenu::init(BlindCall nextMenuCb, BlindCall prevMenuCb)
 void
 AccountMenu::activate()
 {
-    impl()->userInputs_.set(DeviceInputs::UserAction::up, BlindCall::make(impl(), &AccountMenuImpl::prev));
-    impl()->userInputs_.set(DeviceInputs::UserAction::down, BlindCall::make(impl(), &AccountMenuImpl::next));
-
     impl()->userInputs_.set(DeviceInputs::UserAction::left, impl()->prevMenuCb_);
     impl()->userInputs_.set(DeviceInputs::UserAction::right, BlindCall::make(impl(), &AccountMenuImpl::select));
+
+    impl()->userInputs_.set(DeviceInputs::UserAction::up, BlindCall::make(impl(), &AccountMenuImpl::prev));
+    impl()->userInputs_.set(DeviceInputs::UserAction::down, BlindCall::make(impl(), &AccountMenuImpl::next));
 }
 
 void
 AccountMenu::deactivate()
 {
-    impl()->userInputs_.unset(DeviceInputs::UserAction::up);
-    impl()->userInputs_.unset(DeviceInputs::UserAction::down);
     impl()->userInputs_.unset(DeviceInputs::UserAction::left);
     impl()->userInputs_.unset(DeviceInputs::UserAction::right);
 
-    memset(&impl()->acc_, 0, sizeof(Account));
+    impl()->userInputs_.unset(DeviceInputs::UserAction::up);
+    impl()->userInputs_.unset(DeviceInputs::UserAction::down);
+
+    acc_ctor(impl()->acc_);
 }
 
 void
@@ -222,13 +223,21 @@ AccountMenu::account() const
 void
 AccountMenuImpl::prev()
 {
+    if (!fieldsSl_) {
+        return;
+    }
     fieldsSl_->prev();
+    fieldsSl_->draw();
 }
 
 void
 AccountMenuImpl::next()
 {
+    if (!fieldsSl_) {
+        return;
+    }
     fieldsSl_->next();
+    fieldsSl_->draw();
 }
 
 void

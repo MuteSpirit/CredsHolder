@@ -39,6 +39,10 @@ public:
     void next();
     void select();
 
+    void draw();
+
+    void notifyModelStoreUpdated();
+
 public:
     BlindCall nextMenuCb_; /// jump to form showing concrete Account
     BlindCall prevMenuCb_; /// jump back to form showed before "Accounts'
@@ -87,15 +91,6 @@ AccountsMenu::activate()
 
     impl()->userInputs_.set(DeviceInputs::UserAction::up, BlindCall::make(impl(), &AccountsMenuImpl::prev));
     impl()->userInputs_.set(DeviceInputs::UserAction::down, BlindCall::make(impl(), &AccountsMenuImpl::next));
-
-    impl()->oled_.home();
-
-    // if (modelStore_.get(acc_idx_, acc_) || 
-    //     modelStore_.getNext(acc_idx_, acc_, acc_idx_)) {
-    //     draw();
-    // } else {
-    //     oled_.println(F("No creds accounts"));
-    // }
 }
 
 void
@@ -106,23 +101,25 @@ AccountsMenu::deactivate()
 
     impl()->userInputs_.unset(DeviceInputs::UserAction::up);
     impl()->userInputs_.unset(DeviceInputs::UserAction::down);
-    impl()->userInputs_.unset(DeviceInputs::UserAction::enter);
-
-    impl()->oled_.clear();
 }
 
 void
 AccountsMenu::draw()
 {
-    if (impl()->accSl_) {
-        impl()->accSl_->draw();
-    }
+    if (Serial) { Serial.println(F("AccountsMenu::draw()")); }
+    impl()->draw();
 }
 
 Account
 AccountsMenu::selected() const
 {
     return impl()->accSl_->selected();
+}
+
+void
+AccountsMenu::notifyModelStoreUpdated()
+{
+    impl()->notifyModelStoreUpdated();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -139,76 +136,43 @@ AccountsMenuImpl::AccountsMenuImpl(Oled& oled,
 void
 AccountsMenuImpl::select()
 {
-    if (nextMenuCb_) {
-        nextMenuCb_();
-    }
+    nextMenuCb_();
 }
 
 void
 AccountsMenuImpl::next()
 {
-    if (accSl_) {
-        accSl_->next();
+    if (!accSl_) {
+        return;
     }
+    accSl_->next();
+    accSl_->draw();
 }
 
 void
 AccountsMenuImpl::prev()
 {
-    if (accSl_) {
-        accSl_->prev();
+    if (!accSl_) {
+        return;
     }
+    accSl_->prev();
+    accSl_->draw();
 }
 
-// /// @param[in] direction - 0 = No rotation, 1 = Clockwise, -1 = Counter Clockwise
-// void
-// AccountsMenu::navigateAccounts(int direction)
-// {
-    // (void)direction;
-    // if (0 == direction) {
-    //     return;
-    // }
-    //
-    // ModelStorage<Account>::ObjIndex idx = acc_idx_;
-    //
-    // do {
-    //     if (direction > 0) {
-    //         if (modelStore_.getNext(acc_idx_, acc_, idx)) {
-    //             break;
-    //         }
-    //         if (modelStore_.get(0, acc_)) {
-    //             idx = 0;
-    //             break;
-    //         }
-    //         if (modelStore_.getNext(0, acc_, idx)) {
-    //             break;
-    //         }
-    //     } else {
-    //         if (modelStore_.getPrev(acc_idx_, acc_, idx)) {
-    //             break;
-    //         }
-    //         auto maxIdx = modelStore_.maxIdx();
-    //
-    //         if (modelStore_.get(maxIdx, acc_)) {
-    //             idx = maxIdx;
-    //             break;
-    //         }
-    //         if (modelStore_.getPrev(maxIdx, acc_, idx)) {
-    //             break;
-    //         }
-    //     }
-    // } while (0);
-    //
-    // if (idx != acc_idx_) {
-    //     acc_idx_ = idx;
-    //
-    //     oled_.clear();
-    //     oled_.home();
-    //
-    //     draw();
-    // }
-// }
+void
+AccountsMenuImpl::draw()
+{
+    if (!accSl_) {
+        return;
+    }
+    accSl_->draw();
+}
 
-
-
-
+void
+AccountsMenuImpl::notifyModelStoreUpdated()
+{
+    if (!accSl_) {
+        return;
+    }
+    accSl_->update(modelStore_.cbegin(), modelStore_.cend());
+}

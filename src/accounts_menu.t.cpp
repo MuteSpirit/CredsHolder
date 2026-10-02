@@ -85,6 +85,52 @@ testF(AccountsMenuTest, draw_single_account)
     oled_.getLine(3, buf, sz); assertStringCaseEqual("", buf);
 }
 
+testF(AccountsMenuTest, draw_the_same_accounts_as_visible)
+{
+    std::array<Account, 3> aa {{
+        {"acc0", "login0", "passwd0"},
+        {"acc1", "login1", "passwd1"},
+        {"acc2", "login2", "passwd2"},
+    }};
+
+    for (auto acc : aa) {
+        assertTrue(ms_.add(acc));
+    }
+
+    AccountsMenu menu(oled_, userInputs_, ms_);
+
+    assertTrue(aa[0] == menu.selected());
+
+    oled_.clear();
+    menu.draw();
+
+    memset(buf, 0, sz);
+    oled_.getLine(0, buf, sz); assertStringCaseEqual("Accounts", buf);
+    oled_.getLine(1, buf, sz); assertStringCaseEqual("acc0", buf);
+    oled_.getLine(2, buf, sz); assertStringCaseEqual("acc1", buf);
+    oled_.getLine(3, buf, sz); assertStringCaseEqual("acc2", buf);
+
+    menu.activate();
+
+    userInputs_.tilt(DeviceInputs::UserAction::down); // acc0 ->acc1
+    assertTrue(aa[1] == menu.selected());
+
+    userInputs_.tilt(DeviceInputs::UserAction::down); // acc1 ->acc2
+    assertTrue(aa[2] == menu.selected());
+
+    userInputs_.tilt(DeviceInputs::UserAction::down); // acc2 ->acc0
+    assertTrue(aa[0] == menu.selected());
+
+    oled_.clear();
+    menu.draw();
+
+    memset(buf, 0, sz);
+    oled_.getLine(0, buf, sz); assertStringCaseEqual("Accounts", buf);
+    oled_.getLine(1, buf, sz); assertStringCaseEqual("acc0", buf);
+    oled_.getLine(2, buf, sz); assertStringCaseEqual("acc1", buf);
+    oled_.getLine(3, buf, sz); assertStringCaseEqual("acc2", buf);
+}
+
 testF(AccountsMenuTest, draw_more_accounts_then_visible)
 {
     std::array<Account, 4> aa {{

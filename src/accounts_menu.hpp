@@ -44,6 +44,9 @@ public:
 
     Account selected() const;
 
+    /// Notification that Model Storage has been update externally
+    void notifyModelStoreUpdated();
+
 protected:
     AccountsMenuImpl* impl();
     const AccountsMenuImpl* impl() const;

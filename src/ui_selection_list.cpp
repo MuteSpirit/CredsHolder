@@ -13,4 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+// This stub file has been added to keep more simple build commands in Makefile.
+
 #include "ui_selection_list.hpp"

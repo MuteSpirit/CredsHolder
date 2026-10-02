@@ -110,7 +110,7 @@ CredsHolderInputs::unset(UserAction act)
 bool
 CredsHolderInputs::setup(void)
 {
-    if (Serial) {Serial.println(F("CredsHolderInputs::setup 1"));}
+    // if (Serial) {Serial.println(F("CredsHolderInputs::setup 1"));}
 #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
     Wire.begin();
     Wire.setClock(400000); // 400kHz I2C clock. Comment this line if having compilation difficulties
@@ -122,14 +122,14 @@ CredsHolderInputs::setup(void)
 
     mpu->initialize();
 
-    if (Serial) {Serial.println(F("CredsHolderInputs::setup 2"));}
+    // if (Serial) {Serial.println(F("CredsHolderInputs::setup 2"));}
 
     uint8_t devStatus = mpu->dmpInitialize(/* rate */ 20);
     if (devStatus != 0) {
         return false;
     }
 
-    if (Serial) {Serial.println(F("CredsHolderInputs::setup 3"));}
+    // if (Serial) {Serial.println(F("CredsHolderInputs::setup 3"));}
 
     // TODO: make initial calibration, store init values in internal memory and reuse when they are present
     // for my concrete MPU6050 module next offsets has been detected during calibration:
@@ -145,12 +145,12 @@ CredsHolderInputs::setup(void)
     // mpu->CalibrateAccel(6);
     // mpu->CalibrateGyro(6);
 
-    if (Serial) {Serial.println(F("CredsHolderInputs::setup 4"));}
+    // if (Serial) {Serial.println(F("CredsHolderInputs::setup 4"));}
 
     // turn on the DMP, now that it's ready
     mpu->setDMPEnabled(true);
 
-    if (Serial) {Serial.println(F("CredsHolderInputs::setup 5"));}
+    // if (Serial) {Serial.println(F("CredsHolderInputs::setup 5"));}
 
     // enable Arduino interrupt detection
     attachInterrupt(digitalPinToInterrupt(MPU6050_CS_PIN), dmpDataReady, RISING);

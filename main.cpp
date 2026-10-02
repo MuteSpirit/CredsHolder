@@ -21,6 +21,7 @@
 // #include "src/auth.hpp"
 #include "src/cli.hpp"
 #include "src/model/account.hpp"
+#include "src/model/iterator.hpp"
 #include "src/model/storage.hpp"
 #include "src/ssd1306_oled.hpp"
 #include "src/version.hpp"
@@ -86,6 +87,7 @@ setup()
         modelStore.add(acc);
     }
     // </debug>
+
     // Init keyboard before Serial to avoid troubles
     keyboard.setup();
 
@@ -95,16 +97,17 @@ setup()
     // Serial Monitor (or analog app) does not run
     // while (!Serial) { delay(50); };
     delay(50);
+
+    // debug: hard-coded Accounts has been added
+    // TODO: use pattern Observer
+    accountsMenu.notifyModelStoreUpdated();
+
     if (Serial) {
         print_welcome(Serial);
     }
-    //
-    oled.setup();
-    // oled.setFont(u8x8_font_chroma48medium8_r);
-    // oled.setFont(u8x8_font_courR18_2x3_f);
-    oled.setFont(u8x8_font_8x13_1x2_f);
 
-    // oled.setFont(u8g2_font_ncenB08_tr);	// choose a suitable font
+    oled.setup();
+    oled.setFont(u8x8_font_8x13_1x2_f);
 
     oled.clear();
     oled.home();
@@ -113,16 +116,9 @@ setup()
     delay(SHOW_SPLASHSCREEN);
 
     // if (Serial) {
-    //     Account acc;
-    //
-    //     modelStore.get(0, acc);
-    //     Serial.println(acc.name);
-    //
-    //     modelStore.get(1, acc);
-    //     Serial.println(acc.name);
-    //
-    //     modelStore.get(2, acc);
-    //     Serial.println(acc.name);
+    //     for (ModelIterator<Account> it = modelStore.cbegin(); it != modelStore.cend(); ++it) {
+    //         Serial.println((*it).name);
+    //     }
     // }
 
     if (!userInputs.setup()) {
@@ -147,9 +143,12 @@ loop()
 
     }
     // TODO: auto register "loop_step" handlers ???
-    // cli_loop_step();
-    userInputs.loop_step();
+
     // <debug>
     // if (Serial) Serial.println(F("."));
     // delay(1000);
+
+    // cli_loop_step();
+
+    userInputs.loop_step();
 }

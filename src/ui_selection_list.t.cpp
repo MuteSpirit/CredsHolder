@@ -29,7 +29,7 @@ class UISelectionListTestHelper
 {
 public:
     template<typename Iterator, typename T>
-    static uint8_t visible(UISelectionList<Iterator, T>& sl) { return sl.visible_; }
+    static uint8_t visible(UISelectionList<Iterator, T>& sl) { return sl.visible(); }
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -55,7 +55,7 @@ test(ui_sl_visible)
     etl::array<const char* const, 3> sa {"a", "b", "c"};
     UISelectionList<typename etl::array<const char* const, 3>::iterator, const char*> sl(oled, "title", sa.cbegin(), sa.cend());
 
-    assertEqual(4, UISelectionListTestHelper::visible(sl));
+    assertEqual(4 - 1 /*for title*/, UISelectionListTestHelper::visible(sl));
 }
 
 test(ui_sl_next)

@@ -40,10 +40,10 @@ void
 DisplayUI::setup(void)
 {
     // authForm_.init(BlindCall::make(this, &DisplayUI::switch2accountsMenu), BlindCall::stub());
-    accountsMenu_.init(BlindCall::make(this, &DisplayUI::switch2accountMenu), BlindCall::make(this, &DisplayUI::switch2accountMenu));
+    accountsMenu_.init(BlindCall::make(this, &DisplayUI::switch2accountMenu), BlindCall::stub());
     accMenu_.init(BlindCall::stub(), BlindCall::make(this, &DisplayUI::switch2accountsMenu));
-    settingsMenu_.init(BlindCall::make(this, &DisplayUI::switch2accountsMenu), BlindCall::make(this, &DisplayUI::switch2settingsMenu));
-    //
+    settingsMenu_.init(BlindCall::stub(), BlindCall::make(this, &DisplayUI::switch2accountsMenu));
+
     switch2accountsMenu();
 }
 
@@ -60,6 +60,7 @@ void
 DisplayUI::switch2accountsMenu()
 {
     accMenu_.deactivate();
+
     accountsMenu_.activate();
     accountsMenu_.draw();
 }

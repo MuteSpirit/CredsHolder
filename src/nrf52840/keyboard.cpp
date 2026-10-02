@@ -26,7 +26,7 @@ static uint8_t const desc_keyboard_report[] = {
 
 void TinyUsbKeyboard::setup()
 {
-    if (Serial) { Serial.println(F("TinyUsbKeyboard::setup()")); }
+    // if (Serial) { Serial.println(F("TinyUsbKeyboard::setup()")); }
 
     if (!TinyUSBDevice.isInitialized()) {
         TinyUSBDevice.begin(0);
@@ -68,10 +68,7 @@ bool TinyUsbKeyboard::print(const char* s)
     }
 
     if (!ready()) {
-        if (Serial) {
-            Serial.println(F("Keyboard is not ready"));
-        }
-
+        if (Serial) { Serial.println(F("Keyboard is not ready")); }
         return false;
     }
 

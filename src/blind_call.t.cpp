@@ -23,6 +23,12 @@
 
 test(blind_call_default_ctor)
 {
+    BlindCall cb;
+    cb();
+}
+
+test(blind_call_stub_ctor)
+{
     BlindCall cb(BlindCall::stub());
     cb();
 }
