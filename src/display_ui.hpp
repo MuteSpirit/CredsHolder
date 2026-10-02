@@ -17,7 +17,7 @@
 
 class Oled;
 class AccountsMenu;
-// class AccountMenu;
+class AccountMenu;
 class SettingsMenu;
 class AuthForm;
 class DeviceInputs;
@@ -26,7 +26,7 @@ class DeviceInputs;
 class DisplayUI
 {
 public:
-    DisplayUI(Oled&, DeviceInputs &,/* AuthForm &, */AccountsMenu&/*, AccountMenu&*/, SettingsMenu&);
+    DisplayUI(Oled&, DeviceInputs &,/* AuthForm &, */AccountsMenu&, AccountMenu&, SettingsMenu&);
 
     void setup(void);
 
@@ -40,6 +40,6 @@ protected:
     DeviceInputs &userInputs_;
     // AuthForm &authForm_;
     AccountsMenu& accountsMenu_;
-    // AccountMenu& accMenu_;
+    AccountMenu& accMenu_;
     SettingsMenu& settingsMenu_;
 };

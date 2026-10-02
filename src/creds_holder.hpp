@@ -15,10 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
 
-// Moved into Makefile to define it globally
-// #if !defined ETL_NO_STL
-// #define ETL_NO_STL
-// #endif
+// Keep Embedded Template Library defines in Makefile only does not help to build
+// sketch using Arduino IDE. So let keep them here also.
+#if !defined ETL_NO_STL
+#define ETL_NO_STL
+#endif
+
+#if !defined DETL_NO_INITIALIZER_LIST
+#define DETL_NO_INITIALIZER_LIST
+#endif
 
 #if defined(ARDUINO_ARCH_NRF52)
 #  if !defined(NRF52)

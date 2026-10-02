@@ -15,6 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include "src/creds_holder.hpp"
 
+#include "Embedded_Template_Library.h"
+#include "etl/array.h"
+
 // #include "src/auth.hpp"
 #include "src/cli.hpp"
 #include "src/model/account.hpp"
@@ -64,28 +67,37 @@ ModelStorage<Account> modelStore(mbs);
 // Create on demand ???
 // AuthForm authForm(oled, userInputs, authenticator);
 AccountsMenu accountsMenu(oled, userInputs, modelStore);
-// AccountMenu accMenu(keyboard, oled, userInputs);
+AccountMenu accMenu(oled, userInputs, keyboard);
 SettingsMenu settingsMenu(oled, userInputs, settings);
 
-DisplayUI ui(oled, userInputs/*, authForm*/, accountsMenu/*, accMenu*/, settingsMenu);
+DisplayUI ui(oled, userInputs/*, authForm*/, accountsMenu, accMenu, settingsMenu);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 setup()
 {
     // <debug>
-    Account acc0 {"n0", "u0", "p0"};
-    Account acc1 {"n1", "u1", "p1"};
-    Account acc2 {"n2", "u2", "p2"};
-    modelStore.add(acc0);
-    modelStore.add(acc1);
-    modelStore.add(acc2);
-
+    etl::array<Account, 3> aa {{
+        {"name0", "user0", "passwd0"},
+        {"name1", "user1", "passwd1"},
+        {"NAME2", "USER2", "PASSWD2"}
+    }};
+    for (auto& acc : aa) {
+        modelStore.add(acc);
+    }
     // </debug>
-    //
+    // Init keyboard before Serial to avoid troubles
+    keyboard.setup();
+
     Serial.begin(SERIAL_BAUD_RATE);
-    while (!Serial) { delay(50); };
-    print_welcome(Serial);
+
+    // Waiting Serial initialization forever means stuck forever if Arduino IDE
+    // Serial Monitor (or analog app) does not run
+    // while (!Serial) { delay(50); };
+    delay(50);
+    if (Serial) {
+        print_welcome(Serial);
+    }
     //
     oled.setup();
     // oled.setFont(u8x8_font_chroma48medium8_r);
@@ -113,12 +125,12 @@ setup()
     //     Serial.println(acc.name);
     // }
 
-    ui.setup();
-
     if (!userInputs.setup()) {
         if (Serial) { Serial.println(F("MPU6050 Error"));}
     }
     // cli_init(settings.cli_turn_on_);
+
+    ui.setup();
 }
 
 void
@@ -132,6 +144,7 @@ loop()
         // oled.clear();
         // oled.home();
         // oled.println("DEBUG");
+
     }
     // TODO: auto register "loop_step" handlers ???
     // cli_loop_step();

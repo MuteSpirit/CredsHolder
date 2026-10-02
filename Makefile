@@ -34,11 +34,13 @@ TEST_SRC = $(shell find src -type f -name '*.t.cpp') $(shell find src/t -type f 
 # TODO: compile object files into separate folder
 APP_SRCS_CPP = main.t.cpp $(TEST_SRC) $(patsubst %.t.cpp,%.cpp,$(TEST_SRC))
 
+ETL_FLAGS = -DETL_NO_STL -DETL_NO_INITIALIZER_LIST
+
 # Define EPOXY_DUINO to mark host as target
 # TODO: check is it possible to not define NRF52840_XXAA
-EXTRA_CFLAGS   += -std=gnu17 -DEPOXY_DUINO -g3 -DNRF52840_XXAA -DUSE_TINYUSB -DETL_NO_STL -DETL_NO_INITIALIZER_LIST
-EXTRA_CPPFLAGS += -std=gnu++14 -DEPOXY_DUINO -g3 -DNRF52840_XXAA -DUSE_TINYUSB -DETL_NO_STL -DETL_NO_INITIALIZER_LIST
-EXTRA_CXXFLAGS += -std=gnu++14 -DEPOXY_DUINO -g3 -DNRF52840_XXAA -DUSE_TINYUSB -DETL_NO_STL -DETL_NO_INITIALIZER_LIST
+EXTRA_CFLAGS   += -std=gnu17 -DEPOXY_DUINO -g3 -DNRF52840_XXAA -DUSE_TINYUSB $(ETL_FLAGS)
+EXTRA_CPPFLAGS += -std=gnu++14 -DEPOXY_DUINO -g3 -DNRF52840_XXAA -DUSE_TINYUSB $(ETL_FLAGS)
+EXTRA_CXXFLAGS += -std=gnu++14 -DEPOXY_DUINO -g3 -DNRF52840_XXAA -DUSE_TINYUSB $(ETL_FLAGS)
 
 include ../libraries/EpoxyDuino/EpoxyDuino.mk
 #

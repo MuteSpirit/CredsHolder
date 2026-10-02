@@ -94,6 +94,8 @@ UISelectionList<Iterator, T>::next()
             ++firstIt_;
         }
     }
+
+    draw();
 }
 
 template<typename Iterator, typename T>
@@ -119,6 +121,8 @@ UISelectionList<Iterator, T>::prev()
         }
         --curIt_;
     }
+
+    draw();
 }
 
 template<typename Iterator, typename T>

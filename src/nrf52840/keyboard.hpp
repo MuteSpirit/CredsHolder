@@ -36,4 +36,5 @@ protected:
 protected:
     Adafruit_USBD_HID usb_keyboard_;
 };
+
 #endif // defined(ARDUINO_ARCH_NRF52)

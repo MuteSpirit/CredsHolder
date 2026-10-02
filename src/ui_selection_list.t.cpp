@@ -29,9 +29,7 @@ class UISelectionListTestHelper
 {
 public:
     template<typename Iterator, typename T>
-    static 
-    uint8_t 
-    visible(UISelectionList<Iterator, T>& sl) { return sl.visible_; }
+    static uint8_t visible(UISelectionList<Iterator, T>& sl) { return sl.visible_; }
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -63,18 +61,18 @@ test(ui_sl_visible)
 test(ui_sl_next)
 {
     OledInMem<16, 4> oled;
-    using CStr = etl::string<2>;
+    using CStr = char[2];
     using CStrPtrs = etl::array<CStr, 3>;
     CStrPtrs sa {"a", "b", "c"};
 
-    UISelectionList<typename CStrPtrs::const_iterator, CStr> sl(oled, "title", sa.cbegin(), sa.cend());
-    assertStringCaseEqual("a", sl.selected().c_str());
+    UISelectionList<typename CStrPtrs::iterator, CStr> sl(oled, "title", sa.begin(), sa.end());
+    assertStringCaseEqual("a", sl.selected());
 
     sl.next();
-    assertStringCaseEqual("b", sl.selected().c_str());
+    assertStringCaseEqual("b", sl.selected());
 
     sl.next();
-    assertStringCaseEqual("c", sl.selected().c_str());
+    assertStringCaseEqual("c", sl.selected());
 }
 
 test(ui_sl_with_one_item_and_next_jump_to_start)

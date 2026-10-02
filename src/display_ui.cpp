@@ -26,25 +26,22 @@ DisplayUI::DisplayUI(Oled &oled,
                      DeviceInputs &userInputs,
                      // AuthForm &authForm,
                      AccountsMenu &accountsMenu,
-                     // AccountMenu &accMenu,
+                     AccountMenu &accMenu,
                      SettingsMenu &settingsMenu)
     : oled_(oled)
     , userInputs_(userInputs)
     // , authForm_(authForm)
     , accountsMenu_(accountsMenu)
-    // , accMenu_(accMenu)
+    , accMenu_(accMenu)
     , settingsMenu_(settingsMenu)
 {}
 
 void
 DisplayUI::setup(void)
 {
-    oled_.clear();
-    oled_.home();
-
     // authForm_.init(BlindCall::make(this, &DisplayUI::switch2accountsMenu), BlindCall::stub());
-    accountsMenu_.init(BlindCall::make(this, &DisplayUI::switch2accountMenu), BlindCall::make(this, &DisplayUI::switch2settingsMenu));
-    // accMenu_.init(BlindCall::make(this, &DisplayUI::switch2accountMenu), BlindCall::make(this, &DisplayUI::switch2accountsMenu));
+    accountsMenu_.init(BlindCall::make(this, &DisplayUI::switch2accountMenu), BlindCall::make(this, &DisplayUI::switch2accountMenu));
+    accMenu_.init(BlindCall::stub(), BlindCall::make(this, &DisplayUI::switch2accountsMenu));
     settingsMenu_.init(BlindCall::make(this, &DisplayUI::switch2accountsMenu), BlindCall::make(this, &DisplayUI::switch2settingsMenu));
     //
     switch2accountsMenu();
@@ -62,8 +59,9 @@ DisplayUI::switch2settingsMenu()
 void
 DisplayUI::switch2accountsMenu()
 {
-    // accMenu_.deactivate();
+    accMenu_.deactivate();
     accountsMenu_.activate();
+    accountsMenu_.draw();
 }
 
 void
@@ -71,6 +69,7 @@ DisplayUI::switch2accountMenu()
 {
     accountsMenu_.deactivate();
 
-    // accMenu_.init(accountsMenu_.selected());
-    // accMenu_.activate();
+    accMenu_.account(accountsMenu_.selected());
+    accMenu_.activate();
+    accMenu_.draw();
 }
