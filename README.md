@@ -49,7 +49,19 @@ Free Documentation License](COPYING.FDL-1.3.md).
 
 # Project News
 
-Current stage - designing.
+Current stage - MVP.
+
+## 02 Oct 2026
+
+* Demo variant:
+  * no authentication
+  * no storage on flash
+  * 3 hard-coded accounts
+  * accounts menu
+  * account fields menu
+  * typing login and password
+  * navigation with device tilts (forward, backward, clockwise and counterclockwise)
+  * vibration motor to feedback User about correct tilt angle
 
 ## 27 Aug 2026
 

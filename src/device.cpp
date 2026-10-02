@@ -53,14 +53,18 @@ struct SplashDetectCtx
 
     /// like for keyboard we must detect when splash dissapear
     /// to react "not on button push but pull"
-    uint8_t splashStarted {false};
+    uint8_t splashStarted {0};
 
     Movement mv {Movement::none};
 };
 
-struct CredsHolderInputsData
+class CredsHolderInputsImpl
 {
-    CredsHolderInputsData();
+public:
+    CredsHolderInputsImpl(DeviceOutputs&);
+
+public:
+    DeviceOutputs& deviceOutputs_;
 
     BlindCall hooks_[static_cast<uint8_t>(DeviceInputs::UserAction::size)];
 
@@ -77,7 +81,8 @@ void dmpDataReady() {
     mpuInterrupt = true;
 }
 
-CredsHolderInputsData::CredsHolderInputsData()
+CredsHolderInputsImpl::CredsHolderInputsImpl(DeviceOutputs& deviceOutputs)
+    : deviceOutputs_(deviceOutputs)
 {
     for (size_t i = 0; i < static_cast<uint8_t>(DeviceInputs::UserAction::size); ++i) {
         hooks_[i] = BlindCall::stub();
@@ -85,26 +90,27 @@ CredsHolderInputsData::CredsHolderInputsData()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-CredsHolderInputs::CredsHolderInputs()
+CredsHolderInputs::CredsHolderInputs(DeviceOutputs& deviceOutputs)
 {
-    new(data_) CredsHolderInputsData();
+    static_assert(sizeof(impl_) == sizeof(CredsHolderInputsImpl), "fix CredsHolderInputs::impl_ size");
+    new(impl_) CredsHolderInputsImpl(deviceOutputs);
 }
 
-CredsHolderInputsData* CredsHolderInputs::data()
+CredsHolderInputsImpl* CredsHolderInputs::impl()
 {
-    return reinterpret_cast<CredsHolderInputsData*>(data_);
+    return reinterpret_cast<CredsHolderInputsImpl*>(impl_);
 }
 
 void
 CredsHolderInputs::set(UserAction act, BlindCall cb)
 {
-    data()->hooks_[static_cast<uint8_t>(act)] = cb;
+    impl()->hooks_[static_cast<uint8_t>(act)] = cb;
 }
 
 void
 CredsHolderInputs::unset(UserAction act)
 {
-    data()->hooks_[static_cast<uint8_t>(act)] = BlindCall::stub();
+    impl()->hooks_[static_cast<uint8_t>(act)] = BlindCall::stub();
 }
 
 bool
@@ -118,7 +124,7 @@ CredsHolderInputs::setup(void)
     Fastwire::setup(400, true);
 #endif
 
-    MPU6050* mpu = &data()->mpu_;
+    MPU6050* mpu = &impl()->mpu_;
 
     mpu->initialize();
 
@@ -161,7 +167,7 @@ CredsHolderInputs::setup(void)
     // set our DMP Ready flag so the main loop() function knows it's okay to use it
 
     // get expected DMP packet size for later comparison
-    data()->packetSize_ = mpu->dmpGetFIFOPacketSize();
+    impl()->packetSize_ = mpu->dmpGetFIFOPacketSize();
 
     return true;
 }
@@ -184,8 +190,8 @@ CredsHolderInputs::loop_step(void)
     //     return;
     // }
 
-    if (!data()->mpu_.dmpGetCurrentFIFOPacket(data()->fifoBuffer_)) { // Get the Latest packet }
-        // if (Serial) { Serial.println(data()->mpu_.dmpGetFIFOPacketSize()); }
+    if (!impl()->mpu_.dmpGetCurrentFIFOPacket(impl()->fifoBuffer_)) { // Get the Latest packet }
+        // if (Serial) { Serial.println(impl()->mpu_.dmpGetFIFOPacketSize()); }
         return;
     }
 
@@ -193,9 +199,9 @@ CredsHolderInputs::loop_step(void)
     Quaternion q;           // [w, x, y, z]         quaternion container
     float ypr[3];           // [yaw, pitch, roll]   yaw/pitch/roll container and gravity vector
 
-    data()->mpu_.dmpGetQuaternion(&q, data()->fifoBuffer_);
-    data()->mpu_.dmpGetGravity(&gravity, &q);
-    data()->mpu_.dmpGetYawPitchRoll(ypr, &q, &gravity);
+    impl()->mpu_.dmpGetQuaternion(&q, impl()->fifoBuffer_);
+    impl()->mpu_.dmpGetGravity(&gravity, &q);
+    impl()->mpu_.dmpGetYawPitchRoll(ypr, &q, &gravity);
 
     if (Serial) {
         Serial.print(ypr[1] * 180 / M_PI); 
@@ -204,31 +210,46 @@ CredsHolderInputs::loop_step(void)
         Serial.println(); 
     }
 
-    if (isTiltHappen(data()->pitchDetectCtx_, ypr[1] * 180 / M_PI)) {
-        if (data()->pitchDetectCtx_.mv == Movement::clockwise) {
+    uint8_t splashStarted = impl()->pitchDetectCtx_.splashStarted;
+    if (isTiltHappen(impl()->pitchDetectCtx_, ypr[1] * 180 / M_PI)) {
+        if (impl()->pitchDetectCtx_.mv == Movement::clockwise) {
             if (Serial) {Serial.println(F("UserAction::up"));}
-            data()->hooks_[static_cast<uint8_t>(UserAction::up)]();
+            impl()->hooks_[static_cast<uint8_t>(UserAction::up)]();
         } else {
             if (Serial) {Serial.println(F("UserAction::down"));}
-            data()->hooks_[static_cast<uint8_t>(UserAction::down)]();
+            impl()->hooks_[static_cast<uint8_t>(UserAction::down)]();
         }
+    } else {
+        if (0 == splashStarted && impl()->pitchDetectCtx_.splashStarted > 0) {
+            // enough big tilt angle has been detected
+            impl()->deviceOutputs_.notify(DeviceOutputs::Feedback::halfTilt);
+        } 
     }
-    if (isTiltHappen(data()->rollDetectCtx_, ypr[2] * 180 / M_PI)) {
-        if (data()->rollDetectCtx_.mv == Movement::clockwise) {
+
+    splashStarted = impl()->rollDetectCtx_.splashStarted;
+    if (isTiltHappen(impl()->rollDetectCtx_, ypr[2] * 180 / M_PI)) {
+        if (impl()->rollDetectCtx_.mv == Movement::clockwise) {
             if (Serial) {Serial.println(F("UserAction::left"));}
-            data()->hooks_[static_cast<uint8_t>(UserAction::left)]();
+            impl()->hooks_[static_cast<uint8_t>(UserAction::left)]();
         } else {
             if (Serial) {Serial.println(F("UserAction::right"));}
-            data()->hooks_[static_cast<uint8_t>(UserAction::right)]();
+            impl()->hooks_[static_cast<uint8_t>(UserAction::right)]();
         }
+    } else {
+        if (0 == splashStarted && impl()->rollDetectCtx_.splashStarted > 0) {
+            // enough big tilt angle has been detected
+            impl()->deviceOutputs_.notify(DeviceOutputs::Feedback::halfTilt);
+        } 
     }
+
 }
 
+////////////////////////////////////////////////////////////////////////////////
 static
 bool
 isTiltHappen(SplashDetectCtx &ctx, const float p)
 {
-  constexpr float threshold = 10; // usually tilt angle is about 15 degrees
+  constexpr float threshold = 7; // usually tilt angle is about 15 degrees
   constexpr float alpha = 0.15;
 
   ctx.ema = alpha * p + (1.0 - alpha) * ctx.ema;
@@ -261,4 +282,37 @@ isTiltHappen(SplashDetectCtx &ctx, const float p)
       return false;
     }
   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+CredsHolderOutputs::CredsHolderOutputs(const uint8_t vibroMotorPin)
+: vibroMotorPin_(vibroMotorPin)
+{}
+
+bool
+CredsHolderOutputs::setup(void)
+{
+    pinMode(vibroMotorPin_, OUTPUT);
+    digitalWrite(vibroMotorPin_, LOW); // to avoid active vibration at device boot time
+    return true;
+}
+
+void
+CredsHolderOutputs::loop_step(void)
+{}
+
+
+void
+CredsHolderOutputs::notify(Feedback fb)
+{
+    switch (fb) {
+        case Feedback::halfTilt:
+            digitalWrite(vibroMotorPin_, HIGH);
+            delay(shortBipDelayMs);
+            digitalWrite(vibroMotorPin_, LOW);
+            break;
+
+        default:
+            break;
+    }
 }

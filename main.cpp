@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include "src/creds_holder.hpp"
+#include <Arduino.h>
 
 #include "Embedded_Template_Library.h"
 #include "etl/array.h"
@@ -55,7 +56,9 @@ Settings settings;
 
 SSD1306I2C oled;
 
-CredsHolderInputs userInputs;
+CredsHolderOutputs deviceOutputs;
+
+CredsHolderInputs userInputs(deviceOutputs);
 
 // PasswordWandAuth authenticator;
 
@@ -77,6 +80,10 @@ DisplayUI ui(oled, userInputs/*, authForm*/, accountsMenu, accMenu, settingsMenu
 void
 setup()
 {
+    if (deviceOutputs.setup()) {
+        if (Serial) { Serial.println(F("DeviceOutputs::setup failed")); }
+    }
+
     // <debug>
     etl::array<Account, 3> aa {{
         {"name0", "user0", "passwd0"},
@@ -120,9 +127,8 @@ setup()
     //         Serial.println((*it).name);
     //     }
     // }
-
     if (!userInputs.setup()) {
-        if (Serial) { Serial.println(F("MPU6050 Error"));}
+        if (Serial) { Serial.println(F("MPU6050 Error")); }
     }
     // cli_init(settings.cli_turn_on_);
 

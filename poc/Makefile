@@ -1,4 +1,4 @@
-all: ui-mpu-6050-with-oled-on-arduino-uno ui-mpu-6050-with-oled-on-nrf52840
+all: ui-mpu-6050-with-oled-on-arduino-uno ui-mpu-6050-with-oled-on-nrf52840 ui-mpu-6050-oled-vibro-on-nrf5240
 
 .PHONY: clean ui-mpu-6050-with-oled-on-arduino-uno ui-mpu-6050-with-oled-on-nrf52840
 
@@ -8,6 +8,10 @@ ui-mpu-6050-with-oled-on-arduino:
 ui-mpu-6050-with-oled-on-nrf52840:
 	$(MAKE) -C ui-mpu-6050-with-oled-on-nrf52840
 
+ui-mpu-6050-oled-vibro-on-nrf5240:
+	$(MAKE) -C ui-mpu-6050-oled-vibro-on-nrf5240
+
 clean:
 	$(MAKE) -C ui-mpu-6050-with-oled-on-arduino-uno clean
 	$(MAKE) -C ui-mpu-6050-with-oled-on-nrf52840 clean
+	$(MAKE) -C ui-mpu-6050-oled-vibro-on-nrf5240 clean

@@ -106,7 +106,7 @@ AccountsMenu::deactivate()
 void
 AccountsMenu::draw()
 {
-    if (Serial) { Serial.println(F("AccountsMenu::draw()")); }
+    // if (Serial) { Serial.println(F("AccountsMenu::draw()")); }
     impl()->draw();
 }
 

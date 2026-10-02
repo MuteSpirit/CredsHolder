@@ -15,7 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
 
+#include "creds_holder.hpp"
+#include <Arduino.h>
+
 #include "device_inputs.hpp"
+#include "device_outputs.hpp"
 
 #if defined(ARDUINO_ARCH_AVR) // Arduino
 
@@ -26,6 +30,8 @@
 
 #define MPU6050_CS_PIN  D5
 
+#define VIBRO_MOTOR_IN_PIN  D10
+
 #elif defined(ARDUINO_ARCH_NRF52) // Pro Micro nRF52840
 
 // OLED Display
@@ -34,6 +40,8 @@
 #define OLED_I2C_ADDR   0x3C
 
 #define MPU6050_CS_PIN  D5
+
+#define VIBRO_MOTOR_IN_PIN  D10
 
 #elif defined(EPOXY_DUINO) // Unit tests
 
@@ -44,16 +52,19 @@
 
 #define MPU6050_CS_PIN  D5
 
+#define VIBRO_MOTOR_IN_PIN  D10
+
 #else
 #error("Unknown board type")
 #endif // defined(ARDUINO_ARCH_AVR)
 
-class CredsHolderInputsData;
+class CredsHolderInputsImpl;
 
+////////////////////////////////////////////////////////////////////////////////
 class CredsHolderInputs : public DeviceInputs
 {
 public:
-    CredsHolderInputs();
+    CredsHolderInputs(DeviceOutputs&);
 
     virtual void set(UserAction act, BlindCall cb) override;
     virtual void unset(UserAction act) override;
@@ -64,8 +75,24 @@ public:
     virtual void loop_step(void) override;
 
 protected:
-    CredsHolderInputsData* data();
+    CredsHolderInputsImpl* impl();
 
 protected:
-    uint8_t data_[1024]; /// "insulation' for internal data
+    uint8_t impl_[296]; /// "insulation' for internal data
+};
+
+////////////////////////////////////////////////////////////////////////////////
+class CredsHolderOutputs : public DeviceOutputs
+{
+public:
+    CredsHolderOutputs(const uint8_t vibroMotorPin = VIBRO_MOTOR_IN_PIN);
+
+    virtual void notify(Feedback) override;
+
+    virtual bool setup(void) override;
+    virtual void loop_step(void) override;
+
+protected:
+    uint8_t vibroMotorPin_;
+    constexpr static const size_t shortBipDelayMs = 175; // ms
 };

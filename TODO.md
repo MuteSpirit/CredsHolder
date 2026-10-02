@@ -21,12 +21,12 @@
 * [x] Propose Device HW storage
 * [x] Propose Device (encrypted) data storage
 * [x] Propose Device file system
-* [~] Propose menu navigation
+* [x] Propose menu navigation
   * without auth
   * menu Accounts
-  * menu Settings (show/hide passwords)
   * typing login/password
   * no encryption, no storage on microSD, hard-coded accounts
+* [x] vibration feedback on tilt up to enough angle
 * [ ] build test objects/exec in separate folder
 * [x] build .o files for tests using all .cpp files, not .t.cpp only
 * [ ] scope code within new C++ namespace "creds_holder"
