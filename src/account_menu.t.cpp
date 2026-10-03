@@ -21,7 +21,6 @@
 #include "t/in_memory_oled.hpp"
 #include "t/imitated_user_unputs.hpp"
 #include "t/keyboard.hpp"
-#include "nrf52840/keyboard.hpp"
 
 // Must be included as the last one to avoid troubles with macro "test"
 // when such word is used in headers above

@@ -23,7 +23,7 @@ APP_NAME := CredsHolder
 
 # Add all dependency libraries into ARDUINO_LIBS to allow AUnit add consequent "-I..." compiler flags
 # and make includes working for that libraries
-ARDUINO_LIBS = AUnit Crypto Embedded_Template_Library_ETL SimpleCLI # arduino-NVM
+ARDUINO_LIBS = AUnit Crypto Embedded_Template_Library_ETL SimpleCLI U8g2 # arduino-NVM
 
 # Add *.cpp files only as DEPS to correctly trigger recompilation on sources change
 #   but does not add all sources into APP_SRCS_CPP to avoid compilation troubles for host just right now
@@ -37,14 +37,14 @@ APP_SRCS_CPP = main.t.cpp $(TEST_SRC) $(patsubst %.t.cpp,%.cpp,$(TEST_SRC))
 ETL_FLAGS = -DETL_NO_STL -DETL_NO_INITIALIZER_LIST
 
 # TODO: check is it possible to not define NRF52840_XXAA
-COMMON_CFLAGS = -std=gnu17 -DNRF52840_XXAA -DUSE_TINYUSB $(ETL_FLAGS)
-COMMON_CXXFLAGS = -std=gnu++14 -DNRF52840_XXAA -DUSE_TINYUSB $(ETL_FLAGS)
+COMMON_CFLAGS = -DNRF52840_XXAA -DUSE_TINYUSB $(ETL_FLAGS)
+COMMON_CXXFLAGS = -DNRF52840_XXAA -DUSE_TINYUSB $(ETL_FLAGS)
 
 CC=clang
 CXX=clang++
 # Define EPOXY_DUINO to mark host as target
-EXTRA_CFLAGS   += $(COMMON_CFLAGS)   -DEPOXY_DUINO -g3
-EXTRA_CXXFLAGS += $(COMMON_CXXFLAGS) -DEPOXY_DUINO -g3
+EXTRA_CFLAGS   += -std=gnu17 $(COMMON_CFLAGS)   -DEPOXY_DUINO -g3
+EXTRA_CXXFLAGS += -std=gnu++14 $(COMMON_CXXFLAGS) -DEPOXY_DUINO -g3
 
 # -Wno-main is needed to suppress warning in AUnit <Arduino.h>
 EXTRA_CPPFLAGS += $(ETL_FLAGS) -Wno-main
@@ -87,17 +87,20 @@ clean_app:
 	$(MAKE) -C ./poc/ clean
 	$(MAKE) -C ./proposals/ clean
 
-build: build_nrf52840 compiler_commands.json
+build: build_nrf52840
 
-build_nrf52840: ## Target board is Pro Micro NRF52840
-	arduino-cli compile --verbose --log --log-level trace --fqbn "nRFMicro-like-Boards:nrf52:supermini" --build-property "build.extra_flags=$(COMMON_CPPFLAGS)"
+build_nrf52840: ## Build for target board "Pro Micro NRF52840"
+	arduino-cli compile --verbose --log --log-level trace --fqbn "nRFMicro-like-Boards:nrf52:supermini" --build-property "build.extra_flags=$(COMMON_CXXFLAGS)"
 
-build_avr: ## Target board is Arduino Uno
+rebuild_nrf52840: ## Force rebuild for target board "Pro Micro NRF52840"
+	arduino-cli compile --clean --verbose --log --log-level trace --fqbn "nRFMicro-like-Boards:nrf52:supermini" --build-property "build.extra_flags=$(COMMON_CXXFLAGS)"
+
+build_avr: ## Build for target board Arduino Uno
 	arduino-cli compile --fqbn arduino:avr:uno
 
 compiler_commands.json: $(DEPS) clean ## Generate compilation database
 	compiledb -n make t
-	# arduino-cli compile --fqbn "nRFMicro-like-Boards:nrf52:supermini" --only-compilation-database --build-path ./build --build-property "build.extra_flags=$(COMMON_CPPFLAGS)"
+	# arduino-cli compile --fqbn "nRFMicro-like-Boards:nrf52:supermini" --only-compilation-database --build-path ./build --build-property "build.extra_flags=$(COMMON_CXXFLAGS)"
 
 dt:  ## Run GDB to debug unit tests
 	gdb -tui $(APP_NAME).out

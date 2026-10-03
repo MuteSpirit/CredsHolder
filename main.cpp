@@ -34,6 +34,7 @@
 #include "src/settings.hpp"
 // #include "src/auth_form.hpp"
 #include "src/memory_block_storage.hpp"
+#include "src/snake_game.hpp"
 
 #if defined(ARDUINO_ARCH_NRF52)
 
@@ -73,6 +74,8 @@ ModelStorage<Account> modelStore(mbs);
 AccountsMenu accountsMenu(oled, userInputs, modelStore);
 AccountMenu accMenu(oled, userInputs, keyboard);
 SettingsMenu settingsMenu(oled, userInputs, settings);
+
+SnakeGame tutorial(oled, userInputs);
 
 DisplayUI ui(oled, userInputs/*, authForm*/, accountsMenu, accMenu, settingsMenu);
 
@@ -130,8 +133,14 @@ setup()
     if (!userInputs.setup()) {
         if (Serial) { Serial.println(F("MPU6050 Error")); }
     }
+
     // cli_init(settings.cli_turn_on_);
 
+    // If you'd like to play "Snake Game" uncomment next ...
+    // tutorial.setup();
+    // tutorial.activate();
+    // tutorial.draw();
+    // ... and comment next line
     ui.setup();
 }
 
@@ -157,4 +166,7 @@ loop()
     // cli_loop_step();
 
     userInputs.loop_step();
+
+    // If you'd like to play "Snake Game" uncomment next ...
+    // tutorial.loop_step();
 }
