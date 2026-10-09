@@ -20,39 +20,37 @@
 
 #include "device_inputs.hpp"
 #include "device_outputs.hpp"
+//
+// Common PINs for all boards.
+// Define your board below if that's false.
+//
+#define MPU6050_CS_PIN  D5
+#define VIBRO_MOTOR_IN_PIN  D10
 
+#define OLED_I2C_ADDR   0x3C
+
+/// Pin to connect piezoelectric positive connector
+#define KNOCK_SENSOR_PIN  A0
+//
+// Board specific PINs
+//
 #if defined(ARDUINO_ARCH_AVR) // Arduino
 
 // OLED Display
 #define OLED_SDA_PIN    2
 #define OLED_SCK_PIN    3
-#define OLED_I2C_ADDR   0x3C
-
-#define MPU6050_CS_PIN  D5
-
-#define VIBRO_MOTOR_IN_PIN  D10
 
 #elif defined(ARDUINO_ARCH_NRF52) // Pro Micro nRF52840
 
 // OLED Display
 #define OLED_SDA_PIN    D6
 #define OLED_SCK_PIN    D7
-#define OLED_I2C_ADDR   0x3C
-
-#define MPU6050_CS_PIN  D5
-
-#define VIBRO_MOTOR_IN_PIN  D10
 
 #elif defined(EPOXY_DUINO) // Unit tests
 
 // OLED Display
 #define OLED_SDA_PIN    D6
 #define OLED_SCK_PIN    D7
-#define OLED_I2C_ADDR   0x3C
-
-#define MPU6050_CS_PIN  D5
-
-#define VIBRO_MOTOR_IN_PIN  D10
 
 #else
 #error("Unknown board type")
@@ -78,7 +76,7 @@ protected:
     CredsHolderInputsImpl* impl();
 
 protected:
-    uint8_t impl_[296]; /// "insulation' for internal data
+    uint8_t impl_[344]; /// "insulation' for internal data
 };
 
 ////////////////////////////////////////////////////////////////////////////////

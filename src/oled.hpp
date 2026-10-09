@@ -20,6 +20,12 @@
 
 #include <Print.h>
 
+// Include header with fonts declarations to be able use setFont method
+// FIXME: Choose only needed fonts, make separate module with them (or 
+// find a way to cut the others). The goal - avoid concrete UI library header 
+// direct usage
+#include <clib/u8x8.h>
+
 // TODO: Rename class to Gui
 /// @details Coordinates increases from left top corner (0, 0), for example:
 /// +----------------------------------------------+

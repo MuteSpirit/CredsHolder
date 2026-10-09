@@ -202,6 +202,8 @@ void
 SettingsMenu::activate()
 {
     cancelChange();
+
+    oled_.setFont(u8x8_font_8x13_1x2_f);
 }
 
 void

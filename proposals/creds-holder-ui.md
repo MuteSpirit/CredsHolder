@@ -149,7 +149,8 @@ POC is needed to prove Option 1. Let's try to find out how stably detect:
 * 3. Tilt Left (= Move Left)
 * 4. Tilt Right (= Move Right)
 * 5. Turn upside down (= Lock)
-* 6. Knock (= Enter/Accept)
+* 6. Double Knock (= Enter/Accept)
+  * Single Knock is not enough because interconnection between device and any solid surface will be detected as knock
 * 7. Shake horizontally (= "Switch")
 * 8. Shake vertically
 * 9. Knocking device case

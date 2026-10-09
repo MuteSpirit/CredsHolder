@@ -174,6 +174,8 @@ AccountMenu::activate()
 
     impl()->userInputs_.set(DeviceInputs::UserAction::up, BlindCall::make(impl(), &AccountMenuImpl::prev));
     impl()->userInputs_.set(DeviceInputs::UserAction::down, BlindCall::make(impl(), &AccountMenuImpl::next));
+
+    impl()->oled_.setFont(u8x8_font_8x13_1x2_f);
 }
 
 void
