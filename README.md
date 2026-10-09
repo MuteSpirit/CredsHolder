@@ -51,6 +51,11 @@ Free Documentation License](COPYING.FDL-1.3.md).
 
 Current stage - MVP.
 
+## 09 Oct 2026
+
+* Case knock detection has been added as UserAction::enter.
+* "Snake Game" is UI tutorial now
+
 ## 02 Oct 2026
 
 * Demo variant:
