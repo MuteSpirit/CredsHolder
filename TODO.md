@@ -39,7 +39,7 @@
 * [ ] propose authentication
   * (blocked) vibration motor module is in delivery
 * [ ] Implement calibration
-* [ ] Implement tutorial
+* [x] Implement tutorial
 * [ ] Implement authentication by hard-coded pin
 * [ ] Implement read file from microSD card with partition "storage" formatted with FAT16
 * [ ] Implement formatting partition "storage" as VeraCrypt volume
@@ -47,8 +47,7 @@
   * [ ] migrate from Crypto to nRFCrypto (add abstraction?)
 * [ ] Implement PIN on LUKS header in internal storage
 * [ ] Implement set PIN by User
-* [ ] Implement new way for accept/enter action - via tap/knock
-  * (blocked) piezo electronic sensor is in delivery
+* [x] Implement new way for accept/enter action - via tap/knock
 * [ ] propose object storage
   * [~] find OpenSource applications which code may be reused
 * [~] propose secure burn/boot
@@ -59,6 +58,8 @@
 * [ ] propose schematic
 * [ ] implement tilt detection in non vertical position, e.g. lying on the sofa
 * [ ] implement tilt detection during moving in vehicle 
+* [ ] Show password as QR code (when device will be on battery)
+* [ ] Mark A0-A2 pins in Fritzing part for nRF52840 Pro Micro
 * [ ] ROADMAP.md: propose MVP and Roadmap
 * [ ] CONTRIBUTING.md: development process principals
 * [~] TODO.md: plan development

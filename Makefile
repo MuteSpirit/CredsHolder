@@ -1,6 +1,6 @@
-all: html poc proposals build
+.PHONY: all poc proposals fritzing build
 
-.PHONY: poc proposals fritzing build
+all: html poc proposals fritzing build
 #
 # Documentation
 #

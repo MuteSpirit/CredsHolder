@@ -1,17 +1,11 @@
-all: ui-mpu-6050-with-oled-on-arduino-uno ui-mpu-6050-with-oled-on-nrf52840 ui-mpu-6050-oled-vibro-on-nrf5240
+SUBDIRS := $(patsubst %/Makefile,%,$(wildcard ui-*/Makefile))
 
-.PHONY: clean ui-mpu-6050-with-oled-on-arduino-uno ui-mpu-6050-with-oled-on-nrf52840
+.PHONY: all clean $(SUBDIRS)
 
-ui-mpu-6050-with-oled-on-arduino:
-	$(MAKE) -C ui-mpu-6050-with-oled-on-arduino-uno
+all: $(SUBDIRS)
 
-ui-mpu-6050-with-oled-on-nrf52840:
-	$(MAKE) -C ui-mpu-6050-with-oled-on-nrf52840
-
-ui-mpu-6050-oled-vibro-on-nrf5240:
-	$(MAKE) -C ui-mpu-6050-oled-vibro-on-nrf5240
+$(SUBDIRS):
+	$(MAKE) -C $@
 
 clean:
-	$(MAKE) -C ui-mpu-6050-with-oled-on-arduino-uno clean
-	$(MAKE) -C ui-mpu-6050-with-oled-on-nrf52840 clean
-	$(MAKE) -C ui-mpu-6050-oled-vibro-on-nrf5240 clean
+	for dir in $(SUBDIRS); do $(MAKE) -C $$dir clean; done

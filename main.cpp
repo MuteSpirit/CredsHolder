@@ -77,7 +77,7 @@ SettingsMenu settingsMenu(oled, userInputs, settings);
 
 SnakeGame tutorial(oled, userInputs);
 
-DisplayUI ui(oled, userInputs/*, authForm*/, accountsMenu, accMenu, settingsMenu);
+DisplayUI ui(oled, userInputs/*, authForm*/, tutorial, accountsMenu, accMenu, settingsMenu);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
@@ -136,11 +136,6 @@ setup()
 
     // cli_init(settings.cli_turn_on_);
 
-    // If you'd like to play "Snake Game" uncomment next ...
-    // tutorial.setup();
-    // tutorial.activate();
-    // tutorial.draw();
-    // ... and comment next line
     ui.setup();
 }
 
@@ -166,7 +161,5 @@ loop()
     // cli_loop_step();
 
     userInputs.loop_step();
-
-    // If you'd like to play "Snake Game" uncomment next ...
-    // tutorial.loop_step();
+    ui.loop_step();
 }

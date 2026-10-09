@@ -192,5 +192,7 @@ AuthForm::draw()
 {
     oled_.clear();
     oled_.home();
+
+    oled_.setFont(u8x8_font_8x13_1x2_f);
     oled_.println(typingChars_);
 }

@@ -15,31 +15,47 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
 
+#include <inttypes.h>
+
 class Oled;
 class AccountsMenu;
 class AccountMenu;
 class SettingsMenu;
 class AuthForm;
 class DeviceInputs;
+class SnakeGame;
 
 
 class DisplayUI
 {
 public:
-    DisplayUI(Oled&, DeviceInputs &,/* AuthForm &, */AccountsMenu&, AccountMenu&, SettingsMenu&);
+    DisplayUI(Oled&, DeviceInputs &,/* AuthForm &, */SnakeGame&, AccountsMenu&, AccountMenu&, SettingsMenu&);
 
     void setup(void);
+    void loop_step(void);
 
 protected:
+    enum class State : uint8_t
+    {
+        start,
+        tutorial,
+        accounts,
+        account
+    };
+
+    void switch2tutorial();
     void switch2accountsMenu(); /// acc -> accounts
     void switch2accountMenu();  /// accounts -> acc
-    void switch2settingsMenu();
+    // void switch2settingsMenu();
 
 protected:
     Oled& oled_;
     DeviceInputs &userInputs_;
+    SnakeGame& tutorial_;
     // AuthForm &authForm_;
     AccountsMenu& accountsMenu_;
     AccountMenu& accMenu_;
     SettingsMenu& settingsMenu_;
+
+    State state_ {State::start};
 };

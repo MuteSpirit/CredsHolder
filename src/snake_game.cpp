@@ -94,6 +94,7 @@ public:
     bool setup();
     void loop_step();
 
+    void drawHintScreen();
     void drawGame();
     void drawGameOver();
 
@@ -180,7 +181,7 @@ SnakeGameImpl::activate()
     userInputs_.set(DeviceInputs::UserAction::right, BlindCall::make(this, &SnakeGameImpl::right));
     userInputs_.set(DeviceInputs::UserAction::up, BlindCall::make(this, &SnakeGameImpl::up));
     userInputs_.set(DeviceInputs::UserAction::down, BlindCall::make(this, &SnakeGameImpl::down));
-    userInputs_.set(DeviceInputs::UserAction::enter, BlindCall::make(this, &SnakeGameImpl::reset));
+    userInputs_.set(DeviceInputs::UserAction::enter, nextMenuCb_);
 
     activated = true;
 }
@@ -188,13 +189,14 @@ SnakeGameImpl::activate()
 void
 SnakeGameImpl::deactivate()
 {
-    activated = false;
-
     userInputs_.unset(DeviceInputs::UserAction::left);
     userInputs_.unset(DeviceInputs::UserAction::right);
     userInputs_.unset(DeviceInputs::UserAction::up);
     userInputs_.unset(DeviceInputs::UserAction::down);
     userInputs_.unset(DeviceInputs::UserAction::enter);
+
+    activated = false;
+
 }
 
 bool
@@ -228,13 +230,13 @@ SnakeGameImpl::up()
         resetGame();
         needs_redraw = true;
         delay(500);
-    }
-
-    if (current_direction != 3) {
-        next_direction = 2;
-        is_direction_changed = true;
-        input_detected = true;
-        last_input = millis();
+    } else {
+        if (current_direction != 3) {
+            next_direction = 2;
+            is_direction_changed = true;
+            input_detected = true;
+            last_input = millis();
+        }
     }
 }
 
@@ -245,13 +247,13 @@ SnakeGameImpl::down()
         resetGame();
         needs_redraw = true;
         delay(500);
-    }
-
-    if (current_direction != 2) {
-        next_direction = 3;
-        is_direction_changed = true;
-        input_detected = true;
-        last_input = millis();
+    } else {
+        if (current_direction != 2) {
+            next_direction = 3;
+            is_direction_changed = true;
+            input_detected = true;
+            last_input = millis();
+        }
     }
 }
 
@@ -262,13 +264,13 @@ SnakeGameImpl::left()
         resetGame();
         needs_redraw = true;
         delay(500);
-    }
-
-    if (current_direction != 0) {
-        next_direction = 1;
-        is_direction_changed = true;
-        input_detected = true;
-        last_input = millis();
+    } else {
+        if (current_direction != 0) {
+            next_direction = 1;
+            is_direction_changed = true;
+            input_detected = true;
+            last_input = millis();
+        }
     }
 }
 
@@ -279,13 +281,13 @@ SnakeGameImpl::right()
         resetGame();
         needs_redraw = true;
         delay(500);
-    }
-
-    if (current_direction != 1) {
-        next_direction = 0;
-        is_direction_changed = true;
-        input_detected = true;
-        last_input = millis();
+    } else {
+        if (current_direction != 1) {
+            next_direction = 0;
+            is_direction_changed = true;
+            input_detected = true;
+            last_input = millis();
+        }
     }
 }
 
@@ -450,6 +452,29 @@ SnakeGameImpl::resetHighScore() {
 }
 
 void
+SnakeGameImpl::drawHintScreen()
+{
+    u8g2.clearBuffer();
+    u8g2.setFont(u8g2_font_5x8_mf);
+    const uint8_t h = u8g2.getMaxCharHeight();
+    const uint8_t w = u8g2.getMaxCharWidth();
+
+    u8g2.drawStr(w, 1.0*h, (PGM_P)F("Navigation:"));
+    u8g2.drawStr(w, 2.05*h, (PGM_P)F(" up  : tilt forward"));
+    u8g2.drawStr(w, 3.10*h, (PGM_P)F("down : tilt backward"));
+    u8g2.drawStr(w, 4.15*h, (PGM_P)F(" <=  : tilt left"));
+    u8g2.drawStr(w, 5.20*h, (PGM_P)F(" =>  : tilt right"));
+    u8g2.drawStr(w, 6.30*h, (PGM_P)F("knock-knock: exit"));
+
+    strcpy_P(buffer, str_press_btn);
+    u8g2.drawStr(w, 7.35*h, buffer);
+
+    u8g2.sendBuffer();
+
+    game_over = true;
+}
+
+void
 SnakeGameImpl::drawGame() {
     u8g2.clearBuffer();
 
@@ -514,7 +539,7 @@ SnakeGameImpl::drawGameOver() {
     u8g2.print(score);
 
     strcpy_P(buffer, str_press_btn);
-    u8g2.drawStr(20 , 62 , buffer);
+    u8g2.drawStr(20, 62, buffer);
 
     u8g2.sendBuffer();
 }
@@ -584,7 +609,7 @@ SnakeGame::deactivate()
 void
 SnakeGame::draw()
 {
-    impl()->drawGame();
+    impl()->drawHintScreen();
 }
 
 SnakeGameImpl*

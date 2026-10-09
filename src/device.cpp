@@ -38,6 +38,7 @@
 #include "MPU6050/MPU6050.h"
 
 #include "device.hpp"
+#include "knock_sensor.hpp"
 
 ////////////////////////////////////////////////////////////////////////////////
 enum class Movement : uint8_t
@@ -63,6 +64,9 @@ class CredsHolderInputsImpl
 public:
     CredsHolderInputsImpl(DeviceOutputs&);
 
+    bool setupKnockSensor();
+    bool setupPositionSensor();
+
 public:
     DeviceOutputs& deviceOutputs_;
 
@@ -74,6 +78,8 @@ public:
                              //
     SplashDetectCtx pitchDetectCtx_;
     SplashDetectCtx rollDetectCtx_;
+
+    KnockSensor knockSensor_;
 };
 
 static volatile bool mpuInterrupt {false}; // indicates whether MPU interrupt pin has gone high
@@ -92,7 +98,7 @@ CredsHolderInputsImpl::CredsHolderInputsImpl(DeviceOutputs& deviceOutputs)
 ////////////////////////////////////////////////////////////////////////////////
 CredsHolderInputs::CredsHolderInputs(DeviceOutputs& deviceOutputs)
 {
-    static_assert(sizeof(impl_) == sizeof(CredsHolderInputsImpl), "fix CredsHolderInputs::impl_ size");
+    static_assert(sizeof(impl_) >= sizeof(CredsHolderInputsImpl), "fix CredsHolderInputs::impl_ size");
     new(impl_) CredsHolderInputsImpl(deviceOutputs);
 }
 
@@ -117,6 +123,30 @@ bool
 CredsHolderInputs::setup(void)
 {
     // if (Serial) {Serial.println(F("CredsHolderInputs::setup 1"));}
+
+    return impl()->setupKnockSensor()
+        && impl()->setupPositionSensor();
+}
+
+bool
+CredsHolderInputsImpl::setupKnockSensor()
+{
+    pinMode(KNOCK_SENSOR_PIN, INPUT);
+
+    constexpr uint8_t cSamples = 10;
+    uint32_t sum = 0;
+    for (uint8_t i = 0; i < cSamples; ++i) {
+        sum += analogRead(KNOCK_SENSOR_PIN);
+        delay(5);
+    }
+    knockSensor_.begin(sum / cSamples);
+
+    return true;
+}
+
+bool
+CredsHolderInputsImpl::setupPositionSensor()
+{
 #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
     Wire.begin();
     Wire.setClock(400000); // 400kHz I2C clock. Comment this line if having compilation difficulties
@@ -124,13 +154,11 @@ CredsHolderInputs::setup(void)
     Fastwire::setup(400, true);
 #endif
 
-    MPU6050* mpu = &impl()->mpu_;
-
-    mpu->initialize();
+    mpu_.initialize();
 
     // if (Serial) {Serial.println(F("CredsHolderInputs::setup 2"));}
 
-    uint8_t devStatus = mpu->dmpInitialize(/* rate */ 20);
+    uint8_t devStatus = mpu_.dmpInitialize(/* rate */ 20);
     if (devStatus != 0) {
         return false;
     }
@@ -139,22 +167,22 @@ CredsHolderInputs::setup(void)
 
     // TODO: make initial calibration, store init values in internal memory and reuse when they are present
     // for my concrete MPU6050 module next offsets has been detected during calibration:
-    mpu->setXAccelOffset(2508);
-    mpu->setYAccelOffset(-2151);
-    mpu->setZAccelOffset(992);
+    mpu_.setXAccelOffset(2508);
+    mpu_.setYAccelOffset(-2151);
+    mpu_.setZAccelOffset(992);
 
-    mpu->setXGyroOffset(-147);
-    mpu->setYGyroOffset(25);
-    mpu->setZGyroOffset(68); 
+    mpu_.setXGyroOffset(-147);
+    mpu_.setYGyroOffset(25);
+    mpu_.setZGyroOffset(68); 
 
     // Calibration Time: generate offsets and calibrate our MPU6050
-    // mpu->CalibrateAccel(6);
-    // mpu->CalibrateGyro(6);
+    // mpu_.CalibrateAccel(6);
+    // mpu_.CalibrateGyro(6);
 
     // if (Serial) {Serial.println(F("CredsHolderInputs::setup 4"));}
 
     // turn on the DMP, now that it's ready
-    mpu->setDMPEnabled(true);
+    mpu_.setDMPEnabled(true);
 
     // if (Serial) {Serial.println(F("CredsHolderInputs::setup 5"));}
 
@@ -162,12 +190,12 @@ CredsHolderInputs::setup(void)
     attachInterrupt(digitalPinToInterrupt(MPU6050_CS_PIN), dmpDataReady, RISING);
 
     // TODO: add interrupts handling
-    // uint8_t mpuIntStatus = mpu->getIntStatus();
+    // uint8_t mpuIntStatus = mpu_.getIntStatus();
 
     // set our DMP Ready flag so the main loop() function knows it's okay to use it
 
     // get expected DMP packet size for later comparison
-    impl()->packetSize_ = mpu->dmpGetFIFOPacketSize();
+    packetSize_ = mpu_.dmpGetFIFOPacketSize();
 
     return true;
 }
@@ -177,18 +205,34 @@ static bool isTiltHappen(SplashDetectCtx &ctx, const float p);
 void
 CredsHolderInputs::loop_step(void)
 {
-    // bool nothingToDo = true;
+    unsigned long nowMs = millis();
     //
-    // noInterrupts();
-    // if (mpuInterrupt) {
-    //     mpuInterrupt = false;
-    //     nothingToDo = false;
-    // }
-    // interrupts();
+    // Knock detection
     //
-    // if (nothingToDo) {
-    //     return;
-    // }
+    if (nowMs > impl()->knockSensor_.lastMeasureMs() 
+            && nowMs - impl()->knockSensor_.lastMeasureMs() >= KnockSensor::MEASURE_INTERVAL) {
+        uint32_t newVal = analogRead(KNOCK_SENSOR_PIN);
+
+        if (Serial) {Serial.println(newVal);}
+
+        if (KnockSensor::Knock::twin == impl()->knockSensor_.update(newVal, nowMs)) {
+            if (Serial) {
+                Serial.print(F("UserAction::enter"));
+            }
+            impl()->hooks_[static_cast<uint8_t>(UserAction::enter)]();
+        }
+    }
+    //
+    // Tilt detection
+    //
+    bool doNothing = !mpuInterrupt;
+
+    if (doNothing) {
+        return;
+    } else {
+        // FIXME: modify variable together with interrupt handler causes data racing
+        mpuInterrupt = false;
+    }
 
     if (!impl()->mpu_.dmpGetCurrentFIFOPacket(impl()->fifoBuffer_)) { // Get the Latest packet }
         // if (Serial) { Serial.println(impl()->mpu_.dmpGetFIFOPacketSize()); }
@@ -241,7 +285,6 @@ CredsHolderInputs::loop_step(void)
             impl()->deviceOutputs_.notify(DeviceOutputs::Feedback::halfTilt);
         } 
     }
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////
