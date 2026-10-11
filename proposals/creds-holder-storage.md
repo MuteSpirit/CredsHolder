@@ -9,7 +9,7 @@ A copy of the license is included in the section entitled "GNU
 Free Documentation License".
 -->
 
-# CredsHolder Storage
+# HLD. CredsHolder Storage
 
 ## Introduction
 
@@ -434,3 +434,67 @@ If someone will try to find encryption password among "crypto card" partition th
 * [Brute-force LUKS volumes](https://blog.elcomsoft.ru/2020/08/rasshifrovka-diskov-luks/)
 * [Brute-force VeraCrypt volumes](https://blog.elcomsoft.ru/2020/04/rasshifrovka-kriptokontejnerov-veracrypt/)
 * [VeraCrypt Volume Format Specification](https://veracrypt.io/en/VeraCrypt%20Volume%20Format%20Specification.html)
+
+# LLD. CredsHolder Model Storage
+
+## Step 1. KeePass DB on single FAT partition at microSD card
+
+Such schema is used in [Pastilda](https://www.crowdsupply.com/third-pin/pastilda) project.
+
+Reasons of this intermediate steps:
+* Reuse part of Pastilda sources
+* Integrate TinyFATFS instead of FatFS
+* Not implement VeraCrypt support right now
+* Have encrypted storage at the end of POC
+* More flexible schema is not needed until another type of accounts (TOTP, FIDO2, notes, etc.) appear
+* :heavy_minus_sign: random password will be generated and stored in in internal memory. No way to open DB on PC.
+* :heavy_minus_sign: device will be still unusable because internal memory is unprotected and access to device is not authorized
+
+## Step 2. SQLite3 DB on VeraCrypt volume
+
+Let's try to design one of straightforward variant:
+
+* microSD card reader is plugged to SPI bus of nRF52840
+* microSD card contains MBR and 1 or 2 partitions
+* We use partition with label "storage"
+* That partition is VeraCrypt volume
+* SQLite3 DB is located on that volume directly or as a file on FAT file system inside
+
+Reasons:
+
+* VeraCrypt allows to decrypt data from microSD card using PC
+* VeraCrypt allows to use any format for application data storage
+* SQLite3 allows to easy export data from microSD card using PC
+
+Proposals:
+
+* Sketch uses SQLite3 DB as model storage
+* Implement VeraCrypt driver which transparently decrypt/encrypt encrypted volume sectors
+* TinyFATFS will be used to format MBR, format FAT32 inside VeraCrypt volume
+* Implement SQLite3 VFS to access file of that FAT32 file system
+* [TinyFATFS](https://github.com/pschatzmann/TinyFATFS) will be used to format/read/write microSD card and MBR on it
+* It's reasonable to use as much needed VeraCrypt code as possible because own implementation is expensive and maintenance in future is even more expensive. As I know VeraCrypt code for volume is storage agnostic and if provide own code for read/write from SD card then it should be enough.
+* It's reasonable to take "latest and greatest" version of libraries related to security in spite of versions available in Arduino IDE library index. Maybe other libraries - too. Just to have fixed and tested versions of dependencies.
+* To improve cloning speed it's possible to use [shallow sub-modules](https://git-scm.com/docs/git-clone#Documentation/git-clone.txt---shallow-submodules)
+* It's reasonable to run unit tests both on host and target. More often - on host, before commit+push - on target. Reason: different endianess.
+
+### Notes
+
+* VeraCrypt uses [wolfSSL library](https://github.com/wolfSSL/wolfssl) as cryptography backend (e.g. PBKDF2 function and AES XTS algorithm)
+* VeraCrypt `./src/Common/Volumes.h` contains common defines for VeraCrypt volume parameters.
+
+### Rejected idea
+
+* Implement SQLite3 Virtual File System (VFS) driver to store DB in volume instead of file. Official site contains [prototype](https://sqlite.org/src/doc/trunk/src/test_onefile.c)
+  * :heavy_plus_sigh: File system like FAT is not needed
+  * :heavy_plus_sigh: Less development effort
+  * :heavy_minus_sign: CredsHolder plugins will have to use SQLite3 DB only
+Reason to reject: mentioned file from SQLite site contains note that it's a demo and there were no updated during last 9 years. It's too risky to use it.
+
+### Links
+
+* [VeraCrypt GitHub](https://github.com/veracrypt/VeraCrypt.git)
+* [wolfSSL GitHub](https://github.com/wolfSSL/wolfssl.git)
+* [TinyFATFS GitHub](https://github.com/pschatzmann/TinyFATFS)
+* [SQLite3 VFS](https://www.sqlite.org/vfs.html)
+* [SQLite3 VFS volume instead of file](https://sqlite.org/src/doc/trunk/src/test_onefile.c)
