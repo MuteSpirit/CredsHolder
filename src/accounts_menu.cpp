@@ -18,8 +18,8 @@
 #include "creds_holder.hpp"
 #include <new>
 
-#include "Embedded_Template_Library.h"
-#include "etl/memory.h"
+#include <Embedded_Template_Library.h>
+#include <etl/memory.h>
 
 #include "model/storage.hpp"
 #include "model/iterator.hpp"

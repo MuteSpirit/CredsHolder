@@ -15,9 +15,29 @@ Hardware credentials manager.
 
 Secure replacement of stickers on monitor (and other similar stuff) with login and passwords.
 
-CredsHolder makes it easier to use good complex and unique passwords for your accounts on different web sites and other applications. 
+CredsHolder makes it easier to use good complex and unique passwords for your accounts on different web sites and other applications.
 
 <img src="./docs/slide-monitor-with-stickers.png" alt="Slide 1" width=768 height=1024>
+
+## Dependencies
+
+```
+Used library                  Version
+Embedded Template Library ETL 20.48.1
+U8g2                          2.36.19
+Adafruit TinyUSB Library      3.7.7
+SPI                           1.0
+Wire                          1.0
+Crypto                        0.4.0
+SimpleCLI                     1.1.4
+EEPROM_SPI_WE                 1.1.6
+arduino-NVM                   0.9.1
+AUnit                         1.7.1
+TinyFATFS                     0.3.0
+
+Used platform              Version Path
+nRFMicro-like-Boards:nrf52    1.0.3
+```
 
 ## Code License
 

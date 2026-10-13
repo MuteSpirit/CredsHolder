@@ -19,8 +19,8 @@
 #include "../keyboard.hpp"
 
 #include <inttypes.h>
-#include "Embedded_Template_Library.h"
-#include "etl/string.h"
+#include <Embedded_Template_Library.h>
+#include <etl/string.h>
 
 class ImitatedKeyboard : public Keyboard
 {

@@ -44,7 +44,7 @@ According to several proposal documents and POCs made previously next libraries 
 
 | Theme | Library | URL | Comment | License |
 | --- | --- | --- | --- | --- |
-| USB HID keyboard<b/>Bluetooth keyboard<b/>USB MassStorage | Adafruit_TinyUSB_Arduino | https://github.com/Adafruit/adafruit_tinyusb_arduino | Supports NRF52840 | MIT |
+| USB HID keyboard<b/>Bluetooth keyboard<b/>USB MassStorage | Adafruit_TinyUSB_Arduino | https://github.com/Adafruit/adafruit_tinyusb_arduino | Supports NRF52840. TinyFATFS library has class TinyUsbMscIO to share exist storage as USB MassStorage. | MIT |
 | I2C | ArduinoCore-avr/Wire | https://github.com/arduino/ArduinoCore-avr/tree/master/libraries/Wire | Needed for libraries works with OLED and MPU6050 | GPL-v2 or GPL-v2.1 or later |
 | SSD1306 OLED display | SSD1306Ascii | https://github.com/greiman/ssd1306ascii | | MIT | 
 | SSD1306 OLED display | Adafruit_SSD1306 | https://github.com/adafruit/Adafruit_SSD1306 | | BSD |
@@ -74,7 +74,9 @@ According to several proposal documents and POCs made previously next libraries 
 | (alternative to position sensor UI) Rotary Encoder | RotaryEncoder | https://github.com/mathertel/RotaryEncoder | will be needed if UI based on MPU6050 failed | BSD |
 | Tap/knock detection via Piezo Sensor | | https://docs.arduino.cc/built-in-examples/sensors/Knock/ | Separate lib is not needed | Public Domain |
 | Morse code via vibrations | | | Separate lib is not needed | |
-| Intro Tutorial via Snake Game | https://github.com/aydakikio/arduino_snake | | MIT |
+| Intro Tutorial via Snake Game | Snake Game | https://github.com/aydakikio/arduino_snake | | MIT |
+| SPI, SDCard | TinyFATFS | https://github.com/pschatzmann/TinyFATFS | C++ Wrapper over FatFs | MIT |
+
 
 ### Code Licenses
 

@@ -23,16 +23,19 @@ APP_NAME := CredsHolder
 
 # Add all dependency libraries into ARDUINO_LIBS to allow AUnit add consequent "-I..." compiler flags
 # and make includes working for that libraries
-ARDUINO_LIBS = AUnit Crypto Embedded_Template_Library_ETL SimpleCLI U8g2 # arduino-NVM
+ARDUINO_LIBS = AUnit Crypto Embedded_Template_Library_ETL SimpleCLI U8g2 TinyFATFS # arduino-NVM
 
 # Add *.cpp files only as DEPS to correctly trigger recompilation on sources change
 #   but does not add all sources into APP_SRCS_CPP to avoid compilation troubles for host just right now
 # TODO: fix host target compilation for all *.cpp
-DEPS = $(shell find src -type f -name '*.cpp' -o -name '*.hpp')
+DEPS = $(shell find src -type f -name '*.cpp' -o -name '*.hpp' -o -name '*.h' -o -name '*.c')
+
 TEST_SRC = $(shell find src -type f -name '*.t.cpp') $(shell find src/t -type f -name '*.cpp')
+SRC_UNDER_TEST = $(patsubst %.t.cpp,%.cpp,$(TEST_SRC))
 
 # TODO: compile object files into separate folder
-APP_SRCS_CPP = main.t.cpp $(TEST_SRC) $(patsubst %.t.cpp,%.cpp,$(TEST_SRC))
+APP_SRCS_CPP = main.t.cpp $(TEST_SRC) $(SRC_UNDER_TEST)
+APP_SRCS_C = src/sqlite/sqlite3.c
 
 ETL_FLAGS = -DETL_NO_STL -DETL_NO_INITIALIZER_LIST
 
@@ -43,8 +46,8 @@ COMMON_CXXFLAGS = -DNRF52840_XXAA -DUSE_TINYUSB $(ETL_FLAGS)
 CC=clang
 CXX=clang++
 # Define EPOXY_DUINO to mark host as target
-EXTRA_CFLAGS   += -std=gnu17 $(COMMON_CFLAGS)   -DEPOXY_DUINO -g3
-EXTRA_CXXFLAGS += -std=gnu++14 $(COMMON_CXXFLAGS) -DEPOXY_DUINO -g3
+EXTRA_CFLAGS   += -std=gnu17 $(ETL_FLAGS)   -DEPOXY_DUINO -g3
+EXTRA_CXXFLAGS += -std=gnu++14 $(ETL_FLAGS) -DEPOXY_DUINO -g3
 
 # -Wno-main is needed to suppress warning in AUnit <Arduino.h>
 EXTRA_CPPFLAGS += $(ETL_FLAGS) -Wno-main
@@ -98,7 +101,7 @@ rebuild_nrf52840: ## Force rebuild for target board "Pro Micro NRF52840"
 build_avr: ## Build for target board Arduino Uno
 	arduino-cli compile --fqbn arduino:avr:uno
 
-compiler_commands.json: $(DEPS) clean ## Generate compilation database
+compile_commands.json: $(DEPS) clean ## Generate compilation database
 	compiledb -n make t
 	# arduino-cli compile --fqbn "nRFMicro-like-Boards:nrf52:supermini" --only-compilation-database --build-path ./build --build-property "build.extra_flags=$(COMMON_CXXFLAGS)"
 

@@ -16,8 +16,8 @@
 #include "src/creds_holder.hpp"
 #include <Arduino.h>
 
-#include "Embedded_Template_Library.h"
-#include "etl/array.h"
+#include <Embedded_Template_Library.h>
+#include <etl/array.h>
 
 // #include "src/auth.hpp"
 #include "src/cli.hpp"

@@ -437,7 +437,7 @@ If someone will try to find encryption password among "crypto card" partition th
 
 # LLD. CredsHolder Model Storage
 
-## Step 1. KeePass DB on single FAT partition at microSD card
+## (Rejected) Step 1. KeePass DB on single FAT partition at microSD card
 
 Such schema is used in [Pastilda](https://www.crowdsupply.com/third-pin/pastilda) project.
 
@@ -450,7 +450,38 @@ Reasons of this intermediate steps:
 * :heavy_minus_sign: random password will be generated and stored in in internal memory. No way to open DB on PC.
 * :heavy_minus_sign: device will be still unusable because internal memory is unprotected and access to device is not authorized
 
-## Step 2. SQLite3 DB on VeraCrypt volume
+| :blue_book: | Reject reasons: |
+|---|:---|
+| 1 | Pastilda project contains code for reading but not creating KeePass DB.<br/>But one of project requirement is minimal PC tools usage |
+| 2 | Both C/C++ founded libraries - [libkpass](https://github.com/bldewolf/libkpass) C library and [libkeepass](https://github.com/raulcostajunior/libkeepass) C++ library work only with precreated KeePass DB files |
+| 3 | Required development effort will be useless because KeePass is not planned to use in a long term |
+
+## Step 2. SQLite3 DB on FAT32 partition
+
+Let's try variant without encryption but with MBR/FAT and SQLite on SD card:
+
+* microSD card reader is plugged to SPI bus of nRF52840
+* microSD card contains MBR and 1 or 2 partitions
+* We use partition with label "storage"
+* That partition is formatted as FAT32
+* SQLite3 DB file is located on that FAT32 file system
+
+Reasons:
+
+* MicroSD card is removable and permanent storage
+* SQLite3 allows to export data from microSD card using PC tools (FAT32 is compatible with many OSes and SQLite3 clients are available for them too)
+* Ability to test such schema without encryption. Pay attention on "power cut" problem. Development effort is less in such schema.
+* FatFS will allow to format microSD card by sketch code and not involve PC tools
+* Ability to develop authenticated access to device independently
+
+Proposals:
+
+* TinyFATFS will be used to create MBR and format FAT32 volumes
+* TinyFATFS disk drivers will be used for unit tests and access SD card over SPI
+* SQLite3 VFS abstraction will allow access file on FAT32 partition
+* SQLite3 DB will store model objects (credentials)
+
+## Step 3. SQLite3 DB on VeraCrypt volume
 
 Let's try to design one of straightforward variant:
 
@@ -458,24 +489,18 @@ Let's try to design one of straightforward variant:
 * microSD card contains MBR and 1 or 2 partitions
 * We use partition with label "storage"
 * That partition is VeraCrypt volume
-* SQLite3 DB is located on that volume directly or as a file on FAT file system inside
+* That volume is formatted as FAT32
+* SQLite3 DB file is located on that FAT32 file system
 
 Reasons:
 
 * VeraCrypt allows to decrypt data from microSD card using PC
 * VeraCrypt allows to use any format for application data storage
-* SQLite3 allows to easy export data from microSD card using PC
 
 Proposals:
 
-* Sketch uses SQLite3 DB as model storage
-* Implement VeraCrypt driver which transparently decrypt/encrypt encrypted volume sectors
-* TinyFATFS will be used to format MBR, format FAT32 inside VeraCrypt volume
-* Implement SQLite3 VFS to access file of that FAT32 file system
-* [TinyFATFS](https://github.com/pschatzmann/TinyFATFS) will be used to format/read/write microSD card and MBR on it
-* It's reasonable to use as much needed VeraCrypt code as possible because own implementation is expensive and maintenance in future is even more expensive. As I know VeraCrypt code for volume is storage agnostic and if provide own code for read/write from SD card then it should be enough.
-* It's reasonable to take "latest and greatest" version of libraries related to security in spite of versions available in Arduino IDE library index. Maybe other libraries - too. Just to have fixed and tested versions of dependencies.
-* To improve cloning speed it's possible to use [shallow sub-modules](https://git-scm.com/docs/git-clone#Documentation/git-clone.txt---shallow-submodules)
+* VeraCrypt library core part is storage agnostic. It'll be possible to provice FatFS API to access block storage.
+* VeraCrypt volume API should be implemented as fatfs::IO interface.
 * It's reasonable to run unit tests both on host and target. More often - on host, before commit+push - on target. Reason: different endianess.
 
 ### Notes

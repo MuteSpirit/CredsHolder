@@ -27,27 +27,34 @@
   * typing login/password
   * no encryption, no storage on microSD, hard-coded accounts
 * [x] vibration feedback on tilt up to enough angle
-* [ ] build test objects/exec in separate folder
-* [x] build .o files for tests using all .cpp files, not .t.cpp only
-* [ ] scope code within new C++ namespace "creds_holder"
-* [x] auto generation compiler_commands.json
-* [ ] Implement "insulation" as template class
-* [ ] Include "creds_holder.hpp" globally via CFLAGS/CPPFLAGS/CXXFLAGS instead of explicit one in each source file
-* [ ] Build Adafruit_nRFCrypto under AUnit
-* [ ] Check U8x8 log class - maybe it's better in memory debug oled then OledInMem
-* [ ] Exclude .t.cpp files from build for target platform and avoid "if defined(EPOXY_DUINO)" guards usage
-* [ ] propose authentication
-  * (blocked) vibration motor module is in delivery
-* [ ] Implement calibration
 * [x] Implement tutorial
-* [ ] Implement authentication by hard-coded pin
-* [ ] Implement read file from microSD card with partition "storage" formatted with FAT16
+* [x] Implement new way for accept/enter action - via tap/knock
+* [~] Refactoring
+  * [ ] Put '#pragma once' on first line before any license banners
+  * [ ] build test objects/exec in separate folder
+  * [x] build .o files for tests using all .cpp files, not .t.cpp only
+  * [ ] scope code within new C++ namespace "creds_holder"
+  * [x] auto generation compiler_commands.json
+  * [ ] Implement "insulation" as template class
+  * [ ] Include "creds_holder.hpp" globally via CFLAGS/CPPFLAGS/CXXFLAGS instead of explicit one in each source file
+  * [ ] Build Adafruit_nRFCrypto under AUnit
+  * [ ] Check U8x8 log class - maybe it's better in memory debug oled then OledInMem
+  * [ ] Exclude .t.cpp files from build for target platform and avoid "if defined(EPOXY_DUINO)" guards usage
+  * [ ] Add memory sanitizer compiler options to catch memory access troubles. Think about Valgrind
+* [~] Implement read file from microSD card with partition "storage" formatted with FAT32
+  * [ ] Check is it needed to implement own fatfs::SPIClass using EEPROM_SPI_EE
+  * [ ] !!! I had to change TinyFATFS sources to enable FF_MULTI_PARTITION. Do something to use it by default
+  * [ ] Check what does mean fatfs::MKFS_PARM::n_fat and is it needed to use 2 or not
+  * [ ] Build SQLite3 amalgamation source from last official sources to be able predefine all needed macro and remove unneeded parts. Use https://github.com/siara-cc/esp32_arduino_sqlite3_lib/blob/master/src/config_ext.h as example
 * [ ] Implement formatting partition "storage" as VeraCrypt volume
 * [ ] Implement reading from VeraCrypt volume
   * [ ] migrate from Crypto to nRFCrypto (add abstraction?)
 * [ ] Implement PIN on LUKS header in internal storage
 * [ ] Implement set PIN by User
-* [x] Implement new way for accept/enter action - via tap/knock
+* [ ] propose authentication
+  * (blocked) vibration motor module is in delivery
+* [ ] Implement calibration
+* [ ] Implement authentication by hard-coded pin
 * [ ] propose object storage
   * [~] find OpenSource applications which code may be reused
 * [~] propose secure burn/boot
@@ -64,3 +71,10 @@
 * [ ] CONTRIBUTING.md: development process principals
 * [~] TODO.md: plan development
 * [ ] TODO.md: estimate development
+* [ ] Make forks of all dependency libraries and fix all compilation warnings
+  * It's reasonable to take "latest and greatest" version of libraries related to security in spite of versions available in Arduino IDE library index. Maybe other libraries - too. Just to have fixed and tested versions of dependencies.
+  * To improve cloning speed it's possible to use [shallow sub-modules](https://git-scm.com/docs/git-clone#Documentation/git-clone.txt---shallow-submodules)
+  * include <fatfs.h> give redefinition if made from C and from C++ files because (?) only pragma once without include guards usage
+  * There is separate page on chan-fatfs website with latest patches. Need to take them too.
+  * find a way to avoid TinyFATFS usage and smart way to convert original FatFs into C++ classes FatFs and IO
+* [ ] Fix multiple interrupts support on nRF52840 in BSP 
