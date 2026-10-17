@@ -33,7 +33,7 @@
   * [ ] Make code less Arduino: no F("<string>") or PROGMEM usage or configurable
   * [ ] Make autoformatting (config + nvim lsp config + neovim-dev-env image)
   * [ ] Add -MD compiler option and add more correct dependencies in Makefile
-  * [ ] Put '#pragma once' on first line before any license banners
+  * [x] Put '#pragma once' on first line before any license banners
   * [ ] build test objects/exec in separate folder
   * [x] build .o files for tests using all .cpp files, not .t.cpp only
   * [ ] scope code within new C++ namespace "creds_holder"
