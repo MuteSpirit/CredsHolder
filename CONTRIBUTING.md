@@ -388,6 +388,22 @@ Create `~/.arduino15/packages/nRFMicro-like-Boards/hardware/nrf52/1.0.3/platform
 compiler.optimization_flag=-Os
 ```
 
+## Update SQLite3 amalgamation (src/sqlite/sqlite3.{h,c})
+
+Assumption: CredsHolder folder is located at `~/Arduino/CredsHolder`. If false then adapt commands below accordingly.
+
+1. Download SQLite3 canonical sources
+2. Extract them and go inside folder
+3. Run `sqlite3.{h,c}` build
+```sh
+make clean && ./configure && make sqlite3.c CFLAGS="$(cat ~/Arduino/CredsHolder/src/sqlite/config_ext.h | sed 's/^\s\+//' | sed '/^\/\/.*$/d' | sed 's/^\#undef\s\+\(\w\+\)\s*/-U\1 /;  s/^\#define\s\+\(\w\+\)\s\+\([^\s]\+\)\s*/-D\1=\2 /; s/^\#define\s\+\(\w\+\)\s*$/-D\1/' | xargs echo)"
+```
+4. Copy generated amalgamation back to CredsHolder:
+```sh
+cp -v sqlite3.h sqlite3.c ~/Arduino/CredsHolder/src/sqlite/
+```
+5. To force `sqlite3.c` include header `config_ext.h` with user defined SQLite3 options next define should be defined `-DSQLITE_CUSTOM_INCLUDE=config_ext.h`. Note: it has been already done in [Makefile](./Makefile) and no you may skip this step.
+
 # Troubleshooting
 
 ## Output binary is too big
