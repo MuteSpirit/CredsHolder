@@ -3,8 +3,6 @@
 //   https://github.com/siara-cc/esp32_arduino_sqlite3_lib
 
 #define BUILD_sqlite                  -DNDEBUG
-#define SQLITE_OMIT_LOAD_EXTENSION           1
-#define SQLITE_OS_OTHER                      1
 #define SQLITE_DQS                           0
 #define SQLITE_NO_SYNC                       1
 #define SQLITE_TEMP_STORE                    1
@@ -21,8 +19,6 @@
 #define SQLITE_CORE                          1
 #define SQLITE_SYSTEM_MALLOC                 1
 #define SQLITE_THREADSAFE                    0
-#define SQLITE_MUTEX_APPDEF                  1
-#define SQLITE_OMIT_WAL                      1
 #define SQLITE_DISABLE_FTS3_UNICODE          1
 #define SQLITE_DISABLE_FTS4_DEFERRED         1
 #define SQLITE_LIKE_DOESNT_MATCH_BLOBS       1
@@ -34,7 +30,19 @@
 #define SQLITE_POWERSAFE_OVERWRITE           1
 #define SQLITE_MAX_EXPR_DEPTH                0
 
+#define SQLITE_OS_OTHER                      1
+// #define SQLITE_MUTEX_APPDEF                  1
+#define SQLITE_MUTEX_NOOP
+
+#define SQLITE_OMIT_LOAD_EXTENSION           1
+#define SQLITE_OMIT_WAL                      1
+#define SQLITE_OMIT_DEPRECATED               1
+#define SQLITE_OMIT_EXPLAIN
+#define SQLITE_OMIT_AUTHORIZATION
+#define SQLITE_OMIT_MEMORYDB
+
 #undef SQLITE_OMIT_FOREIGN_KEY
+#undef SQLITE_DEBUG
 
 // Another available SQLite options:
 // #undef SQLITE_OMIT_ALTERTABLE
