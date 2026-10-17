@@ -56,7 +56,11 @@ User git commit alias with signing and adding "Signed-off-by":
 
 # File Naming
 
-Dash (`-`) is word separator in file names, e.g. `file-name.ext`.
+Underscore (`_`) is word separator in file names, e.g. `file_name.ext`.
+
+| :blue_book: | Reason: |
+|---|:---|
+| | Avoid troubles in using such file names in #include C/C++ statement. |
 
 # Folder Structure
 
@@ -178,6 +182,14 @@ During the years in IT we collect ready solutions and tricks in our mind and har
 
 Usage of "TRIZ Ideal Result" formulation, "TRIZ System Operator" and "TRIZ Principals to Resolve Contradictions" will allow you cross borders of your mind. ! Without any drugs !
 
+## Development Stack
+
+We are using Arduino IDE ecosystem.
+
+| :blue_book: | Reason: |
+|---|:---|
+| | To decrease complexity if starting development by new contributors.<br/>It's really more developers who know Arduino stack then peoples who are aware about Nordic SDK |
+
 ## C++ Code Style
 
 1. Function/method definition:
@@ -283,7 +295,7 @@ It's useful to have full access to internal fields of class under test.
 
 Implement that via friend class. It's enough to declare it in module source and define later in unit test module, e.g.
 
-```
+```c++
 #
 # <module>.hpp
 #
@@ -300,7 +312,7 @@ private:
 };
 ```
 
-```
+```c++
 #
 # <module>.t.cpp
 #
@@ -320,7 +332,7 @@ public:
 ## Debugger usage
 
 There is makefile target to run `gdb` debugger. Usage is
-```
+```sh
 make dt
 ```
 where `td` is Abbreviation of `debug test`
@@ -329,7 +341,7 @@ where `td` is Abbreviation of `debug test`
 
 ## Dependencies
 
-```
+```sh
 sudo apt install \
     git \
     git-lfs \
@@ -355,14 +367,36 @@ Then choose board "SuperMini nRF52840" in "Tools -> Board -> nRFMicro-Style Boar
 ## arduino-cli
 
 1. Make configuration file `~/.arduino15/arduino-cli.yaml`
-```
+```yaml
 board_manager:
     additional_urls:
       - https://files.seeedstudio.com/arduino/package_seeeduino_boards_index.json
       - https://github.com/MuteSpirit/nRFMicro-Arduino-Core/raw/refs/heads/main/package_nRFMicro_index.json
 ```
 2. Install BSP
-```
+```sh
 arduino-cli core update-index
 arduino-cli core install nRFMicro-like-Boards:nrf52
 ```
+
+## Modify BSP settings
+
+It's needed to change optimization option from '-Ofast' to '-Os' to have enough small image containing SQLite3 inside.
+
+Create `~/.arduino15/packages/nRFMicro-like-Boards/hardware/nrf52/1.0.3/platform.local.txt` with content:
+```
+compiler.optimization_flag=-Os
+```
+
+# Troubleshooting
+
+## Output binary is too big
+
+Check in build log the sketch build folder location used by arduino-cli(-ide), then go inside and perform:
+```sh
+~/.arduino15/packages/Seeeduino/tools/arm-none-eabi-gcc/9-2019q4/bin/arm-none-eabi-gcc-nm --size-sort --reverse-sort --demangle  ./<sketch-name>.ino.elf | nvim -
+```
+where
+* `--size-sort`: Sorts symbols by size.
+* `--reverse-sort`: Reverses the sort, so the largest symbols appear first.
+* `--demangle` (or `-C`): Converts C++ mangled names (like _ZN5MyApp7processEv) into human-readable names (like MyApp::process()).
