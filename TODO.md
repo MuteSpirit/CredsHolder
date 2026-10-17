@@ -55,7 +55,7 @@
   * [ ] Check is it needed to implement own fatfs::SPIClass using EEPROM_SPI_EE
   * [ ] !!! I had to change TinyFATFS sources to enable FF_MULTI_PARTITION. Do something to use it by default
   * [ ] Check what does mean fatfs::MKFS_PARM::n_fat and is it needed to use 2 or not
-  * [ ] Build SQLite3 amalgamation source from last official sources to be able predefine all needed macro and remove unneeded parts. Use https://github.com/siara-cc/esp32_arduino_sqlite3_lib/blob/master/src/config_ext.h as example
+  * [x] Build SQLite3 amalgamation source from last official sources to be able predefine all needed macro and remove unneeded parts. Use https://github.com/siara-cc/esp32_arduino_sqlite3_lib/blob/master/src/config_ext.h as example
 * [ ] Implement formatting partition "storage" as VeraCrypt volume
 * [ ] Implement reading from VeraCrypt volume
   * [ ] migrate from Crypto to nRFCrypto (add abstraction?)

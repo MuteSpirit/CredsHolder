@@ -402,7 +402,28 @@ make clean && ./configure && make sqlite3.c CFLAGS="$(cat ~/Arduino/CredsHolder/
 ```sh
 cp -v sqlite3.h sqlite3.c ~/Arduino/CredsHolder/src/sqlite/
 ```
-5. To force `sqlite3.c` include header `config_ext.h` with user defined SQLite3 options next define should be defined `-DSQLITE_CUSTOM_INCLUDE=config_ext.h`. Note: it has been already done in [Makefile](./Makefile) and no you may skip this step.
+5. To force `sqlite3.c` include header `config_ext.h` by applying next patch:
+
+```diff
+diff --git a/src/sqlite/sqlite3.c b/src/sqlite/sqlite3.c
+index ac75490..89c1090 100644
+--- a/src/sqlite/sqlite3.c
++++ b/src/sqlite/sqlite3.c
+@@ -311,6 +311,8 @@
+ # define INC_STRINGIFY_(f) #f
+ # define INC_STRINGIFY(f) INC_STRINGIFY_(f)
+ # include INC_STRINGIFY(SQLITE_CUSTOM_INCLUDE)
++#else
++# include "config_ext.h"
+ #endif
+ 
+ /* The public SQLite interface.  The _FILE_OFFSET_BITS macro must appear
+
+```
+
+| :blue_book: | Reason: |
+|---|:---|
+| | Define SQLITE_CUSTOM_INCLUDE for unit test build or arduino-cli in Makefile is not an issue.<br/>But to do the same for Arduino IDE build is not so trivial and require change build settings in BSP package folder.<br/>So let's use local and more clear fix |
 
 # Troubleshooting
 

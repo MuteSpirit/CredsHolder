@@ -311,6 +311,8 @@
 # define INC_STRINGIFY_(f) #f
 # define INC_STRINGIFY(f) INC_STRINGIFY_(f)
 # include INC_STRINGIFY(SQLITE_CUSTOM_INCLUDE)
+#else
+# include "config_ext.h"
 #endif
 
 /* The public SQLite interface.  The _FILE_OFFSET_BITS macro must appear

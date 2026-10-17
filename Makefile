@@ -40,7 +40,7 @@ APP_SRCS_C = src/sqlite/sqlite3.c
 ETL_FLAGS = -DETL_NO_STL -DETL_NO_INITIALIZER_LIST
 
 # TODO: check is it possible to not define NRF52840_XXAA
-COMMON_CXXFLAGS = -DNRF52840_XXAA -DUSE_TINYUSB $(ETL_FLAGS) -DSQLITE_CUSTOM_INCLUDE=config_ext.h
+COMMON_CXXFLAGS = -DNRF52840_XXAA -DUSE_TINYUSB $(ETL_FLAGS)
 
 CC=clang
 CXX=clang++
@@ -49,7 +49,7 @@ EXTRA_CFLAGS   += -std=gnu17 $(ETL_FLAGS)   -DEPOXY_DUINO -g3
 EXTRA_CXXFLAGS += -std=gnu++14 $(ETL_FLAGS) -DEPOXY_DUINO -g3
 
 # -Wno-main is needed to suppress warning in AUnit <Arduino.h>
-EXTRA_CPPFLAGS += $(ETL_FLAGS) -Wno-main -DSQLITE_CUSTOM_INCLUDE=config_ext.h
+EXTRA_CPPFLAGS += $(ETL_FLAGS) -Wno-main
 
 # TODO: decide something with warnings in dependent libraries
 # -Wno-unused-but-set-variable is needed to suppress warning in SimpleCLI
