@@ -23,14 +23,15 @@
 #include "snake_game.hpp"
 // #include "auth_form.hpp"
 
+namespace creds_holder {
 
 DisplayUI::DisplayUI(Oled &oled,
-                     DeviceInputs &userInputs,
+                     DeviceInputs& userInputs,
                      SnakeGame& tutorial,
-                     // AuthForm &authForm,
-                     AccountsMenu &accountsMenu,
-                     AccountMenu &accMenu,
-                     SettingsMenu &settingsMenu)
+                     // AuthForm& authForm,
+                     AccountsMenu<AccountSqlStorage>& accountsMenu,
+                     AccountMenu& accMenu,
+                     SettingsMenu& settingsMenu)
     : oled_(oled)
     , userInputs_(userInputs)
     , tutorial_(tutorial)
@@ -58,7 +59,11 @@ DisplayUI::setup(void)
     accountsMenu_.init(showAccountCb,  showTutorialCb);
     accMenu_.init(     doNothingCb,    showAccountsCb);
 
-    switch2tutorial();
+    // <debug>
+    // Tutorial has been tested. So to decrease time to open Accounts Menu let's make it default
+    // switch2tutorial();
+    switch2accountsMenu();
+    // </debug>
 }
 
 void
@@ -112,3 +117,5 @@ DisplayUI::switch2accountMenu()
 
     state_ = State::account;
 }
+
+} // namespace creds_holder

@@ -1,3 +1,4 @@
+#pragma once
 // CredsHolder (Hardware Credential Manager)
 // Copyright (C)  2026  Ivan Efimov aka MuteSpirit <mutespirit@yandex.ru>.
 //
@@ -13,35 +14,76 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
-#pragma once
+#include "../creds_holder.hpp"
 
-#include <inttypes.h>
-#include <stdio.h>
 #include <cstddef>
+#include <cstdint>
 
-// TODO: use enum ?
-#define ACCOUNT_NAME_SIZE 32
-#define USERNAME_SIZE     32
-#define PASSWORD_SIZE     32
 
-struct __attribute__((packed)) Account
-{
-    char name[ACCOUNT_NAME_SIZE];
-    char username[USERNAME_SIZE];
-    char password[PASSWORD_SIZE];
+/**
+ * @brief Represents a single credential account.
+ *
+ * A plain data-holder used as the model type stored in
+ * creds_holder::ModelStorage. Fields are public by design.
+ */
+
+class  __attribute__((packed)) Account {
+public:
+    using ObjIndex = size_t;
+
+    static constexpr const size_t nameMaxLen     = 32;
+    static constexpr const size_t urlMaxLen      = 256;
+    static constexpr const size_t usernameMaxLen = 32;
+    static constexpr const size_t passwordMaxLen = 32;
+
+    static constexpr const size_t keyMaxLen = nameMaxLen;
+
+public:
+    /** @brief Default-constructs an empty Account with id = 0. */
+    Account();
+
+    /**
+     * @brief Constructs a fully-initialized Account.
+     * @param idVal       Row id (0 for new records).
+     * @param nameVal     Account name.
+     * @param urlVal      Account URL.
+     * @param usernameVal Account username.
+     * @param passwordVal Account password.
+     */
+    Account(size_t idVal,
+            const char* nameVal,
+            const char* urlVal,
+            const char* usernameVal,
+            const char* passwordVal);
 
     operator const char*();
+
+    void reset();
+
+public:
+    /** @brief Account row id (0 when not yet persisted). */
+    ObjIndex id {0};
+
+    /** @brief Human-readable account name (also the lookup key). */
+    char name[nameMaxLen];
+
+    /** @brief Account URL (may be empty). */
+    char url[urlMaxLen];
+
+    /** @brief Account username (may be empty). */
+    char username[usernameMaxLen];
+
+    /** @brief Account password (may be empty). */
+    char password[passwordMaxLen];
 };
 
-void acc_ctor(struct Account&); /// zeroes internal string fields
-
-bool operator==(const struct Account& lhs, const struct Account& rhs);
+bool operator==(const Account& lhs, const Account& rhs);
 
 template<typename Object>
 char *get_key_ptr(Object &o);
-
+ 
 template<typename Object>
 uint8_t get_key_size();
-
+ 
 template<typename Object>
 ptrdiff_t get_key_offset();

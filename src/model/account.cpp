@@ -14,32 +14,66 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include "account.hpp"
-
 #include <string.h>
+
+Account::Account()
+    : id(0)
+    , name("")
+    , url("")
+    , username("")
+    , password("")
+{}
+
+Account::Account(typename Account::ObjIndex idVal,
+                 const char* nameVal,
+                 const char* urlVal,
+                 const char* usernameVal,
+                 const char* passwordVal)
+    : id(idVal)
+{
+    if (nameVal) {
+        strncpy(name, nameVal, sizeof(name));
+    }
+    if (urlVal) {
+        strncpy(url, urlVal, sizeof(url));
+    }
+    if (usernameVal) {
+        strncpy(username, usernameVal, sizeof(username));
+    }
+    if (passwordVal) {
+        strncpy(password, passwordVal, sizeof(password));
+    }
+}
+
 
 Account::operator const char*()
 {
     return name;
 }
 
-void acc_ctor(struct Account& acc)
+void
+Account::reset()
 {
-    memset(acc.name, 0, sizeof(acc.name));
-    memset(acc.username, 0, sizeof(acc.username));
-    memset(acc.password, 0, sizeof(acc.password));
+    id = 0;
+    memset(name, 0, sizeof(name));
+    memset(url, 0, sizeof(url));
+    memset(username, 0, sizeof(username));
+    memset(password, 0, sizeof(password));
 }
 
 bool
-operator==(const struct Account& lhs, const struct Account& rhs)
+operator==(const Account& lhs, const Account& rhs)
 {
     return !strncmp(lhs.name, rhs.name, sizeof(lhs.name))
+        && !strncmp(lhs.url, rhs.url, sizeof(lhs.url))
         && !strncmp(lhs.username, rhs.username, sizeof(lhs.username))
         && !strncmp(lhs.password, rhs.password, sizeof(lhs.password));
 }
 
+////////////////////////////////////////////////////////////////////////////////
 template<>
 char *
-get_key_ptr(struct Account &o)
+get_key_ptr(Account &o)
 {
     return o.name;
 }

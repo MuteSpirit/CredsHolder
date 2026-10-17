@@ -71,6 +71,11 @@ Free Documentation License](COPYING.FDL-1.3.md).
 
 Current stage - MVP.
 
+## 17 Oct 2026
+
+* New model object storage keeping data in SQLite3 DB.
+* At the moment TinyFATFS and new VFS provides access to SQLite3 DB on RAM disk. 
+
 ## 09 Oct 2026
 
 * Case knock detection has been added as UserAction::enter.

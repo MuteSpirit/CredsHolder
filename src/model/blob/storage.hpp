@@ -1,3 +1,4 @@
+#pragma once
 // CredsHolder (Hardware Credential Manager)
 // Copyright (C)  2026  Ivan Efimov aka MuteSpirit <mutespirit@yandex.ru>.
 //
@@ -13,29 +14,37 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
-#pragma once
 
 #include <inttypes.h>
 #include <stdio.h>
 
+#include <Embedded_Template_Library.h>
+#include <etl/string.h>
 
 class BlockStorage;
-template<typename T> class ModelIterator;
+
+namespace creds_holder {
+
+template<typename T>
+class ModelIterator;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 template<typename T>
-class ModelStorage
+class ModelBlobStorage
 {
 public:
     // TODO: add more unit tests after change type from unsigned to signed
     using ObjIndex = int16_t;
+    using ConstIterator = ModelIterator<T>;
 
 public:
-    ModelStorage(BlockStorage &bs) : bs_(bs) {};
-    ~ModelStorage() = default;
+    ModelBlobStorage(BlockStorage &bs) : bs_(bs) {};
+    ~ModelBlobStorage() = default;
 
     bool isExist(const char* key);
+    bool isExist(const etl::string<T::keyMaxLen>& key);
+
     bool search(const char* key, T &t);
 
     bool empty() const;
@@ -46,7 +55,9 @@ public:
     bool getNext(const ObjIndex from, T &t, ObjIndex &idx) const;
     bool getPrev(const ObjIndex from, T &t, ObjIndex &idx) const;
     bool add(const T &t);
+
     bool del(const char* key);
+    bool del(const etl::string<T::keyMaxLen>& key);
 
     void factoryReset();
 
@@ -82,3 +93,5 @@ protected:
 protected:
     BlockStorage &bs_;
 };
+
+} // namespace creds_holder

@@ -62,6 +62,9 @@ class CredsHolderInputsImpl;
 class CredsHolderInputs : public DeviceInputs
 {
 public:
+    using Impl = CredsHolderInputsImpl;
+
+public:
     CredsHolderInputs(DeviceOutputs&);
 
     virtual void set(UserAction act, BlindCall cb) override;
@@ -76,7 +79,7 @@ protected:
     CredsHolderInputsImpl* impl();
 
 protected:
-    uint8_t impl_[344]; /// "insulation' for internal data
+    uint8_t impl_[312]; /// "insulation' for internal data
 };
 
 ////////////////////////////////////////////////////////////////////////////////

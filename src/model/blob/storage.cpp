@@ -16,14 +16,20 @@
 #include "storage.hpp"
 #include <string.h>
 #include <sys/types.h>
-#include "account.hpp"
+
+#include <Embedded_Template_Library.h>
+#include <etl/string.h>
+
+#include "../account.hpp"
 #include "iterator.hpp"
-#include "../block_storage.hpp"
+#include "../../block_storage.hpp"
+
+namespace creds_holder {
 
 ////////////////////////////////////////////////////////////////////////////////
 template<typename T>
 bool
-ModelStorage<T>::isExist(const char* key)
+ModelBlobStorage<T>::isExist(const char* key)
 {
     T o;  
     for (ObjIndex i = 0; isOkIdx(i); ++i) {
@@ -43,7 +49,14 @@ ModelStorage<T>::isExist(const char* key)
 
 template<typename T>
 bool
-ModelStorage<T>::search(const char* key, T &t)
+ModelBlobStorage<T>::isExist(const etl::string<T::keyMaxLen>& key)
+{
+    return isExist(key.c_str());
+}
+
+template<typename T>
+bool
+ModelBlobStorage<T>::search(const char* key, T &t)
 {
     for (ObjIndex i = 0; isOkIdx(i); ++i) {
         if (isFreeAccount(i)) {
@@ -63,7 +76,7 @@ ModelStorage<T>::search(const char* key, T &t)
 
 template<typename T>
 bool
-ModelStorage<T>::isOkIdx(const ObjIndex idx) const
+ModelBlobStorage<T>::isOkIdx(const ObjIndex idx) const
 {
     size_t startAddr = idx2addr(idx);
     return bs_.isAddrOk(startAddr) && (bs_.isAddrOk(startAddr + sizeof(T) - sizeof(ObjInStorage::commitFlag_)));
@@ -71,14 +84,14 @@ ModelStorage<T>::isOkIdx(const ObjIndex idx) const
 
 template<typename T>
 size_t
-ModelStorage<T>::getKeyAddr(const ObjIndex idx)
+ModelBlobStorage<T>::getKeyAddr(const ObjIndex idx)
 {
     return idx2addr(idx) + get_key_offset<T>();
 }
 
 template<typename T>
 bool
-ModelStorage<T>::empty() const
+ModelBlobStorage<T>::empty() const
 {
     for (ObjIndex idx = 0; isOkIdx(idx); ++idx) {
         if (!isFreeAccount(idx)) {
@@ -89,8 +102,8 @@ ModelStorage<T>::empty() const
 }
 
 template<typename T>
-typename ModelStorage<T>::ObjIndex
-ModelStorage<T>::count() const
+typename ModelBlobStorage<T>::ObjIndex
+ModelBlobStorage<T>::count() const
 {
     ObjIndex c = 0;
     for (ObjIndex idx = 0; isOkIdx(idx); ++idx) {
@@ -102,8 +115,8 @@ ModelStorage<T>::count() const
 }
 
 template<typename T>
-typename ModelStorage<T>::ObjIndex
-ModelStorage<T>::maxIdx() const
+typename ModelBlobStorage<T>::ObjIndex
+ModelBlobStorage<T>::maxIdx() const
 {
     size_t maxAvailableSlots = (bs_.maxAddr() - bs_.minAddr()) / sizeof(ObjInStorage);
     return maxAvailableSlots > 0 ? maxAvailableSlots - 1 : 0;
@@ -111,14 +124,14 @@ ModelStorage<T>::maxIdx() const
 
 template<typename T>
 bool
-ModelStorage<T>::isFreeAccount(const ObjIndex idx) const
+ModelBlobStorage<T>::isFreeAccount(const ObjIndex idx) const
 {
     return static_cast<uint8_t>(ObjInStorage::Committment::free) == bs_.read(idx2addr(idx) + offsetof(ObjInStorage, commitFlag_));
 }
 
 template<typename T>
 bool
-ModelStorage<T>::get(const ObjIndex idx, T &o) const
+ModelBlobStorage<T>::get(const ObjIndex idx, T &o) const
 {
     bs_.read(idx2addr(idx), o);
     return !isFreeAccount(idx);
@@ -126,7 +139,7 @@ ModelStorage<T>::get(const ObjIndex idx, T &o) const
 
 template<typename T>
 bool
-ModelStorage<T>::getNext(const ObjIndex from, T &o, ObjIndex &idx) const
+ModelBlobStorage<T>::getNext(const ObjIndex from, T &o, ObjIndex &idx) const
 {
     for (ObjIndex i = from + 1; isOkIdx(i); ++i) {
         if (!isFreeAccount(i)) {
@@ -140,7 +153,7 @@ ModelStorage<T>::getNext(const ObjIndex from, T &o, ObjIndex &idx) const
 
 template<typename T>
 bool
-ModelStorage<T>::getPrev(const ObjIndex from, T &o, ObjIndex &idx) const
+ModelBlobStorage<T>::getPrev(const ObjIndex from, T &o, ObjIndex &idx) const
 {
     for (ObjIndex i = from; i > 0; --i) {  // if set "i >= 0" as stop condition then index 0 will be missed
         ObjIndex pos = i > 0 ? i - 1 : 0;
@@ -156,7 +169,7 @@ ModelStorage<T>::getPrev(const ObjIndex from, T &o, ObjIndex &idx) const
 
 template<typename T>
 bool
-ModelStorage<T>::add(const T &o)
+ModelBlobStorage<T>::add(const T &o)
 {
     ObjIndex idx = 0;
     if (!getFreeObjectIndex(idx)) {
@@ -171,7 +184,7 @@ ModelStorage<T>::add(const T &o)
 
 template<typename T>
 bool
-ModelStorage<T>::getFreeObjectIndex(ObjIndex &idx)
+ModelBlobStorage<T>::getFreeObjectIndex(ObjIndex &idx)
 {
     for (ObjIndex i = 0; isOkIdx(i); ++i) {
         if (isFreeAccount(i)) {
@@ -184,7 +197,7 @@ ModelStorage<T>::getFreeObjectIndex(ObjIndex &idx)
 
 template<typename T>
 bool
-ModelStorage<T>::del(const char* key)
+ModelBlobStorage<T>::del(const char* key)
 {
     T o;
 
@@ -208,22 +221,29 @@ ModelStorage<T>::del(const char* key)
 }
 
 template<typename T>
+bool
+ModelBlobStorage<T>::del(const etl::string<T::keyMaxLen>& key)
+{
+    return del(key.c_str());
+}
+
+template<typename T>
 size_t
-ModelStorage<T>::idx2addr(const ObjIndex idx) const
+ModelBlobStorage<T>::idx2addr(const ObjIndex idx) const
 {
     return bs_.minAddr() + idx * sizeof(ObjInStorage);
 }
 
 template<typename T>
 void
-ModelStorage<T>::factoryReset()
+ModelBlobStorage<T>::factoryReset()
 {
     bs_.factoryReset();
 }
 
 template<typename T>
 ModelIterator<T>
-ModelStorage<T>::cbegin() const
+ModelBlobStorage<T>::cbegin() const
 {
     // special case when storage is empty: need to return the same as end()
     if (empty()) {
@@ -234,11 +254,13 @@ ModelStorage<T>::cbegin() const
 
 template<typename T>
 ModelIterator<T>
-ModelStorage<T>::cend() const
+ModelBlobStorage<T>::cend() const
 {
     return ModelIterator<T>(*this, ModelIterator<T>::END);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// Let's instantiate for Account to keep control on ModelStorage class usage
-template class ModelStorage<Account>;
+// Let's instantiate for Account to keep control of class usage
+template class ModelBlobStorage<Account>;
+
+} // namespace creds_holder

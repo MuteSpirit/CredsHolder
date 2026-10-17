@@ -34,7 +34,7 @@ test(account_menu_ctor_and_init)
 
     AccountMenu accMenu(oled, userInputs, keyboard);
 
-    Account acc{"name", "login", "passw"};
+    Account acc{0, "name", "url", "login", "passw"};
     accMenu.account(acc);
 };
 
@@ -55,7 +55,7 @@ test(account_menu_draw_with_acc)
 
     AccountMenu accMenu(oled, userInputs, keyboard);
 
-    Account acc{"accName", "accLogin", "accPassw"};
+    Account acc{0, "accName", "accUrl", "accLogin", "accPassw"};
     accMenu.account(acc);
 
     accMenu.draw();
@@ -78,7 +78,7 @@ test(account_menu_type_login)
 
     AccountMenu accMenu(oled, userInputs, keyboard);
 
-    Account acc{"accName", "accLogin", "accPassw"};
+    Account acc{0, "accName", "accUrl", "accLogin", "accPassw"};
     accMenu.account(acc);
     //
     // When
@@ -105,7 +105,7 @@ test(account_menu_type_password)
     AccountMenu accMenu(oled, userInputs, keyboard);
     accMenu.activate();
 
-    Account acc{"accName", "accLogin", "accPassw"};
+    Account acc{0, "accName", "accUrl", "accLogin", "accPassw"};
     accMenu.account(acc);
     //
     // When

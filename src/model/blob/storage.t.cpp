@@ -18,34 +18,37 @@
 #include "iterator.hpp"
 
 #include <string.h>
-#include "account.hpp"
-#include "../memory_block_storage.hpp"
+#include "../account.hpp"
+#include "account_storage.hpp"
+#include "../../memory_block_storage.hpp"
 
 // Must be included as the last header to avoid troubles with macro "test"
 // when such word is used in headers above
-#include <AUnitVerbose.h>
+#include "../../aunit.hpp"
+
+using namespace creds_holder;
 
 test(model_storage_ctor)
 {
     MemoryBlockStorage<1024, 64> bs;
-    ModelStorage<Account> model(bs);
+    AccountBlobStorage model(bs);
 };
 
 test(model_storage_is_persist)
 {
     MemoryBlockStorage<1024, 64> bs;
 
-    Account acc {.name = "n", .username = "u", .password = "p"};
+    Account acc {0, "n", "url", "u", "p"};
     // a'la first device with block storage initialization
     {
-        ModelStorage<Account> m(bs);
+        AccountBlobStorage m(bs);
 
         assertTrue(m.add(acc));
         assertEqual(1, m.count());
     }
     // a'la second/one-of-next device boot with data in ext EEPROM
     {
-        ModelStorage<Account> m(bs);
+        AccountBlobStorage m(bs);
 
         assertEqual(1, m.count());
         assertTrue(m.isExist(acc.name));
@@ -65,13 +68,13 @@ protected:
         bs_.factoryReset();
     }
 
-    MemoryBlockStorage<1024, 64> bs_;
-    ModelStorage<Account> ms_ {bs_};
+    MemoryBlockStorage<4096, 64> bs_;
+    AccountBlobStorage ms_ {bs_};
 };
 
 testF(ModelStorageTest, add)
 {
-    Account acc {.name = "n", .username = "u", .password = "p"};
+    Account acc {0, "n", "url", "u", "p"};
 
     assertEqual(0, ms_.count());
     assertFalse(ms_.isExist(acc.name));
@@ -84,7 +87,7 @@ testF(ModelStorageTest, add)
 
 testF(ModelStorageTest, get)
 {
-    Account acc0 {.name = "n", .username = "u", .password = "p"};
+    Account acc0 {0, "n", "url", "u", "p"};
 
     assertTrue(ms_.add(acc0));
 
@@ -96,16 +99,15 @@ testF(ModelStorageTest, get)
 
 testF(ModelStorageTest, get_next_prev)
 {
-    Account acc0 {.name = "n0", .username = "u0", .password = "p0"};
-    Account acc1 {.name = "n1", .username = "u1", .password = "p1"};
+    Account acc0 {0, "n0", "url", "u0", "p0"};
+    Account acc1 {1, "n1", "url", "u1", "p1"};
 
     assertTrue(ms_.add(acc0));
     assertTrue(ms_.add(acc1));
 
     Account acc;
-    memset(&acc, 0, sizeof(acc));
 
-    typename ModelStorage<Account>::ObjIndex idx = 0;
+    typename AccountBlobStorage::ObjIndex idx = 0;
     //
     // Next
     assertTrue(ms_.getNext(0, acc, idx));
@@ -114,7 +116,7 @@ testF(ModelStorageTest, get_next_prev)
     assertStringCaseEqual(acc1.name, acc.name);
     //
     // Prev
-    memset(&acc, 0, sizeof(acc));
+    acc.reset();
 
     assertTrue(ms_.getPrev(idx, acc, idx));
 
@@ -124,7 +126,7 @@ testF(ModelStorageTest, get_next_prev)
 
 testF(ModelStorageTest, del_one_object)
 {
-    Account acc0 {.name = "n0", .username = "u0", .password = "p0"};
+    Account acc0 {0, "n0", "url", "u0", "p0"};
     assertTrue(ms_.add(acc0));
 
     assertTrue(ms_.del(acc0.name));
@@ -134,9 +136,9 @@ testF(ModelStorageTest, del_one_object)
 
 testF(ModelStorageTest, del_three_objects_fifo)
 {
-    Account acc0 {.name = "n0", .username = "u0", .password = "p0"};
-    Account acc1 {.name = "n1", .username = "u1", .password = "p1"};
-    Account acc2 {.name = "n2", .username = "u2", .password = "p2"};
+    Account acc0 {0, "n0", "url", "u0", "p0"};
+    Account acc1 {1, "n1", "url", "u1", "p1"};
+    Account acc2 {2, "n2", "url", "u2", "p2"};
 
     assertTrue(ms_.add(acc0));
     assertTrue(ms_.add(acc1));
@@ -156,9 +158,9 @@ testF(ModelStorageTest, del_three_objects_fifo)
 
 testF(ModelStorageTest, del_three_objects_lifo)
 {
-    Account acc0 {.name = "n0", .username = "u0", .password = "p0"};
-    Account acc1 {.name = "n1", .username = "u1", .password = "p1"};
-    Account acc2 {.name = "n2", .username = "u2", .password = "p2"};
+    Account acc0 {0, "n0", "url", "u0", "p0"};
+    Account acc1 {1, "n1", "url", "u1", "p1"};
+    Account acc2 {2, "n2", "url", "u2", "p2"};
 
     assertTrue(ms_.add(acc0));
     assertTrue(ms_.add(acc1));
@@ -176,9 +178,9 @@ testF(ModelStorageTest, del_three_objects_lifo)
 
 testF(ModelStorageTest, get_next_prev_over_free_spot)
 {
-    Account acc0 {.name = "n0", .username = "u0", .password = "p0"};
-    Account acc1 {.name = "n1", .username = "u1", .password = "p1"};
-    Account acc2 {.name = "n2", .username = "u2", .password = "p2"};
+    Account acc0 {0, "n0", "url", "u0", "p0"};
+    Account acc1 {1, "n1", "url", "u1", "p1"};
+    Account acc2 {2, "n2", "url", "u2", "p2"};
 
     assertTrue(ms_.add(acc0));
     assertTrue(ms_.add(acc1));
@@ -187,9 +189,8 @@ testF(ModelStorageTest, get_next_prev_over_free_spot)
     assertTrue(ms_.del(acc1.name));
 
     Account acc;
-    memset(&acc, 0, sizeof(acc));
 
-    typename ModelStorage<Account>::ObjIndex idx = 0;
+    typename AccountBlobStorage::ObjIndex idx = 0;
     //
     // Next
     assertTrue(ms_.getNext(0, acc, idx));
@@ -198,7 +199,7 @@ testF(ModelStorageTest, get_next_prev_over_free_spot)
     assertStringCaseEqual(acc2.name, acc.name);
     //
     // Prev
-    memset(&acc, 0, sizeof(acc));
+    acc.reset();
 
     assertTrue(ms_.getPrev(idx, acc, idx));
 
@@ -208,9 +209,9 @@ testF(ModelStorageTest, get_next_prev_over_free_spot)
 
 testF(ModelStorageTest, add_del_and_add_to_fill_free_spot)
 {
-    Account acc0 {.name = "n0", .username = "u0", .password = "p0"};
-    Account acc1 {.name = "n1", .username = "u1", .password = "p1"};
-    Account acc2 {.name = "n2", .username = "u2", .password = "p2"};
+    Account acc0 {0, "n0", "url", "u0", "p0"};
+    Account acc1 {1, "n1", "url", "u1", "p1"};
+    Account acc2 {2, "n2", "url", "u2", "p2"};
 
     assertTrue(ms_.add(acc0));
     assertTrue(ms_.add(acc1));
@@ -219,14 +220,13 @@ testF(ModelStorageTest, add_del_and_add_to_fill_free_spot)
     assertTrue(ms_.del(acc1.name));
     assertEqual(2, ms_.count());
 
-    Account acc3 {.name = "n3", .username = "u3", .password = "p3"};
+    Account acc3 {0, "n3", "url", "u3", "p3"};
     assertTrue(ms_.add(acc3));
     assertEqual(3, ms_.count());
 
     Account acc;
-    memset(&acc, 0, sizeof(acc));
 
-    typename ModelStorage<Account>::ObjIndex idx = 0;
+    typename AccountBlobStorage::ObjIndex idx = 0;
     //
     // Next
     assertTrue(ms_.getNext(0, acc, idx));
@@ -240,7 +240,6 @@ testF(ModelStorageTest, cbegin_for_empty_storage)
     ModelIterator<Account> it(ms_.cbegin());
 
     Account emptyAcc;
-    acc_ctor(emptyAcc);
 
     assertTrue(emptyAcc == *it);
 };
@@ -250,7 +249,6 @@ testF(ModelStorageTest, cend_for_empty_storage)
     ModelIterator<Account> it(ms_.cend());
 
     Account emptyAcc;
-    acc_ctor(emptyAcc);
 
     assertTrue(emptyAcc == *it);
 };
@@ -262,7 +260,7 @@ testF(ModelStorageTest, cbegin_equal_to_cend_for_empty_storage)
 
 testF(ModelStorageTest, cbegin_not_equal_to_cend_for_non_empty_storage)
 {
-    Account acc0 {.name = "n0", .username = "u0", .password = "p0"};
+    Account acc0 {0, "n0", "url", "u0", "p0"};
     assertTrue(ms_.add(acc0));
     ModelIterator<Account> it = ms_.cbegin();
     assertTrue(it != ms_.cend());
@@ -277,7 +275,7 @@ testF(ModelStorageTest, prev_cend_for_empty_storage)
 
 testF(ModelStorageTest, prev_cbegin_for_non_empty_storage)
 {
-    Account acc0 {.name = "n0", .username = "u0", .password = "p0"};
+    Account acc0 {0, "n0", "url", "u0", "p0"};
     assertTrue(ms_.add(acc0));
 
     ModelIterator<Account> it = ms_.cbegin();
@@ -286,7 +284,7 @@ testF(ModelStorageTest, prev_cbegin_for_non_empty_storage)
 
 testF(ModelStorageTest, prev_cend_for_non_empty_storage)
 {
-    Account acc0 {.name = "n0", .username = "u0", .password = "p0"};
+    Account acc0 {0, "n0", "url", "u0", "p0"};
     assertTrue(ms_.add(acc0));
 
     ModelIterator<Account> it = ms_.cend();
@@ -301,7 +299,7 @@ testF(ModelStorageTest, iterate_from_cbegin_for_empty_storage)
 
 testF(ModelStorageTest, iterate_from_cbegin_to_cend_for_non_empty_storage)
 {
-    Account acc0 {.name = "n0", .username = "u0", .password = "p0"};
+    Account acc0 {0, "n0", "url", "u0", "p0"};
     assertTrue(ms_.add(acc0));
     ModelIterator<Account> it = ms_.cbegin();
     assertTrue(ms_.cend() == ++it);

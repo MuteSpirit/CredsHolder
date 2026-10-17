@@ -22,13 +22,16 @@ class Oled;
 class AccountMenuImpl;
 class DeviceInputs;
 class Keyboard;
-struct Account;
+class Account;
 
 /// GUI element to show single credential account, it's URL, login, password, etc.
 /// Account fields which maybe typed into login form (or other) will be able to navigate and select.
 /// On selection some field CredsHolder must type it on attached PC.
 class AccountMenu : public Menu
 {
+public:
+    using Impl = AccountMenuImpl;
+
 public:
     AccountMenu(Oled &oled, DeviceInputs&, Keyboard& keyboard);
 
@@ -51,5 +54,5 @@ protected:
 protected:
     /// Buffer for implementation class instance
     /// @details Use static_assert in constructor to check required size at compile time 
-    uint8_t impl_[200];
+    uint8_t impl_[464];
 };

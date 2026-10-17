@@ -30,6 +30,9 @@
 * [x] Implement tutorial
 * [x] Implement new way for accept/enter action - via tap/knock
 * [~] Refactoring
+  * [ ] Make code less Arduino: no F("<string>") or PROGMEM usage or configurable
+  * [ ] Make autoformatting (config + nvim lsp config + neovim-dev-env image)
+  * [ ] Add -MD compiler option and add more correct dependencies in Makefile
   * [ ] Put '#pragma once' on first line before any license banners
   * [ ] build test objects/exec in separate folder
   * [x] build .o files for tests using all .cpp files, not .t.cpp only
@@ -41,6 +44,13 @@
   * [ ] Check U8x8 log class - maybe it's better in memory debug oled then OledInMem
   * [ ] Exclude .t.cpp files from build for target platform and avoid "if defined(EPOXY_DUINO)" guards usage
   * [ ] Add memory sanitizer compiler options to catch memory access troubles. Think about Valgrind
+* BSP
+  * [ ] Why Seeduino try to use std_vector.h which use exception and require __throw_length_error definition ??!
+  * [ ] Replace -Ofast to maybe -Os or find way to strip binaries
+  * [ ] Just to the latest available C/C++ standard for compilation
+  * [ ] Add SQLite3 library
+  * [ ] Add TinyFATFS
+  * [ ] Add SQLite3 VFS library
 * [~] Implement read file from microSD card with partition "storage" formatted with FAT32
   * [ ] Check is it needed to implement own fatfs::SPIClass using EEPROM_SPI_EE
   * [ ] !!! I had to change TinyFATFS sources to enable FF_MULTI_PARTITION. Do something to use it by default

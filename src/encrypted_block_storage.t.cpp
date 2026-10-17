@@ -13,13 +13,14 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
+#include "model/blob/account_storage.hpp"
 #if defined(EPOXY_DUINO)
 #include "encrypted_block_storage.hpp"
 
 #include <inttypes.h>
 #include <string.h>
 #include "model/account.hpp"
-#include "model/storage.hpp"
+#include "model/blob/storage.hpp"
 #include "memory_block_storage.hpp"
 
 // Must be included as the last header to avoid troubles with macro "test"
@@ -29,6 +30,8 @@
 // AES-256 requires a key that is exactly 32 bytes (256 bits).
 constexpr const uint8_t encStoreKey[] = "32-length-password-0123456789012";
 constexpr size_t encStoreKeyLen = (sizeof("32-length-password-0123456789012") / sizeof(encStoreKey[0])) - 1;
+
+using namespace creds_holder;
 
 test(encrypted_store_ctor)
 {
@@ -133,28 +136,31 @@ test(encrypted_store_write_block_by_one_shot)
 #undef SECOND_BLOCK_TEXT
 }
 
-test(encrypted_model_storage_ctor)
+class EncryptedAccountBlobStorageTest : public aunit::TestOnce
 {
-    MemoryBlockStorage<1024, 64> mbs;
-    mbs.factoryReset();
+protected:
+    virtual void setup() override
+    {
+        TestOnce::setup();
 
-    EncryptedBlockStorage ebs(mbs);
-    assertTrue(ebs.init(encStoreKey, encStoreKeyLen));
+        mbs.factoryReset();
+        assertTrue(ebs.init(encStoreKey, encStoreKeyLen));
+    }
 
-    ModelStorage<Account> model(ebs);
+protected:
+    MemoryBlockStorage<4096, 64> mbs;
+    EncryptedBlockStorage ebs{mbs};
+    AccountBlobStorage m{ebs};
+
 };
 
-test(encrypted_model_storage_add)
+testF(EncryptedAccountBlobStorageTest, ctor)
 {
-    MemoryBlockStorage<1024, 64> mbs;
-    mbs.factoryReset();
+};
 
-    EncryptedBlockStorage ebs(mbs);
-    assertTrue(ebs.init(encStoreKey, encStoreKeyLen));
-
-    ModelStorage<Account> m(ebs);
-
-    Account acc {.name = "n", .username = "u", .password = "p"};
+testF(EncryptedAccountBlobStorageTest, add)
+{
+    Account acc {0, "n", "url", "u", "p"};
 
     assertEqual(0, m.count());
     assertFalse(m.isExist(acc.name));
@@ -165,17 +171,9 @@ test(encrypted_model_storage_add)
     assertTrue(m.isExist(acc.name));
 };
 
-test(encrypted_model_storage_get)
+testF(EncryptedAccountBlobStorageTest, get)
 {
-    MemoryBlockStorage<1024, 64> mbs;
-    mbs.factoryReset();
-
-    EncryptedBlockStorage ebs(mbs);
-    assertTrue(ebs.init(encStoreKey, encStoreKeyLen));
-
-    ModelStorage<Account> m(ebs);
-
-    Account acc0 {.name = "n", .username = "u", .password = "p"};
+    Account acc0 {0, "n", "url", "u", "p"};
 
     assertTrue(m.add(acc0));
 
@@ -185,18 +183,10 @@ test(encrypted_model_storage_get)
     assertStringCaseEqual(acc0.name, acc1.name);
 };
 
-test(encrypted_model_storage_get_next_prev)
+testF(EncryptedAccountBlobStorageTest, get_next_prev)
 {
-    MemoryBlockStorage<1024, 64> mbs;
-    mbs.factoryReset();
-
-    EncryptedBlockStorage ebs(mbs);
-    assertTrue(ebs.init(encStoreKey, encStoreKeyLen));
-
-    ModelStorage<Account> m(ebs);
-
-    Account acc0 {.name = "n0", .username = "u0", .password = "p0"};
-    Account acc1 {.name = "n1", .username = "u1", .password = "p1"};
+    Account acc0 {0, "n0", "u0", "url0", "p0"};
+    Account acc1 {1, "n1", "u1", "url1", "p1"};
 
     assertTrue(m.add(acc0));
     assertTrue(m.add(acc1));
@@ -204,7 +194,7 @@ test(encrypted_model_storage_get_next_prev)
     Account acc;
     memset(&acc, 0, sizeof(acc));
 
-    typename ModelStorage<Account>::ObjIndex idx = 0;
+    typename AccountBlobStorage::ObjIndex idx = 0;
     //
     // Next
     assertTrue(m.getNext(0, acc, idx));
@@ -221,17 +211,9 @@ test(encrypted_model_storage_get_next_prev)
     assertStringCaseEqual(acc0.name, acc.name);
 };
 
-test(encrypted_model_storage_del_one_object)
+testF(EncryptedAccountBlobStorageTest, del_one_object)
 {
-    MemoryBlockStorage<1024, 64> mbs;
-    mbs.factoryReset();
-
-    EncryptedBlockStorage ebs(mbs);
-    assertTrue(ebs.init(encStoreKey, encStoreKeyLen));
-
-    ModelStorage<Account> m(ebs);
-
-    Account acc0 {.name = "n0", .username = "u0", .password = "p0"};
+    Account acc0 {0, "n0", "u0", "url0", "p0"};
     assertTrue(m.add(acc0));
 
     assertTrue(m.del(acc0.name));
@@ -239,19 +221,11 @@ test(encrypted_model_storage_del_one_object)
     assertEqual(0, m.count());
 };
 
-test(encrypted_model_storage_del_three_objects_fifo)
+testF(EncryptedAccountBlobStorageTest, del_three_objects_fifo)
 {
-    MemoryBlockStorage<1024, 64> mbs;
-    mbs.factoryReset();
-
-    EncryptedBlockStorage ebs(mbs);
-    assertTrue(ebs.init(encStoreKey, encStoreKeyLen));
-
-    ModelStorage<Account> m(ebs);
-
-    Account acc0 {.name = "n0", .username = "u0", .password = "p0"};
-    Account acc1 {.name = "n1", .username = "u1", .password = "p1"};
-    Account acc2 {.name = "n2", .username = "u2", .password = "p2"};
+    Account acc0 {0, "n0", "u0", "url0", "p0"};
+    Account acc1 {1, "n1", "u1", "url1", "p1"};
+    Account acc2 {2, "n2", "u2", "url2", "p2"};
 
     assertTrue(m.add(acc0));
     assertTrue(m.add(acc1));
@@ -269,19 +243,11 @@ test(encrypted_model_storage_del_three_objects_fifo)
     assertEqual(0, m.count());
 };
 
-test(encrypted_model_storage_del_three_objects_lifo)
+testF(EncryptedAccountBlobStorageTest, del_three_objects_lifo)
 {
-    MemoryBlockStorage<1024, 64> mbs;
-    mbs.factoryReset();
-
-    EncryptedBlockStorage ebs(mbs);
-    assertTrue(ebs.init(encStoreKey, encStoreKeyLen));
-
-    ModelStorage<Account> m(ebs);
-
-    Account acc0 {.name = "n0", .username = "u0", .password = "p0"};
-    Account acc1 {.name = "n1", .username = "u1", .password = "p1"};
-    Account acc2 {.name = "n2", .username = "u2", .password = "p2"};
+    Account acc0 {0, "n0", "u0", "url0", "p0"};
+    Account acc1 {1, "n1", "u1", "url1", "p1"};
+    Account acc2 {2, "n2", "u2", "url2", "p2"};
 
     assertTrue(m.add(acc0));
     assertTrue(m.add(acc1));
@@ -297,19 +263,11 @@ test(encrypted_model_storage_del_three_objects_lifo)
     assertEqual(0, m.count());
 };
 
-test(encrypted_model_storage_get_next_prev_over_free_spot)
+testF(EncryptedAccountBlobStorageTest, get_next_prev_over_free_spot)
 {
-    MemoryBlockStorage<1024, 64> mbs;
-    mbs.factoryReset();
-
-    EncryptedBlockStorage ebs(mbs);
-    assertTrue(ebs.init(encStoreKey, encStoreKeyLen));
-
-    ModelStorage<Account> m(ebs);
-
-    Account acc0 {.name = "n0", .username = "u0", .password = "p0"};
-    Account acc1 {.name = "n1", .username = "u1", .password = "p1"};
-    Account acc2 {.name = "n2", .username = "u2", .password = "p2"};
+    Account acc0 {0, "n0", "u0", "url0", "p0"};
+    Account acc1 {1, "n1", "u1", "url1", "p1"};
+    Account acc2 {2, "n2", "u2", "url2", "p2"};
 
     assertTrue(m.add(acc0));
     assertTrue(m.add(acc1));
@@ -320,7 +278,7 @@ test(encrypted_model_storage_get_next_prev_over_free_spot)
     Account acc;
     memset(&acc, 0, sizeof(acc));
 
-    typename ModelStorage<Account>::ObjIndex idx = 0;
+    typename AccountBlobStorage::ObjIndex idx = 0;
     //
     // Next
     assertTrue(m.getNext(0, acc, idx));
@@ -337,19 +295,11 @@ test(encrypted_model_storage_get_next_prev_over_free_spot)
     assertStringCaseEqual(acc0.name, acc.name);
 };
 
-test(encrypted_model_storage_add_del_and_add_to_fill_free_spot)
+testF(EncryptedAccountBlobStorageTest, add_del_and_add_to_fill_free_spot)
 {
-    MemoryBlockStorage<1024, 64> mbs;
-    mbs.factoryReset();
-
-    EncryptedBlockStorage ebs(mbs);
-    assertTrue(ebs.init(encStoreKey, encStoreKeyLen));
-
-    ModelStorage<Account> m(ebs);
-
-    Account acc0 {.name = "n0", .username = "u0", .password = "p0"};
-    Account acc1 {.name = "n1", .username = "u1", .password = "p1"};
-    Account acc2 {.name = "n2", .username = "u2", .password = "p2"};
+    Account acc0 {0, "n0", "u0", "url0", "p0"};
+    Account acc1 {1, "n1", "u1", "url1", "p1"};
+    Account acc2 {2, "n2", "u2", "url2", "p2"};
 
     assertTrue(m.add(acc0));
     assertTrue(m.add(acc1));
@@ -358,14 +308,14 @@ test(encrypted_model_storage_add_del_and_add_to_fill_free_spot)
     assertTrue(m.del(acc1.name));
     assertEqual(2, m.count());
 
-    Account acc3 {.name = "n3", .username = "u3", .password = "p3"};
+    Account acc3 {3, "n3", "u3", "url3", "p3"};
     assertTrue(m.add(acc3));
     assertEqual(3, m.count());
 
     Account acc;
     memset(&acc, 0, sizeof(acc));
 
-    typename ModelStorage<Account>::ObjIndex idx = 0;
+    typename AccountBlobStorage::ObjIndex idx = 0;
     //
     // Next
     assertTrue(m.getNext(0, acc, idx));
@@ -374,25 +324,19 @@ test(encrypted_model_storage_add_del_and_add_to_fill_free_spot)
     assertStringCaseEqual(acc3.name, acc.name);
 };
 
-test(encrypted_model_storage_is_persist)
+testF(EncryptedAccountBlobStorageTest, is_persist)
 {
-    MemoryBlockStorage<1024, 64> mbs;
-    mbs.factoryReset();
-
-    EncryptedBlockStorage ebs(mbs);
-    assertTrue(ebs.init(encStoreKey, encStoreKeyLen));
-
-    Account acc {.name = "n", .username = "u", .password = "p"};
+    Account acc {0, "n", "url", "u", "p"};
     // a'la first device with block storage initialization
     {
-        ModelStorage<Account> m(ebs);
+        AccountBlobStorage m(ebs);
 
         assertTrue(m.add(acc));
         assertEqual(1, m.count());
     }
     // a'la second/one-of-next device boot with data in ext EEPROM
     {
-        ModelStorage<Account> m(ebs);
+        AccountBlobStorage m(ebs);
 
         assertEqual(1, m.count());
         assertTrue(m.isExist(acc.name));

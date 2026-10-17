@@ -20,12 +20,14 @@
 #include "storage.hpp"
 #include "iterator.hpp"
 
-#include "account.hpp"
-#include "../memory_block_storage.hpp"
+#include "account_storage.hpp"
+#include "../../memory_block_storage.hpp"
 
 // Must be included as the last header to avoid troubles with macro "test"
 // when such word is used in headers above
 #include <AUnitVerbose.h>
+
+using namespace creds_holder;
 
 // TODO: figure out why test with fixture crash with segfault
 class ModelIteratorTest : public aunit::TestOnce
@@ -48,13 +50,12 @@ protected:
     // Account acc2 {.name = "n2", .username = "u2", .password = "p2"};
     //
     MemoryBlockStorage<1024, 64> bs_;
-    ModelStorage<Account> ms_ {bs_};
+    AccountBlobStorage ms_ {bs_};
 };
 
 testF(ModelIteratorTest, ctor_empty_iterator)
 {
     Account emptyAcc;
-    acc_ctor(emptyAcc);
 
     ModelIterator<Account> it(ms_);
     

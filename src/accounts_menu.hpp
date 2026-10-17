@@ -1,3 +1,4 @@
+#pragma once
 // CredsHolder (Hardware Credential Manager)
 // Copyright (C)  2026  Ivan Efimov aka MuteSpirit <mutespirit@yandex.ru>.
 //
@@ -13,7 +14,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
-#pragma once
 #include "creds_holder.hpp"
 
 #include "menu.hpp"
@@ -23,17 +23,20 @@
 class DeviceInputs;
 class Oled;
 
+namespace creds_holder {
 
-template<typename T>
-class ModelStorage;
-
+template<typename Storage>
 class AccountsMenuImpl;
 
 ////////////////////////////////////////////////////////////////////////////////
+template<typename Storage>
 class AccountsMenu : public Menu
 {
 public:
-    AccountsMenu(Oled& oled, DeviceInputs& userInputs, ModelStorage<Account>&);
+    using Impl = AccountsMenuImpl<Storage>;
+
+public:
+    AccountsMenu(Oled& oled, DeviceInputs& userInputs, Storage&);
 
     virtual void init(BlindCall nextMenuCb, BlindCall prevMenuCb) override;
 
@@ -48,11 +51,13 @@ public:
     void notifyModelStoreUpdated();
 
 protected:
-    AccountsMenuImpl* impl();
-    const AccountsMenuImpl* impl() const;
+    Impl* impl();
+    const Impl* impl() const;
 
 protected:
     /// Buffer for implementation class instance.
     /// @details static_assert is used in a constructor to control required impl_ size
-    uint8_t impl_[112];
+    uint8_t impl_[104];
 };
+
+} // namespace creds_holder

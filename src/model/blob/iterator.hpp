@@ -15,19 +15,24 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
 
-#include "../creds_holder.hpp"
+#include "../../creds_holder.hpp"
+
 #include <inttypes.h>
 #include <Embedded_Template_Library.h>
 #include <etl/iterator.h>
 
 #include "storage.hpp"
 
-struct Account;
-template <typename T> class ModelIteratorImpl;
+class Account;
+
+namespace creds_holder {
+
+template <typename T>
+class ModelIteratorImpl;
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// Iterator over objects in ModelStorage<T> storage.
+/// Iterator over objects in ModelBlobStorage<T> storage.
 ///
 /// It may be used in UISelectionList
 ///
@@ -39,11 +44,11 @@ template<typename T>
 class ModelIterator : public etl::iterator<etl::bidirectional_iterator_tag, T>
 {
 public:
-    static constexpr typename ModelStorage<T>::ObjIndex END = -1;
-    static constexpr typename ModelStorage<T>::ObjIndex FIRST = 0;
+    static constexpr typename ModelBlobStorage<T>::ObjIndex END = -1;
+    static constexpr typename ModelBlobStorage<T>::ObjIndex FIRST = 0;
 
 public:
-    explicit ModelIterator(const ModelStorage<T>& store, typename ModelStorage<T>::ObjIndex idx = 0);
+    explicit ModelIterator(const ModelBlobStorage<T>& store, typename ModelBlobStorage<T>::ObjIndex idx = 0);
 
     T& operator*();
     const T& operator*() const;
@@ -64,6 +69,7 @@ protected:
 protected:
     /// Buffer for implementation class instance.
     /// @details Use static_assert in constructor to check required size at compile time 
-    uint8_t impl_[112];
+    uint8_t impl_[376];
 };
 
+} // namespace creds_holder

@@ -21,19 +21,25 @@
 #include <Embedded_Template_Library.h>
 #include <etl/memory.h>
 
-#include "model/storage.hpp"
-#include "model/iterator.hpp"
+#include "model/sql/account_storage.hpp"
+#include "model/blob/account_storage.hpp"
+#include "model/blob/iterator.hpp"
 
-#include "device.hpp"
+#include "device_inputs.hpp"
 #include "oled.hpp"
 #include "ui_selection_list.hpp"
 
+namespace creds_holder {
 
 ////////////////////////////////////////////////////////////////////////////////
+template<typename Storage>
 class AccountsMenuImpl
 {
 public:
-    AccountsMenuImpl(Oled& oled, DeviceInputs& userInputs, ModelStorage<Account>&);
+    using AccountSelectionList = UISelectionList<typename Storage::ConstIterator, Account>;
+
+public:
+    AccountsMenuImpl(Oled& oled, DeviceInputs& userInputs, Storage&);
 
     void prev();
     void next();
@@ -50,53 +56,59 @@ public:
     Oled& oled_;
     DeviceInputs& userInputs_;
 
-    ModelStorage<Account>& modelStore_;
+    Storage& modelStore_;
 
-    etl::unique_ptr<UISelectionList<ModelIterator<Account>, Account>> accSl_;
+    etl::unique_ptr<AccountSelectionList> accSl_;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
-AccountsMenu::AccountsMenu(Oled& oled,
-                           DeviceInputs& userInputs,
-                           ModelStorage<Account>& modelStore)
+template<typename Storage>
+AccountsMenu<Storage>::AccountsMenu(Oled& oled,
+        DeviceInputs& userInputs,
+        Storage& modelStore)
 {
-    static_assert(sizeof(impl_) >= sizeof(AccountsMenuImpl), "fix AccountsMenu::impl_ size");
-    new (impl_) AccountsMenuImpl(oled, userInputs, modelStore);
+    static_assert(sizeof(impl_) >= sizeof(Impl), "fix AccountsMenu<Storage>::impl_ size");
+    new (impl_) Impl(oled, userInputs, modelStore);
 }
 
-AccountsMenuImpl*
-AccountsMenu::impl()
+template<typename Storage>
+typename AccountsMenu<Storage>::Impl*
+AccountsMenu<Storage>::impl()
 {
-    return reinterpret_cast<AccountsMenuImpl*>(impl_);
+    return reinterpret_cast<AccountsMenuImpl<Storage>*>(impl_);
 }
 
-const AccountsMenuImpl*
-AccountsMenu::impl() const
+template<typename Storage>
+const typename AccountsMenu<Storage>::Impl*
+AccountsMenu<Storage>::impl() const
 {
-    return reinterpret_cast<const AccountsMenuImpl*>(impl_);
+    return reinterpret_cast<const AccountsMenuImpl<Storage>*>(impl_);
 }
 
+template<typename Storage>
 void
-AccountsMenu::init(BlindCall nextMenuCb, BlindCall prevMenuCb)
+AccountsMenu<Storage>::init(BlindCall nextMenuCb, BlindCall prevMenuCb)
 {
     impl()->nextMenuCb_ = nextMenuCb;
     impl()->prevMenuCb_ = prevMenuCb;
 }
 
+template<typename Storage>
 void
-AccountsMenu::activate()
+AccountsMenu<Storage>::activate()
 {
     impl()->userInputs_.set(DeviceInputs::UserAction::left, impl()->prevMenuCb_);
-    impl()->userInputs_.set(DeviceInputs::UserAction::right, BlindCall::make(impl(), &AccountsMenuImpl::select));
+    impl()->userInputs_.set(DeviceInputs::UserAction::right, BlindCall::make(impl(), &Impl::select));
 
-    impl()->userInputs_.set(DeviceInputs::UserAction::up, BlindCall::make(impl(), &AccountsMenuImpl::prev));
-    impl()->userInputs_.set(DeviceInputs::UserAction::down, BlindCall::make(impl(), &AccountsMenuImpl::next));
+    impl()->userInputs_.set(DeviceInputs::UserAction::up, BlindCall::make(impl(), &Impl::prev));
+    impl()->userInputs_.set(DeviceInputs::UserAction::down, BlindCall::make(impl(), &Impl::next));
 
     impl()->oled_.setFont(u8x8_font_8x13_1x2_f);
 }
 
+template<typename Storage>
 void
-AccountsMenu::deactivate()
+AccountsMenu<Storage>::deactivate()
 {
     impl()->userInputs_.unset(DeviceInputs::UserAction::left);
     impl()->userInputs_.unset(DeviceInputs::UserAction::right);
@@ -105,44 +117,50 @@ AccountsMenu::deactivate()
     impl()->userInputs_.unset(DeviceInputs::UserAction::down);
 }
 
+template<typename Storage>
 void
-AccountsMenu::draw()
+AccountsMenu<Storage>::draw()
 {
-    // if (Serial) { Serial.println(F("AccountsMenu::draw()")); }
+    // if (Serial) { Serial.println(F("AccountsMenu<Storage>::draw()")); }
     impl()->draw();
 }
 
+template<typename Storage>
 Account
-AccountsMenu::selected() const
+AccountsMenu<Storage>::selected() const
 {
     return impl()->accSl_->selected();
 }
 
+template<typename Storage>
 void
-AccountsMenu::notifyModelStoreUpdated()
+AccountsMenu<Storage>::notifyModelStoreUpdated()
 {
     impl()->notifyModelStoreUpdated();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-AccountsMenuImpl::AccountsMenuImpl(Oled& oled,
+template<typename Storage>
+AccountsMenuImpl<Storage>::AccountsMenuImpl(Oled& oled,
                                    DeviceInputs& userInputs,
-                                   ModelStorage<Account>& modelStore)
+                                   Storage& modelStore)
     : oled_(oled)
     , userInputs_(userInputs)
     , modelStore_(modelStore)
-    , accSl_(new UISelectionList<ModelIterator<Account>, Account>(oled_, "Accounts", modelStore_.cbegin(), modelStore_.cend()))
+    , accSl_(new AccountSelectionList(oled_, "Accounts", modelStore_.cbegin(), modelStore_.cend()))
 {
 }
 
+template<typename Storage>
 void
-AccountsMenuImpl::select()
+AccountsMenuImpl<Storage>::select()
 {
     nextMenuCb_();
 }
 
+template<typename Storage>
 void
-AccountsMenuImpl::next()
+AccountsMenuImpl<Storage>::next()
 {
     if (!accSl_) {
         return;
@@ -151,8 +169,9 @@ AccountsMenuImpl::next()
     accSl_->draw();
 }
 
+template<typename Storage>
 void
-AccountsMenuImpl::prev()
+AccountsMenuImpl<Storage>::prev()
 {
     if (!accSl_) {
         return;
@@ -161,8 +180,9 @@ AccountsMenuImpl::prev()
     accSl_->draw();
 }
 
+template<typename Storage>
 void
-AccountsMenuImpl::draw()
+AccountsMenuImpl<Storage>::draw()
 {
     if (!accSl_) {
         return;
@@ -170,11 +190,19 @@ AccountsMenuImpl::draw()
     accSl_->draw();
 }
 
+template<typename Storage>
 void
-AccountsMenuImpl::notifyModelStoreUpdated()
+AccountsMenuImpl<Storage>::notifyModelStoreUpdated()
 {
     if (!accSl_) {
         return;
     }
     accSl_->update(modelStore_.cbegin(), modelStore_.cend());
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// Let's instantiate for concrete storages to keep control on class usage
+template class AccountsMenu<AccountSqlStorage>;
+template class AccountsMenu<AccountBlobStorage>;
+
+} // namespace creds_holder

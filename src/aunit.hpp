@@ -1,3 +1,4 @@
+#pragma once
 // CredsHolder (Hardware Credential Manager)
 // Copyright (C)  2026  Ivan Efimov aka MuteSpirit <mutespirit@yandex.ru>.
 //
@@ -14,3 +15,15 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+/// @file aunit.hpp
+/// AUnitVerbose.h wrapper header. It contains additional assert macros
+/// working with types not expected by original AUnit, e.g. etl::string
+
+#include <AUnitVerbose.h>
+
+namespace aunit {
+
+#define assertEtlStringCaseEqual(expected, actual) \
+    assertStringCaseEqual((expected).c_str(), (actual).c_str())
+
+} // namespace aunit

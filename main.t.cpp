@@ -29,4 +29,4 @@ loop()
 {
     aunit::TestRunner::run();
 }
-#endif // EPOXY_DUINO
+#endif // defined(EPOXY_DUINO)

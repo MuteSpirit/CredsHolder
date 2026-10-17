@@ -18,9 +18,8 @@
 #include <c/arg.h>
 
 #include "cli.hpp"
-#include "model/account.hpp"
 #include "version.hpp"
-#include "model/storage.hpp"
+#include "model/sql/account_storage.hpp"
 
 /******************************************************************************/
 // from SimpleCLI/c/arg.c
@@ -53,13 +52,13 @@ const char * const usage[] = {
 
 // TODO: SimpleCLI(int commandQueueSize = 10, int errorQueueSize = 10); 
 SimpleCLI cli;
-extern ModelStorage<Account> modelStore;
+extern creds_holder::AccountSqlStorage modelStore;
 
 void print_usage(cmd *pcmd);
 void add_account(cmd *pcmd);
 void del_account(cmd *pcmd);
 void ls_accounts(cmd *pcmd);
-void factory_reset(cmd *pcmd);
+// void factory_reset(cmd *pcmd);
 
 void error_cb(cmd_error* e);
 
@@ -81,9 +80,9 @@ cli_init(const bool cli_turn_on)
 
     Command ls_cmd = cli.addCommand("l/s", ls_accounts);
     ls_cmd.setDescription(ls_cmd_usage);
-
-    Command factory_cmd = cli.addCommand("factory_reset", factory_reset);
-    factory_cmd.setDescription(factory_cmd_usage);
+    //
+    // Command factory_cmd = cli.addCommand("factory_reset", factory_reset);
+    // factory_cmd.setDescription(factory_cmd_usage);
 
     cli.setOnError(error_cb);
 
@@ -124,8 +123,8 @@ error_cb(cmd_error* e)
             Serial.println(del_cmd_usage);
         } else if (c.equals("add")) {
             Serial.println(add_cmd_usage);
-        } else if (c.equals("factory_reset")) {
-            Serial.println(factory_cmd_usage);
+        // } else if (c.equals("factory_reset")) {
+        //     Serial.println(factory_cmd_usage);
         }
     } else {
         print_usage(NULL);
@@ -149,19 +148,24 @@ add_account(cmd *pcmd)
 {
     Command add_cmd(pcmd);
 
-    Argument name_arg = add_cmd.getArgument(0);
+    // all next usages will do prefix increment => no difference for 1st or other argument => less error possibility
+    int8_t nArg = -1;
+
+    Argument name_arg = add_cmd.getArgument(++nArg);
     // if (!name_arg.isSet()) {
     //     Serial.println(F("FAIL: argument <name> is absent"));
     //     return;
     // }
     //
-    Argument username_arg = add_cmd.getArgument(1);
+    Argument url_arg = add_cmd.getArgument(++nArg);
+
+    Argument username_arg = add_cmd.getArgument(++nArg);
     // if (!username_arg.isSet()) {
     //     Serial.println(F("FAIL: argument <username> is absent"));
     //     return;
     // }
     //
-    Argument password_arg = add_cmd.getArgument(2);
+    Argument password_arg = add_cmd.getArgument(++nArg);
     // // TODO: generate password if user did not pass it
     //
     if (modelStore.isExist(arg_get_value(name_arg.getPtr()))) {
@@ -171,6 +175,7 @@ add_account(cmd *pcmd)
 
     Account acc;
     strncpy(acc.name, arg_get_value(name_arg.getPtr()), sizeof(acc.name));
+    strncpy(acc.url, arg_get_value(url_arg.getPtr()), sizeof(acc.url));
     strncpy(acc.username, arg_get_value(username_arg.getPtr()), sizeof(acc.username));
     strncpy(acc.password, arg_get_value(password_arg.getPtr()), sizeof(acc.password));
 
@@ -190,7 +195,7 @@ del_account(cmd *pcmd)
         Serial.println(F("FAIL: argument <name> is absent"));
     }
 
-    if (!modelStore.del(arg_get_value(name_arg.getPtr()))) {
+    if (!modelStore.remove(arg_get_value(name_arg.getPtr()))) {
         Serial.println(F("FAIL"));
     } else {
         Serial.println(F("Done"));
@@ -199,30 +204,23 @@ del_account(cmd *pcmd)
 
 void
 ls_accounts(__attribute__((unused)) cmd *pcmd) {
-    Account acc;
-    typename ModelStorage<Account>::ObjIndex idx = 0;
-    if (!modelStore.get(idx, acc)) {
-        Serial.println(F("Done"));
-        return;
+    for (auto i = modelStore.cbegin(), ie = modelStore.cend(); i != ie; ++i) {
+        Serial.println((*i).name); 
+        Serial.println((*i).url); 
+        Serial.println((*i).username); 
+        Serial.println((*i).password); 
     }
 
-    do
-    {
-        Serial.println(acc.name); 
-        Serial.println(acc.username); 
-        Serial.println(acc.password); 
-    } while (modelStore.getNext(idx, acc, idx));
-
     Serial.println(F("Done"));
 }
 
-void
-factory_reset(cmd *pcmd) {
-    Command reset_cmd(pcmd);
-
-    modelStore.factoryReset(); // TODO: how show progress?
-    Serial.println(F("Done"));
-}
+// void
+// factory_reset(cmd *pcmd) {
+//     Command reset_cmd(pcmd);
+//
+//     modelStore.factoryReset(); // TODO: how show progress?
+//     Serial.println(F("Done"));
+// }
 
 void
 cli_on()

@@ -130,7 +130,7 @@ template<typename Iterator, typename T>
 void
 UISelectionList<Iterator, T>::update(Iterator start, Iterator end)
 {
-    // if (Serial) { Serial.println(F("UISelectionList::update(...)")); }
+    if (Serial) { Serial.println(F("UISelectionList::update(...)")); }
 
     firstItemIt_ = start;
     endItemIt_ = end;
@@ -143,7 +143,7 @@ template<typename Iterator, typename T>
 void
 UISelectionList<Iterator, T>::draw()
 {
-    // if (Serial) { Serial.println(F("UISelectionList<Iterator, T>::draw()")); }
+    if (Serial) { Serial.println(F("UISelectionList::draw()")); }
     oled_.setInverseFont(0);
     oled_.clear();
     oled_.home();
@@ -174,10 +174,10 @@ UISelectionList<Iterator, T>::draw()
         if (it == curIt_) {
             oled_.setInverseFont(1);
         }
-        // if (Serial) {
-        //     Serial.print(F("Item: "));
-        //     Serial.println(static_cast<const char*>(*it));
-        // }
+        if (Serial) {
+            Serial.print(F("Item: "));
+            Serial.println(static_cast<const char*>(*it));
+        }
         oled_.println(static_cast<const char*>(*it));
         if (it == curIt_) {
             oled_.setInverseFont(0);

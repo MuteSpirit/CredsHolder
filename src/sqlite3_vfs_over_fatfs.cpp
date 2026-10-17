@@ -515,10 +515,10 @@ fsRead(sqlite3_file* pFile,
         return SQLITE_IOERR_READ;
     }
 
-    if (nRead == iAmt) {
+    if (nRead == static_cast<UINT>(iAmt)) {
         return SQLITE_OK;
     } else if (nRead >= 0) {
-        if (nRead < iAmt) {
+        if (nRead < static_cast<UINT>(iAmt)) {
             memset(&((char*)zBuf)[nRead], 0, iAmt - nRead);
         }
         return SQLITE_IOERR_SHORT_READ;
@@ -542,7 +542,7 @@ fsWrite(
 
     UINT bw = 0;
     if (FR_OK != (f->fatFs)->f_write(&f->fl, zBuf, iAmt, &bw)
-            || bw != iAmt) {
+            || bw != static_cast<UINT>(iAmt)) {
         return SQLITE_IOERR_WRITE;
     }
 

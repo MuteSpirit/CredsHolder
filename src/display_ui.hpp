@@ -16,20 +16,24 @@
 #pragma once
 
 #include <inttypes.h>
+#include "model/sql/account_storage.hpp"
 
 class Oled;
-class AccountsMenu;
 class AccountMenu;
 class SettingsMenu;
 class AuthForm;
 class DeviceInputs;
 class SnakeGame;
 
+namespace creds_holder {
+
+template<typename Storage>
+class AccountsMenu;
 
 class DisplayUI
 {
 public:
-    DisplayUI(Oled&, DeviceInputs &,/* AuthForm &, */SnakeGame&, AccountsMenu&, AccountMenu&, SettingsMenu&);
+    DisplayUI(Oled&, DeviceInputs &,/* AuthForm &, */SnakeGame&, AccountsMenu<AccountSqlStorage>&, AccountMenu&, SettingsMenu&);
 
     void setup(void);
     void loop_step(void);
@@ -53,9 +57,11 @@ protected:
     DeviceInputs &userInputs_;
     SnakeGame& tutorial_;
     // AuthForm &authForm_;
-    AccountsMenu& accountsMenu_;
+    AccountsMenu<AccountSqlStorage>& accountsMenu_;
     AccountMenu& accMenu_;
     SettingsMenu& settingsMenu_;
 
     State state_ {State::start};
 };
+
+} // namespace creds_holder

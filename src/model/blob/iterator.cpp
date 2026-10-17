@@ -16,25 +16,27 @@
 #include "iterator.hpp"
 
 #include <new>
-#include "account.hpp"
+#include "../account.hpp"
 #include "storage.hpp"
+
+namespace creds_holder {
 
 ////////////////////////////////////////////////////////////////////////////////
 template<typename T>
 class ModelIteratorImpl
 {
 public:
-    ModelIteratorImpl(const ModelStorage<T> &store, typename ModelStorage<T>::ObjIndex idx);
+    ModelIteratorImpl(const ModelBlobStorage<T> &store, typename ModelBlobStorage<T>::ObjIndex idx);
 
     ModelIteratorImpl<T>& operator--();
     ModelIteratorImpl<T>& operator++();
 
 public:
-    const ModelStorage<T>& store_;
+    const ModelBlobStorage<T>& store_;
 
     /// equation to (0)  means begin iterator
     /// equation to (-1) means end   iterator
-    typename ModelStorage<T>::ObjIndex idx_ {0};
+    typename ModelBlobStorage<T>::ObjIndex idx_ {0};
 
     /// Keep copy of object:
     /// 1. To avoid separate request to model storage with access external hw storage
@@ -45,19 +47,17 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////
 template<typename T>
-ModelIterator<T>::ModelIterator(const ModelStorage<T> &store, typename ModelStorage<T>::ObjIndex idx)
+ModelIterator<T>::ModelIterator(const ModelBlobStorage<T> &store, typename ModelBlobStorage<T>::ObjIndex idx)
 {
     static_assert(sizeof(impl_) >= sizeof(ModelIteratorImpl<T>), "fix ModelIterator<T>::impl_ size");
     new (impl_) ModelIteratorImpl<T>(store, idx);
 }
 
 template<typename T>
-ModelIteratorImpl<T>::ModelIteratorImpl(const ModelStorage<T> &store, typename ModelStorage<T>::ObjIndex idx)
+ModelIteratorImpl<T>::ModelIteratorImpl(const ModelBlobStorage<T> &store, typename ModelBlobStorage<T>::ObjIndex idx)
     : store_(store)
     , idx_(idx)
 {
-    acc_ctor(t_);
-
     if (ModelIterator<T>::END != idx_) {
         store_.get(idx_, t_) || store_.getNext(idx_, t_, idx_);
     }
@@ -107,7 +107,7 @@ ModelIteratorImpl<T>::operator++()
             || (ModelIterator<T>::END != idx_ 
                 && !store_.getNext(idx_, t_, idx_))) {
         idx_ = ModelIterator<T>::END;
-        acc_ctor(t_);
+        t_.reset();
     } 
     return *this;
 }
@@ -138,14 +138,14 @@ ModelIteratorImpl<T>::operator--()
         if (!store_.get(idx_, t_) 
             && !store_.getPrev(idx_, t_, idx_)) {
             idx_ = ModelIterator<T>::END;
-            acc_ctor(t_);
+            t_.reset();
         }
     } else if (ModelIterator<T>::FIRST != idx_) {
         if (!store_.getPrev(idx_, t_, idx_)) {
             // FIXME: if there will be empty blocks on some Account positions then
             // current idx_ maybe not equal to FIRST and all [FIRST, idx_] are empty too
             idx_ = ModelIterator<T>::FIRST;
-            acc_ctor(t_);
+            t_.reset();
         }
     } 
     // else ModelIterator<T>::FIRST == idx_
@@ -179,5 +179,7 @@ ModelIterator<T>::operator!=(const ModelIterator<T>& rhs) const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// Let's instantiate for Account to keep control on ModelStorage class usage
+// Let's instantiate for Account to keep control on ModelBlobStorage class usage
 template class ModelIterator<Account>;
+
+} // namespace creds_holder

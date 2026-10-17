@@ -136,8 +136,8 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 AccountMenu::AccountMenu(Oled& oled, DeviceInputs& userInputs, Keyboard& keyboard)
 {
-    static_assert(sizeof(impl_) >= sizeof(AccountMenuImpl), "Fix AccountMenu::impl_ size");
-    new (impl_) AccountMenuImpl(oled, userInputs, keyboard);
+    static_assert(sizeof(impl_) >= sizeof(Impl), "Fix AccountMenu::impl_ size");
+    new (impl_) Impl(oled, userInputs, keyboard);
 }
 
 AccountMenuImpl::AccountMenuImpl(Oled& oled, DeviceInputs& userInputs, Keyboard& keyboard)
@@ -187,7 +187,7 @@ AccountMenu::deactivate()
     impl()->userInputs_.unset(DeviceInputs::UserAction::up);
     impl()->userInputs_.unset(DeviceInputs::UserAction::down);
 
-    acc_ctor(impl()->acc_);
+    impl()->acc_.reset();
 }
 
 void

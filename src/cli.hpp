@@ -1,3 +1,4 @@
+#pragma once
 // CredsHolder (Hardware Credential Manager)
 // Copyright (C)  2026  Ivan Efimov aka MuteSpirit <mutespirit@yandex.ru>.
 //
@@ -13,9 +14,8 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
-#pragma once
 
-struct Account;
+class Account;
 
 void cli_init(const bool cli_turn_on);
 void cli_loop_step();

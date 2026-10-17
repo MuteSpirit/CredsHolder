@@ -98,8 +98,8 @@ CredsHolderInputsImpl::CredsHolderInputsImpl(DeviceOutputs& deviceOutputs)
 ////////////////////////////////////////////////////////////////////////////////
 CredsHolderInputs::CredsHolderInputs(DeviceOutputs& deviceOutputs)
 {
-    static_assert(sizeof(impl_) >= sizeof(CredsHolderInputsImpl), "fix CredsHolderInputs::impl_ size");
-    new(impl_) CredsHolderInputsImpl(deviceOutputs);
+    static_assert(sizeof(impl_) >= sizeof(Impl), "fix CredsHolderInputs::impl_ size");
+    new(impl_) Impl(deviceOutputs);
 }
 
 CredsHolderInputsImpl* CredsHolderInputs::impl()
@@ -213,7 +213,7 @@ CredsHolderInputs::loop_step(void)
             && nowMs - impl()->knockSensor_.lastMeasureMs() >= KnockSensor::MEASURE_INTERVAL) {
         uint32_t newVal = analogRead(KNOCK_SENSOR_PIN);
 
-        if (Serial) {Serial.println(newVal);}
+        // if (Serial) {Serial.println(newVal);}
 
         if (KnockSensor::Knock::twin == impl()->knockSensor_.update(newVal, nowMs)) {
             if (Serial) {
